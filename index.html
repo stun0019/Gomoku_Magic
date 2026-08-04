@@ -2100,4 +2100,1029 @@
                 return null;
             }
 
-           
+            /*
+             * 第一優先：
+             * AI 可以直接獲勝。
+             */
+            const winningMove =
+                findImmediateMove(AI);
+
+            if (winningMove) {
+                return winningMove;
+            }
+
+            /*
+             * 第二優先：
+             * 阻止玩家直接獲勝。
+             */
+            const blockingMove =
+                findImmediateMove(PLAYER);
+
+            if (blockingMove) {
+                return blockingMove;
+            }
+
+            /*
+             * 棋盤為空時落在中央。
+             */
+            if (moveCount === 0) {
+                return {
+                    row: 7,
+                    col: 7
+                };
+            }
+
+            /*
+             * 評估所有候選位置。
+             */
+            let bestScore = -Infinity;
+            let bestMoves = [];
+
+            for (
+                const position of emptyPositions
+            ) {
+                const score =
+                    evaluateAiPosition(
+                        position.row,
+                        position.col
+                    );
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMoves = [position];
+                } else if (score === bestScore) {
+                    bestMoves.push(position);
+                }
+            }
+
+            return bestMoves[
+                Math.floor(
+                    Math.random() *
+                    bestMoves.length
+                )
+            ];
+        }
+
+        function findImmediateMove(player) {
+            const emptyPositions =
+                getEmptyPositions();
+
+            for (
+                const position of emptyPositions
+            ) {
+                board[position.row][position.col] =
+                    player;
+
+                const result =
+                    checkWin(
+                        position.row,
+                        position.col,
+                        player
+                    );
+
+                board[position.row][position.col] =
+                    EMPTY;
+
+                if (result.hasWon) {
+                    return position;
+                }
+            }
+
+            return null;
+        }
+
+        function evaluateAiPosition(row, col) {
+            let score = 0;
+
+            /*
+             * AI 進攻分數。
+             */
+            board[row][col] = AI;
+
+            score +=
+                evaluatePositionPatterns(
+                    row,
+                    col,
+                    AI
+                ) * 1.12;
+
+            board[row][col] = EMPTY;
+
+            /*
+             * 玩家威脅分數。
+             */
+            board[row][col] = PLAYER;
+
+            score +=
+                evaluatePositionPatterns(
+                    row,
+                    col,
+                    PLAYER
+                );
+
+            board[row][col] = EMPTY;
+
+            /*
+             * 靠近中央稍微加分。
+             */
+            const centerDistance =
+                Math.abs(row - 7) +
+                Math.abs(col - 7);
+
+            score +=
+                Math.max(
+                    0,
+                    12 - centerDistance
+                ) * 0.7;
+
+            /*
+             * 靠近既有棋子才列為有效候選。
+             */
+            score +=
+                countNearbyStones(
+                    row,
+                    col,
+                    2
+                ) * 1.5;
+
+            return score;
+        }
+
+        function evaluatePositionPatterns(
+            row,
+            col,
+            player
+        ) {
+            let total = 0;
+
+            for (
+                const direction of DIRECTIONS
+            ) {
+                const pattern =
+                    analyzeDirection(
+                        row,
+                        col,
+                        player,
+                        direction.row,
+                        direction.col
+                    );
+
+                if (pattern.count >= 5) {
+                    total += 100000;
+                } else if (
+                    pattern.count === 4 &&
+                    pattern.openEnds === 2
+                ) {
+                    total += 12000;
+                } else if (
+                    pattern.count === 4 &&
+                    pattern.openEnds === 1
+                ) {
+                    total += 4200;
+                } else if (
+                    pattern.count === 3 &&
+                    pattern.openEnds === 2
+                ) {
+                    total += 1100;
+                } else if (
+                    pattern.count === 3 &&
+                    pattern.openEnds === 1
+                ) {
+                    total += 260;
+                } else if (
+                    pattern.count === 2 &&
+                    pattern.openEnds === 2
+                ) {
+                    total += 80;
+                } else if (
+                    pattern.count === 2 &&
+                    pattern.openEnds === 1
+                ) {
+                    total += 22;
+                } else if (
+                    pattern.count === 1 &&
+                    pattern.openEnds === 2
+                ) {
+                    total += 8;
+                }
+            }
+
+            return total;
+        }
+
+        function countNearbyStones(
+            row,
+            col,
+            distance
+        ) {
+            let count = 0;
+
+            for (
+                let rowOffset = -distance;
+                rowOffset <= distance;
+                rowOffset += 1
+            ) {
+                for (
+                    let colOffset = -distance;
+                    colOffset <= distance;
+                    colOffset += 1
+                ) {
+                    if (
+                        rowOffset === 0 &&
+                        colOffset === 0
+                    ) {
+                        continue;
+                    }
+
+                    const targetRow =
+                        row + rowOffset;
+
+                    const targetCol =
+                        col + colOffset;
+
+                    if (
+                        isInsideBoard(
+                            targetRow,
+                            targetCol
+                        ) &&
+                        board[targetRow][targetCol] !==
+                            EMPTY
+                    ) {
+                        count += 1;
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        function getEmptyPositions() {
+            const positions = [];
+
+            for (
+                let row = 0;
+                row < BOARD_SIZE;
+                row += 1
+            ) {
+                for (
+                    let col = 0;
+                    col < BOARD_SIZE;
+                    col += 1
+                ) {
+                    if (
+                        board[row][col] === EMPTY
+                    ) {
+                        positions.push({
+                            row,
+                            col
+                        });
+                    }
+                }
+            }
+
+            return positions;
+        }
+
+        /* ==================================================
+           勝負檢查
+        ================================================== */
+
+        function checkWin(row, col, player) {
+            for (
+                const direction of DIRECTIONS
+            ) {
+                const positions = [
+                    { row, col }
+                ];
+
+                collectConnectedStones(
+                    row,
+                    col,
+                    player,
+                    direction.row,
+                    direction.col,
+                    positions
+                );
+
+                collectConnectedStones(
+                    row,
+                    col,
+                    player,
+                    -direction.row,
+                    -direction.col,
+                    positions
+                );
+
+                if (positions.length >= 5) {
+                    return {
+                        hasWon: true,
+                        positions
+                    };
+                }
+            }
+
+            return {
+                hasWon: false,
+                positions: []
+            };
+        }
+
+        function collectConnectedStones(
+            startRow,
+            startCol,
+            player,
+            rowDirection,
+            colDirection,
+            positions
+        ) {
+            let row =
+                startRow + rowDirection;
+
+            let col =
+                startCol + colDirection;
+
+            while (
+                isInsideBoard(row, col) &&
+                board[row][col] === player
+            ) {
+                positions.push({
+                    row,
+                    col
+                });
+
+                row += rowDirection;
+                col += colDirection;
+            }
+        }
+
+        function analyzeDirection(
+            row,
+            col,
+            player,
+            rowDirection,
+            colDirection
+        ) {
+            let count = 1;
+            let openEnds = 0;
+
+            let targetRow =
+                row + rowDirection;
+
+            let targetCol =
+                col + colDirection;
+
+            while (
+                isInsideBoard(
+                    targetRow,
+                    targetCol
+                ) &&
+                board[targetRow][targetCol] ===
+                    player
+            ) {
+                count += 1;
+                targetRow += rowDirection;
+                targetCol += colDirection;
+            }
+
+            if (
+                isInsideBoard(
+                    targetRow,
+                    targetCol
+                ) &&
+                board[targetRow][targetCol] ===
+                    EMPTY
+            ) {
+                openEnds += 1;
+            }
+
+            targetRow =
+                row - rowDirection;
+
+            targetCol =
+                col - colDirection;
+
+            while (
+                isInsideBoard(
+                    targetRow,
+                    targetCol
+                ) &&
+                board[targetRow][targetCol] ===
+                    player
+            ) {
+                count += 1;
+                targetRow -= rowDirection;
+                targetCol -= colDirection;
+            }
+
+            if (
+                isInsideBoard(
+                    targetRow,
+                    targetCol
+                ) &&
+                board[targetRow][targetCol] ===
+                    EMPTY
+            ) {
+                openEnds += 1;
+            }
+
+            return {
+                count,
+                openEnds
+            };
+        }
+
+        function isInsideBoard(row, col) {
+            return (
+                row >= 0 &&
+                row < BOARD_SIZE &&
+                col >= 0 &&
+                col < BOARD_SIZE
+            );
+        }
+
+        /* ==================================================
+           棋盤走勢與傷害計算
+        ================================================== */
+
+        function calculateRoundDamage(winner) {
+            /*
+             * 每局最低 50 傷害。
+             * 三戰兩勝中，輸掉兩局必定歸零。
+             */
+            const baseDamage = 50;
+
+            /*
+             * 越快完成五連線，速度加成越高。
+             */
+            const speedBonus =
+                Math.max(
+                    0,
+                    Math.min(
+                        7,
+                        Math.floor(
+                            (55 - moveCount) / 5
+                        )
+                    )
+                );
+
+            /*
+             * 計算勝方棋盤上仍存在的開放三與開放四。
+             */
+            const momentum =
+                analyzeBoardMomentum(winner);
+
+            const openFourBonus =
+                Math.min(
+                    4,
+                    momentum.openFours * 2
+                );
+
+            const openThreeBonus =
+                Math.min(
+                    3,
+                    momentum.openThrees
+                );
+
+            /*
+             * 最終傷害限制在 50 至 64。
+             */
+            const totalDamage =
+                Math.max(
+                    50,
+                    Math.min(
+                        64,
+                        baseDamage +
+                        speedBonus +
+                        openFourBonus +
+                        openThreeBonus
+                    )
+                );
+
+            return {
+                totalDamage,
+                baseDamage,
+                speedBonus,
+                openFourBonus,
+                openThreeBonus,
+                momentum
+            };
+        }
+
+        function analyzeBoardMomentum(player) {
+            let openThrees = 0;
+            let openFours = 0;
+
+            const checkedPatterns =
+                new Set();
+
+            for (
+                let row = 0;
+                row < BOARD_SIZE;
+                row += 1
+            ) {
+                for (
+                    let col = 0;
+                    col < BOARD_SIZE;
+                    col += 1
+                ) {
+                    if (
+                        board[row][col] !== player
+                    ) {
+                        continue;
+                    }
+
+                    for (
+                        const direction of DIRECTIONS
+                    ) {
+                        const pattern =
+                            analyzeDirection(
+                                row,
+                                col,
+                                player,
+                                direction.row,
+                                direction.col
+                            );
+
+                        const key =
+                            createPatternKey(
+                                row,
+                                col,
+                                direction
+                            );
+
+                        if (
+                            checkedPatterns.has(key)
+                        ) {
+                            continue;
+                        }
+
+                        checkedPatterns.add(key);
+
+                        if (
+                            pattern.count === 4 &&
+                            pattern.openEnds >= 1
+                        ) {
+                            openFours += 1;
+                        }
+
+                        if (
+                            pattern.count === 3 &&
+                            pattern.openEnds === 2
+                        ) {
+                            openThrees += 1;
+                        }
+                    }
+                }
+            }
+
+            return {
+                openThrees:
+                    Math.min(openThrees, 3),
+
+                openFours:
+                    Math.min(openFours, 2)
+            };
+        }
+
+        function createPatternKey(
+            row,
+            col,
+            direction
+        ) {
+            let startRow = row;
+            let startCol = col;
+
+            while (
+                isInsideBoard(
+                    startRow - direction.row,
+                    startCol - direction.col
+                ) &&
+                board[
+                    startRow - direction.row
+                ][
+                    startCol - direction.col
+                ] === board[row][col]
+            ) {
+                startRow -= direction.row;
+                startCol -= direction.col;
+            }
+
+            return [
+                startRow,
+                startCol,
+                direction.row,
+                direction.col
+            ].join("-");
+        }
+
+        /* ==================================================
+           局結束
+        ================================================== */
+
+        function finishRound(winner) {
+            roundEnded = true;
+            aiThinking = false;
+
+            boardFrame.classList.add("locked");
+            boardFrame.classList.remove("player-turn");
+
+            if (winner === EMPTY) {
+                showDrawResult();
+                return;
+            }
+
+            const damageResult =
+                calculateRoundDamage(winner);
+
+            if (winner === PLAYER) {
+                playerScore += 1;
+
+                aiHealth =
+                    Math.max(
+                        0,
+                        aiHealth -
+                        damageResult.totalDamage
+                    );
+            } else {
+                aiScore += 1;
+
+                playerHealth =
+                    Math.max(
+                        0,
+                        playerHealth -
+                        damageResult.totalDamage
+                    );
+            }
+
+            const hasMatchEnded =
+                playerScore >= WINNING_SCORE ||
+                aiScore >= WINNING_SCORE;
+
+            matchEnded = hasMatchEnded;
+
+            updateBattleInterface(true, winner);
+
+            window.setTimeout(() => {
+                showRoundResult(
+                    winner,
+                    damageResult,
+                    hasMatchEnded
+                );
+            }, RESULT_DELAY);
+        }
+
+        function updateBattleInterface(
+            animateDamage = false,
+            winner = null
+        ) {
+            playerScoreElement.textContent =
+                String(playerScore);
+
+            aiScoreElement.textContent =
+                String(aiScore);
+
+            playerHpText.textContent =
+                `${playerHealth} / ${MAX_HEALTH}`;
+
+            aiHpText.textContent =
+                `${aiHealth} / ${MAX_HEALTH}`;
+
+            playerHealthBar.style.width =
+                `${playerHealth}%`;
+
+            aiHealthBar.style.width =
+                `${aiHealth}%`;
+
+            if (
+                animateDamage &&
+                winner !== null
+            ) {
+                const damagedBar =
+                    winner === PLAYER
+                        ? aiHealthBar
+                        : playerHealthBar;
+
+                damagedBar.classList.add(
+                    "damage-flash"
+                );
+
+                gameApp.classList.add("shake");
+
+                window.setTimeout(() => {
+                    damagedBar.classList.remove(
+                        "damage-flash"
+                    );
+
+                    gameApp.classList.remove(
+                        "shake"
+                    );
+                }, 450);
+            }
+        }
+
+        function showRoundResult(
+            winner,
+            damageResult,
+            hasMatchEnded
+        ) {
+            const winnerName =
+                winner === PLAYER
+                    ? "PLAYER"
+                    : "AI";
+
+            const loserName =
+                winner === PLAYER
+                    ? "AI"
+                    : "PLAYER";
+
+            damageWinner.textContent =
+                winnerName;
+
+            damageLoser.textContent =
+                loserName;
+
+            damageNumber.textContent =
+                String(
+                    damageResult.totalDamage
+                );
+
+            if (hasMatchEnded) {
+                resultKicker.textContent =
+                    "MATCH RESULT";
+
+                resultTitle.textContent =
+                    winner === PLAYER
+                        ? "玩家取得最終勝利"
+                        : "AI 取得最終勝利";
+
+                resultDescription.textContent =
+                    `${playerScore} VS ${aiScore}，本次三戰兩勝對戰已結束。`;
+
+                continueButton.textContent =
+                    "重新對戰";
+            } else {
+                resultKicker.textContent =
+                    `ROUND ${roundNumber} RESULT`;
+
+                resultTitle.textContent =
+                    winner === PLAYER
+                        ? "玩家取得本局勝利"
+                        : "AI 取得本局勝利";
+
+                resultDescription.textContent =
+                    `${winnerName} 完成五連線，對 ${loserName} 造成傷害。`;
+
+                continueButton.textContent =
+                    "下一回合";
+            }
+
+            const details = [
+                `基礎傷害 ${damageResult.baseDamage}`,
+                `速度加成 ${damageResult.speedBonus}`,
+                `四連威脅加成 ${damageResult.openFourBonus}`,
+                `三連攻勢加成 ${damageResult.openThreeBonus}`
+            ];
+
+            damageDetails.textContent =
+                details.join("　");
+
+            showResultOverlay();
+        }
+
+        function showDrawResult() {
+            resultKicker.textContent =
+                `ROUND ${roundNumber} RESULT`;
+
+            resultTitle.textContent =
+                "本局和棋";
+
+            resultDescription.textContent =
+                "棋盤已滿，雙方皆未完成五連線。本局不計分且不扣除血量。";
+
+            damageWinner.textContent =
+                "PLAYER";
+
+            damageLoser.textContent =
+                "AI";
+
+            damageNumber.textContent =
+                "0";
+
+            damageDetails.textContent =
+                "本局沒有產生傷害";
+
+            continueButton.textContent =
+                "重新進行本局";
+
+            window.setTimeout(
+                showResultOverlay,
+                350
+            );
+        }
+
+        function continueAfterResult() {
+            continueButton.classList.add(
+                "fade-hidden"
+            );
+
+            window.setTimeout(() => {
+                hideResultOverlay();
+
+                continueButton.classList.remove(
+                    "fade-hidden"
+                );
+
+                if (matchEnded) {
+                    initializeMatch();
+                    return;
+                }
+
+                roundNumber += 1;
+                startRound();
+            }, 350);
+        }
+
+        /* ==================================================
+           顯示棋盤
+        ================================================== */
+
+        function renderBoard() {
+            const intersections =
+                boardPoints.querySelectorAll(
+                    ".intersection"
+                );
+
+            intersections.forEach(
+                (intersection) => {
+                    const row =
+                        Number(
+                            intersection.dataset.row
+                        );
+
+                    const col =
+                        Number(
+                            intersection.dataset.col
+                        );
+
+                    const cell =
+                        board[row][col];
+
+                    intersection.innerHTML = "";
+
+                    intersection.classList.remove(
+                        "occupied",
+                        "winning-stone"
+                    );
+
+                    if (cell === EMPTY) {
+                        return;
+                    }
+
+                    intersection.classList.add(
+                        "occupied"
+                    );
+
+                    const stone =
+                        document.createElement(
+                            "span"
+                        );
+
+                    stone.className =
+                        cell === PLAYER
+                            ? "stone black"
+                            : "stone white";
+
+                    intersection.appendChild(
+                        stone
+                    );
+
+                    if (
+                        lastMove &&
+                        lastMove.row === row &&
+                        lastMove.col === col
+                    ) {
+                        const marker =
+                            document.createElement(
+                                "span"
+                            );
+
+                        marker.className =
+                            "last-move-marker";
+
+                        intersection.appendChild(
+                            marker
+                        );
+                    }
+
+                    const isWinningStone =
+                        winningPositions.some(
+                            (position) =>
+                                position.row === row &&
+                                position.col === col
+                        );
+
+                    if (isWinningStone) {
+                        intersection.classList.add(
+                            "winning-stone"
+                        );
+                    }
+                }
+            );
+
+            moveCounter.textContent =
+                `MOVE ${moveCount}`;
+        }
+
+        function updateTurnInterface() {
+            const isPlayerTurn =
+                currentPlayer === PLAYER;
+
+            turnStone.className =
+                isPlayerTurn
+                    ? "turn-stone black"
+                    : "turn-stone white";
+
+            turnMessage.textContent =
+                isPlayerTurn
+                    ? "玩家回合"
+                    : "AI 思考中";
+
+            boardFrame.classList.toggle(
+                "player-turn",
+                isPlayerTurn
+            );
+        }
+
+        /* ==================================================
+           Overlay
+        ================================================== */
+
+        function showResultOverlay() {
+            resultOverlay.classList.add("show");
+        }
+
+        function hideResultOverlay() {
+            resultOverlay.classList.remove("show");
+        }
+
+        /* ==================================================
+           返回大廳
+        ================================================== */
+
+        function returnToLobby() {
+            battleScreen.classList.add(
+                "fade-out"
+            );
+
+            window.setTimeout(() => {
+                /*
+                 * 五子棋 Demo 位於：
+                 * gomoku-demo/index.html
+                 *
+                 * 遊戲大廳位於：
+                 * index.html
+                 */
+                window.location.href =
+                    "../index.html";
+            }, 550);
+        }
+
+        /* ==================================================
+           事件
+        ================================================== */
+
+        startGameButton.addEventListener(
+            "click",
+            enterBattleScreen
+        );
+
+        continueButton.addEventListener(
+            "click",
+            continueAfterResult
+        );
+
+        restartMatchButton.addEventListener(
+            "click",
+            () => {
+                initializeMatch();
+            }
+        );
+
+        lobbyButton.addEventListener(
+            "click",
+            returnToLobby
+        );
+
+        resultLobbyButton.addEventListener(
+            "click",
+            returnToLobby
+        );
+
+        /* ==================================================
+           啟動
+        ================================================== */
+
+        runLoadingSequence();
+    </script>
+</body>
+</html>
