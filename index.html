@@ -2967,18 +2967,18 @@ function getRoleConfig(player, role) {
   if (role === "sword") {
     return {
       name: "劍",
-      type: "劍定位",
+      type: player === PLAYER
+        ? "單體破壞型"
+        : "近戰壓制型",
       state: "SWORD"
     };
   }
 
   return {
-    name: player === PLAYER
-      ? "杖"
-      : "赤晶術師",
+    name: "杖",
     type: player === PLAYER
-      ? "杖定位"
-      : "杖定位",
+      ? "戰場控制型"
+      : "元素攻擊型",
     state: "ELEMENT"
   };
 }
@@ -3037,8 +3037,16 @@ function spinRole(player, onComplete) {
 
       typeElement.textContent =
         previewIndex % 2 === 0
-          ? "杖定位"
-          : "劍定位";
+          ? (
+              player === PLAYER
+                ? "戰場控制型"
+                : "元素攻擊型"
+            )
+          : (
+              player === PLAYER
+                ? "單體破壞型"
+                : "近戰壓制型"
+            );
 
       previewIndex += 1;
     }, 90);
