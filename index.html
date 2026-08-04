@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <meta
+        name="description"
+        content="五子棋戰鬥遊戲 Demo"
+    >
+
+    <title>Five Clash</title>
+
+    <style>
+        /* ==================================================
+           全域設定
+        ================================================== */
+
+        :root {
+            --design-width: 720;
+            --design-height: 1280;
+
+            --background-top: #151b25;
+            --background-bottom: #080b10;
+
+            --panel-background: rgba(20, 27, 37, 0.94);
+            --panel-border: rgba(255, 255, 255, 0.11);
+
+            --text-primary: #f3f5f8;
+            --text-secondary: #9ea8b7;
+            --text-dark: #19140c;
+
+            --player-main: #60a5fa;
+            --player-light: #93c5fd;
+
+            --ai-main: #ef6a6a;
+            --ai-light: #fca5a5;
+
+            --accent: #e9b85a;
+            --accent-light: #f4d18b;
+
+            --success: #75d68a;
+            --danger: #ef6a6a;
+
+            --board-light: #deb66f;
+            --board-dark: #bd8440;
+            --board-border: #825424;
+            --board-line: rgba(54, 34, 14, 0.78);
+
+            --black-stone-top: #4d5158;
+            --black-stone-bottom: #07080a;
+
+            --white-stone-top: #ffffff;
+            --white-stone-bottom: #c5c9cf;
+
+            --board-grid-size: 15;
+            --board-line-count: 14;
+
+            --radius-large: 24px;
+            --radius-medium: 16px;
+            --radius-small: 10px;
+
+            --transition-fast: 180ms ease;
+            --transition-normal: 350ms ease;
+            --transition-slow: 700ms ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+
+            color: var(--text-primary);
+
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(65, 84, 115, 0.35),
+                    transparent 42%
+                ),
+                linear-gradient(
+                    165deg,
+                    var(--background-top),
+                    var(--background-bottom)
+                );
+
+            font-family:
+                "Noto Sans TC",
+                "Microsoft JhengHei",
+                Arial,
+                sans-serif;
+        }
+
+        button {
+            color: inherit;
+            font: inherit;
+        }
+
+        button,
+        .intersection {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ==================================================
+           720 × 1280 直式遊戲畫面
+        ================================================== */
+
+        .game-app {
+            position: relative;
+
+            width: min(100vw, 720px, 56.25vh);
+            aspect-ratio: 9 / 16;
+            max-height: 1280px;
+
+            overflow: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 50% 15%,
+                    rgba(66, 82, 108, 0.28),
+                    transparent 38%
+                ),
+                linear-gradient(
+                    180deg,
+                    #161e29 0%,
+                    #0c1118 55%,
+                    #070a0f 100%
+                );
+
+            box-shadow:
+                0 0 80px rgba(0, 0, 0, 0.65);
+
+            isolation: isolate;
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transition:
+                opacity var(--transition-slow),
+                visibility var(--transition-slow);
+        }
+
+        .screen.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ==================================================
+           共用按鈕
+        ================================================== */
+
+        .game-button {
+            position: relative;
+
+            min-width: 230px;
+            padding: 17px 28px;
+
+            overflow: hidden;
+
+            color: var(--text-dark);
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--accent-light),
+                    var(--accent)
+                );
+
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 13px;
+
+            font-weight: 900;
+            font-size: 1rem;
+            letter-spacing: 0.08em;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 28px rgba(233, 184, 90, 0.24),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+            opacity: 1;
+            transform: translateY(0);
+
+            transition:
+                opacity var(--transition-normal),
+                transform var(--transition-normal),
+                filter var(--transition-fast),
+                box-shadow var(--transition-fast);
+        }
+
+        .game-button::before {
+            content: "";
+
+            position: absolute;
+            top: 0;
+            left: -120%;
+
+            width: 80%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.42),
+                    transparent
+                );
+
+            transform: skewX(-20deg);
+            transition: left 550ms ease;
+        }
+
+        .game-button:hover::before {
+            left: 140%;
+        }
+
+        .game-button:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.06);
+
+            box-shadow:
+                0 15px 34px rgba(233, 184, 90, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55);
+        }
+
+        .game-button:active {
+            transform: translateY(0);
+        }
+
+        .game-button.fade-hidden {
+            opacity: 0;
+            transform: translateY(18px);
+            pointer-events: none;
+        }
+
+        .game-button.fade-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .secondary-button {
+            min-width: 180px;
+
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.065);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+
+            box-shadow: none;
+        }
+
+        .secondary-button:hover {
+            background: rgba(255, 255, 255, 0.11);
+            box-shadow: none;
+        }
+
+        /* ==================================================
+           Loading 畫面
+        ================================================== */
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            padding: 9% 8%;
+
+            text-align: center;
+        }
+
+        .loading-decoration {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .loading-line {
+            position: absolute;
+
+            width: 1px;
+            height: 32%;
+
+            background:
+                linear-gradient(
+                    transparent,
+                    rgba(233, 184, 90, 0.5),
+                    transparent
+                );
+
+            opacity: 0.55;
+        }
+
+        .loading-line.left {
+            left: 15%;
+            top: 17%;
+        }
+
+        .loading-line.right {
+            right: 15%;
+            bottom: 17%;
+        }
+
+        .loading-logo {
+            margin-bottom: 4%;
+
+            color: var(--accent);
+
+            font-size: clamp(2.1rem, 7vw, 3.9rem);
+            font-weight: 950;
+            letter-spacing: 0.12em;
+
+            text-shadow:
+                0 0 28px rgba(233, 184, 90, 0.32);
+        }
+
+        .loading-subtitle {
+            margin-bottom: 11%;
+
+            color: var(--text-secondary);
+            font-size: clamp(0.72rem, 2.4vw, 1rem);
+            letter-spacing: 0.28em;
+        }
+
+        .loading-board-mark {
+            position: relative;
+
+            width: 26%;
+            aspect-ratio: 1;
+
+            margin-bottom: 10%;
+
+            border: 1px solid rgba(233, 184, 90, 0.45);
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent 48%,
+                    rgba(233, 184, 90, 0.35) 49%,
+                    rgba(233, 184, 90, 0.35) 51%,
+                    transparent 52%
+                ),
+                linear-gradient(
+                    transparent 48%,
+                    rgba(233, 184, 90, 0.35) 49%,
+                    rgba(233, 184, 90, 0.35) 51%,
+                    transparent 52%
+                );
+
+            animation: loadingMarkFloat 2.2s ease-in-out infinite;
+        }
+
+        .loading-board-mark::before,
+        .loading-board-mark::after {
+            content: "";
+
+            position: absolute;
+            top: 50%;
+
+            width: 22%;
+            aspect-ratio: 1;
+
+            border-radius: 50%;
+
+            transform: translateY(-50%);
+        }
+
+        .loading-board-mark::before {
+            left: 20%;
+
+            background:
+                radial-gradient(
+                    circle at 32% 28%,
+                    var(--black-stone-top),
+                    var(--black-stone-bottom)
+                );
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .loading-board-mark::after {
+            right: 20%;
+
+            background:
+                radial-gradient(
+                    circle at 32% 28%,
+                    var(--white-stone-top),
+                    var(--white-stone-bottom)
+                );
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.28);
+        }
+
+        @keyframes loadingMarkFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-9px);
+            }
+        }
+
+        .loading-content {
+            width: min(78%, 460px);
+        }
+
+        .loading-text-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 12px;
+
+            color: var(--text-secondary);
+            font-size: clamp(0.72rem, 2.2vw, 0.95rem);
+            letter-spacing: 0.08em;
+        }
+
+        .loading-progress-track {
+            width: 100%;
+            height: 8px;
+
+            overflow: hidden;
+
+            background: rgba(255, 255, 255, 0.075);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+        }
+
+        .loading-progress-bar {
+            width: 0;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #b37b32,
+                    var(--accent),
+                    var(--accent-light)
+                );
+
+            border-radius: inherit;
+
+            box-shadow:
+                0 0 18px rgba(233, 184, 90, 0.5);
+
+            transition: width 180ms ease;
+        }
+
+        .loading-start-area {
+            min-height: 100px;
+            margin-top: 9%;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* ==================================================
+           主遊戲畫面
+        ================================================== */
+
+        .battle-screen {
+            display: flex;
+            flex-direction: column;
+
+            padding:
+                max(18px, 3.2%)
+                max(16px, 3.3%)
+                max(18px, 3%);
+        }
+
+        .battle-background-grid {
+            position: absolute;
+            inset: 0;
+
+            opacity: 0.035;
+
+            background-image:
+                linear-gradient(
+                    rgba(255, 255, 255, 0.8) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.8) 1px,
+                    transparent 1px
+                );
+
+            background-size: 50px 50px;
+
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ==================================================
+           頂部戰鬥資訊
+        ================================================== */
+
+        .battle-header {
+            position: relative;
+
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            align-items: start;
+            gap: 12px;
+
+            min-height: 118px;
+            margin-bottom: 2.7%;
+        }
+
+        .fighter-status {
+            min-width: 0;
+        }
+
+        .fighter-status.ai {
+            text-align: right;
+        }
+
+        .fighter-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 8px;
+        }
+
+        .fighter-status.ai .fighter-name-row {
+            flex-direction: row-reverse;
+        }
+
+        .fighter-name {
+            overflow: hidden;
+
+            font-size: clamp(0.7rem, 2.3vw, 1rem);
+            font-weight: 850;
+            letter-spacing: 0.08em;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .fighter-hp-text {
+            color: var(--text-secondary);
+            font-size: clamp(0.62rem, 1.9vw, 0.78rem);
+            font-weight: 700;
+        }
+
+        .health-bar-shell {
+            position: relative;
+
+            width: 100%;
+            height: clamp(16px, 2.8vw, 24px);
+
+            overflow: hidden;
+
+            background: rgba(0, 0, 0, 0.45);
+            border: 2px solid rgba(255, 255, 255, 0.14);
+            border-radius: 6px;
+
+            box-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.45);
+        }
+
+        .health-bar {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+
+            width: 100%;
+
+            transition:
+                width 850ms cubic-bezier(0.25, 0.85, 0.3, 1),
+                filter 300ms ease;
+        }
+
+        .health-bar.player {
+            left: 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--player-light),
+                    var(--player-main)
+                );
+        }
+
+        .health-bar.ai {
+            right: 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--ai-light),
+                    var(--ai-main)
+                );
+        }
+
+        .health-bar.damage-flash {
+            filter: brightness(1.8);
+        }
+
+        .health-bar-shine {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            right: 3px;
+
+            height: 35%;
+
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.24);
+
+            pointer-events: none;
+        }
+
+        .score-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            min-width: 125px;
+            padding-top: 2px;
+        }
+
+        .score-row {
+            display: grid;
+            grid-template-columns: 34px auto 34px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-number {
+            font-size: clamp(1.4rem, 4.7vw, 2.2rem);
+            font-weight: 950;
+            line-height: 1;
+        }
+
+        .score-number.player-score {
+            color: var(--player-light);
+            text-align: right;
+        }
+
+        .score-number.ai-score {
+            color: var(--ai-light);
+            text-align: left;
+        }
+
+        .vs-text {
+            color: var(--accent);
+
+            font-size: clamp(0.95rem, 3vw, 1.35rem);
+            font-weight: 950;
+            letter-spacing: 0.08em;
+
+            text-shadow:
+                0 0 16px rgba(233, 184, 90, 0.35);
+        }
+
+        .round-text {
+            margin-top: 9px;
+
+            color: var(--text-secondary);
+            font-size: clamp(0.6rem, 2vw, 0.8rem);
+            font-weight: 700;
+            letter-spacing: 0.12em;
+        }
+
+        /* ==================================================
+           對戰訊息
+        ================================================== */
+
+        .battle-message-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+
+            min-height: 54px;
+            margin-bottom: 2.5%;
+            padding: 0 15px;
+
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.085);
+            border-radius: 12px;
+        }
+
+        .turn-indicator {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+        }
+
+        .turn-stone {
+            width: clamp(18px, 3.5vw, 26px);
+            aspect-ratio: 1;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+        }
+
+        .turn-stone.black {
+            background:
+                radial-gradient(
+                    circle at 32% 28%,
+                    var(--black-stone-top),
+                    var(--black-stone-bottom) 72%
+                );
+
+            box-shadow:
+                0 3px 7px rgba(0, 0, 0, 0.4);
+        }
+
+        .turn-stone.white {
+            background:
+                radial-gradient(
+                    circle at 32% 28%,
+                    var(--white-stone-top),
+                    var(--white-stone-bottom) 72%
+                );
+
+            box-shadow:
+                0 3px 7px rgba(0, 0, 0, 0.25);
+        }
+
+        .turn-message {
+            overflow: hidden;
+
+            font-size: clamp(0.67rem, 2.15vw, 0.9rem);
+            font-weight: 750;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .move-counter {
+            flex-shrink: 0;
+
+            color: var(--text-secondary);
+            font-size: clamp(0.6rem, 1.9vw, 0.78rem);
+            font-weight: 700;
+        }
+
+        /* ==================================================
+           棋盤
+        ================================================== */
+
+        .board-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            flex: 1;
+            min-height: 0;
+        }
+
+        .board-frame {
+            position: relative;
+
+            width: min(91vw, 92%, 640px);
+            aspect-ratio: 1;
+
+            padding: 4.6%;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #d7a85e,
+                    var(--board-dark)
+                );
+
+            border:
+                clamp(4px, 1vw, 8px)
+                solid
+                var(--board-border);
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 20px 42px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .board-frame.locked {
+            pointer-events: none;
+        }
+
+        .board-grid {
+            position: relative;
+
+            width: 100%;
+            height: 100%;
+
+            background-image:
+                linear-gradient(
+                    to right,
+                    transparent calc(100% - 1px),
+                    var(--board-line) calc(100% - 1px)
+                ),
+                linear-gradient(
+                    to bottom,
+                    transparent calc(100% - 1px),
+                    var(--board-line) calc(100% - 1px)
+                );
+
+            background-size:
+                calc(100% / 14)
+                calc(100% / 14);
+
+            border-top: 1px solid var(--board-line);
+            border-left: 1px solid var(--board-line);
+        }
+
+        .board-points,
+        .star-points {
+            position: absolute;
+            inset: 0;
+        }
+
+        .star-point {
+            position: absolute;
+
+            width: 1.8%;
+            min-width: 5px;
+            aspect-ratio: 1;
+
+            transform: translate(-50%, -50%);
+
+            background: var(--board-line);
+            border-radius: 50%;
+
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .intersection {
+            position: absolute;
+
+            width: calc(100% / 14);
+            aspect-ratio: 1;
+
+            transform: translate(-50%, -50%);
+
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+
+            cursor: pointer;
+
+            z-index: 3;
+        }
+
+        .intersection::before {
+            content: "";
+
+            position: absolute;
+            inset: 14%;
+
+            border-radius: 50%;
+
+            background: #111111;
+
+            opacity: 0;
+            transform: scale(0.75);
+
+            transition:
+                opacity var(--transition-fast),
+                transform var(--transition-fast);
+        }
+
+        .board-frame.player-turn
+        .intersection:not(.occupied):hover::before {
+            opacity: 0.2;
+            transform: scale(1);
+        }
+
+        .intersection.occupied {
+            cursor: default;
+        }
+
+        .stone {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+
+            width: 78%;
+            aspect-ratio: 1;
+
+            transform: translate(-50%, -50%) scale(0);
+
+            border-radius: 50%;
+
+            pointer-events: none;
+
+            animation:
+                stonePlace 190ms cubic-bezier(0.2, 1.25, 0.5, 1)
+                forwards;
+        }
+
+        .stone.black {
+            background:
+                radial-gradient(
+                    circle at 32% 27%,
+                    var(--black-stone-top),
+                    var(--black-stone-bottom) 72%
+                );
+
+            box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.42),
+                inset 0 1px 1px rgba(255, 255, 255, 0.17);
+        }
+
+        .stone.white {
+            background:
+                radial-gradient(
+                    circle at 32% 27%,
+                    var(--white-stone-top),
+                    var(--white-stone-bottom) 72%
+                );
+
+            box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        }
+
+        .last-move-marker {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+
+            width: 18%;
+            aspect-ratio: 1;
+
+            transform: translate(-50%, -50%);
+
+            border: 2px solid #ff5e5e;
+            border-radius: 50%;
+
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .winning-stone .stone {
+            outline: 3px solid var(--success);
+            outline-offset: 2px;
+
+            animation:
+                stonePlace 190ms cubic-bezier(0.2, 1.25, 0.5, 1)
+                forwards,
+                winningPulse 700ms ease-in-out infinite alternate;
+        }
+
+        @keyframes stonePlace {
+            from {
+                transform:
+                    translate(-50%, -50%)
+                    scale(0);
+            }
+
+            to {
+                transform:
+                    translate(-50%, -50%)
+                    scale(1);
+            }
+        }
+
+        @keyframes winningPulse {
+            from {
+                filter: brightness(1);
+            }
+
+            to {
+                filter: brightness(1.4);
+            }
+        }
+
+        /* ==================================================
+           底部控制
+        ================================================== */
+
+        .battle-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+
+            min-height: 64px;
+            margin-top: 2.6%;
+        }
+
+        .footer-button {
+            padding: 12px 17px;
+
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+
+            font-size: clamp(0.63rem, 2vw, 0.82rem);
+            font-weight: 750;
+
+            cursor: pointer;
+
+            transition:
+                color var(--transition-fast),
+                background var(--transition-fast),
+                border-color var(--transition-fast),
+                opacity var(--transition-normal);
+        }
+
+        .footer-button:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.17);
+        }
+
+        .match-rule {
+            color: var(--text-secondary);
+            font-size: clamp(0.58rem, 1.8vw, 0.75rem);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        /* ==================================================
+           局間與最終結果畫面
+        ================================================== */
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 7%;
+
+            background: rgba(4, 7, 11, 0.76);
+            backdrop-filter: blur(10px);
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transition:
+                opacity var(--transition-normal),
+                visibility var(--transition-normal);
+
+            z-index: 50;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .result-card {
+            width: min(100%, 470px);
+            padding: 34px 28px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    165deg,
+                    rgba(31, 41, 55, 0.98),
+                    rgba(15, 21, 29, 0.98)
+                );
+
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            border-radius: 20px;
+
+            box-shadow:
+                0 26px 70px rgba(0, 0, 0, 0.5);
+
+            opacity: 0;
+            transform:
+                translateY(24px)
+                scale(0.96);
+
+            transition:
+                opacity var(--transition-normal),
+                transform var(--transition-normal);
+        }
+
+        .overlay.show .result-card {
+            opacity: 1;
+            transform:
+                translateY(0)
+                scale(1);
+        }
+
+        .result-kicker {
+            margin-bottom: 11px;
+
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 850;
+            letter-spacing: 0.22em;
+        }
+
+        .result-title {
+            margin-bottom: 11px;
+
+            font-size: clamp(1.65rem, 5vw, 2.4rem);
+            font-weight: 950;
+        }
+
+        .result-description {
+            margin-bottom: 21px;
+
+            color: var(--text-secondary);
+            font-size: clamp(0.76rem, 2.4vw, 0.95rem);
+            line-height: 1.75;
+        }
+
+        .damage-result {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 23px;
+            padding: 16px;
+
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.085);
+            border-radius: 12px;
+        }
+
+        .damage-side {
+            font-size: 0.78rem;
+            font-weight: 750;
+        }
+
+        .damage-number {
+            color: var(--danger);
+
+            font-size: clamp(1.5rem, 5vw, 2.25rem);
+            font-weight: 950;
+        }
+
+        .damage-label {
+            color: var(--text-secondary);
+            font-size: 0.66rem;
+            font-weight: 700;
+        }
+
+        .damage-details {
+            margin-bottom: 25px;
+
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            line-height: 1.7;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ==================================================
+           畫面震動與傷害效果
+        ================================================== */
+
+        .game-app.shake {
+            animation: screenShake 380ms ease;
+        }
+
+        @keyframes screenShake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(6px);
+            }
+
+            60% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        /* ==================================================
+           小尺寸適配
+        ================================================== */
+
+        @media (max-height: 760px) {
+            .battle-header {
+                min-height: 82px;
+                margin-bottom: 1.5%;
+            }
+
+            .battle-message-panel {
+                min-height: 42px;
+                margin-bottom: 1.5%;
+            }
+
+            .battle-footer {
+                min-height: 45px;
+                margin-top: 1.5%;
+            }
+
+            .board-frame {
+                width: min(82%, 560px);
+            }
+        }
+
+        @media (pointer: coarse) {
+            .intersection::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main
+        id="gameApp"
+        class="game-app"
+    >
+        <!-- ================================================
+             Loading 畫面
+        ================================================= -->
+
+        <section
+            id="loadingScreen"
+            class="screen loading-screen active"
+        >
+            <div
+                class="loading-decoration"
+                aria-hidden="true"
+            >
+                <span class="loading-line left"></span>
+                <span class="loading-line right"></span>
+            </div>
+
+            <h1 class="loading-logo">
+                FIVE CLASH
+            </h1>
+
+            <p class="loading-subtitle">
+                BOARD BATTLE PROTOCOL
+            </p>
+
+            <div
+                class="loading-board-mark"
+                aria-hidden="true"
+            ></div>
+
+            <div class="loading-content">
+                <div class="loading-text-row">
+                    <span id="loadingStatus">
+                        建立棋盤資料
+                    </span>
+
+                    <span id="loadingPercentage">
+                        0%
+                    </span>
+                </div>
+
+                <div class="loading-progress-track">
+                    <div
+                        id="loadingProgressBar"
+                        class="loading-progress-bar"
+                    ></div>
+                </div>
+            </div>
+
+            <div class="loading-start-area">
+                <button
+                    id="startGameButton"
+                    class="game-button fade-hidden"
+                    type="button"
+                >
+                    開始對戰
+                </button>
+            </div>
+        </section>
+
+        <!-- ================================================
+             對戰畫面
+        ================================================= -->
+
+        <section
+            id="battleScreen"
+            class="screen battle-screen"
+        >
+            <div
+                class="battle-background-grid"
+                aria-hidden="true"
+            ></div>
+
+            <header class="battle-header">
+                <!-- 玩家 -->
+
+                <section class="fighter-status player">
+                    <div class="fighter-name-row">
+                        <span class="fighter-name">
+                            PLAYER
+                        </span>
+
+                        <span
+                            id="playerHpText"
+                            class="fighter-hp-text"
+                        >
+                            100 / 100
+                        </span>
+                    </div>
+
+                    <div class="health-bar-shell">
+                        <div
+                            id="playerHealthBar"
+                            class="health-bar player"
+                        >
+                            <span class="health-bar-shine"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 比分 -->
+
+                <section class="score-center">
+                    <div class="score-row">
+                        <span
+                            id="playerScore"
+                            class="score-number player-score"
+                        >
+                            0
+                        </span>
+
+                        <span class="vs-text">
+                            VS
+                        </span>
+
+                        <span
+                            id="aiScore"
+                            class="score-number ai-score"
+                        >
+                            0
+                        </span>
+                    </div>
+
+                    <span
+                        id="roundText"
+                        class="round-text"
+                    >
+                        ROUND 1
+                    </span>
+                </section>
+
+                <!-- AI -->
+
+                <section class="fighter-status ai">
+                    <div class="fighter-name-row">
+                        <span class="fighter-name">
+                            AI
+                        </span>
+
+                        <span
+                            id="aiHpText"
+                            class="fighter-hp-text"
+                        >
+                            100 / 100
+                        </span>
+                    </div>
+
+                    <div class="health-bar-shell">
+                        <div
+                            id="aiHealthBar"
+                            class="health-bar ai"
+                        >
+                            <span class="health-bar-shine"></span>
+                        </div>
+                    </div>
+                </section>
+            </header>
+
+            <section class="battle-message-panel">
+                <div class="turn-indicator">
+                    <span
+                        id="turnStone"
+                        class="turn-stone black"
+                    ></span>
+
+                    <span
+                        id="turnMessage"
+                        class="turn-message"
+                    >
+                        玩家回合
+                    </span>
+                </div>
+
+                <span
+                    id="moveCounter"
+                    class="move-counter"
+                >
+                    MOVE 0
+                </span>
+            </section>
+
+            <section class="board-section">
+                <div
+                    id="boardFrame"
+                    class="board-frame player-turn"
+                >
+                    <div class="board-grid">
+                        <div
+                            id="starPoints"
+                            class="star-points"
+                            aria-hidden="true"
+                        ></div>
+
+                        <div
+                            id="boardPoints"
+                            class="board-points"
+                        ></div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="battle-footer">
+                <button
+                    id="lobbyButton"
+                    class="footer-button"
+                    type="button"
+                >
+                    返回大廳
+                </button>
+
+                <span class="match-rule">
+                    BEST OF 3
+                </span>
+
+                <button
+                    id="restartMatchButton"
+                    class="footer-button"
+                    type="button"
+                >
+                    重新對戰
+                </button>
+            </footer>
+        </section>
+
+        <!-- ================================================
+             結果視窗
+        ================================================= -->
+
+        <div
+            id="resultOverlay"
+            class="overlay"
+        >
+            <section class="result-card">
+                <p
+                    id="resultKicker"
+                    class="result-kicker"
+                >
+                    ROUND RESULT
+                </p>
+
+                <h2
+                    id="resultTitle"
+                    class="result-title"
+                >
+                    玩家取得勝利
+                </h2>
+
+                <p
+                    id="resultDescription"
+                    class="result-description"
+                >
+                    玩家完成五連線。
+                </p>
+
+                <div class="damage-result">
+                    <span
+                        id="damageWinner"
+                        class="damage-side"
+                    >
+                        PLAYER
+                    </span>
+
+                    <div>
+                        <div
+                            id="damageNumber"
+                            class="damage-number"
+                        >
+                            50
+                        </div>
+
+                        <div class="damage-label">
+                            DAMAGE
+                        </div>
+                    </div>
+
+                    <span
+                        id="damageLoser"
+                        class="damage-side"
+                    >
+                        AI
+                    </span>
+                </div>
+
+                <p
+                    id="damageDetails"
+                    class="damage-details"
+                >
+                    基礎傷害 50
+                </p>
+
+                <div class="result-actions">
+                    <button
+                        id="continueButton"
+                        class="game-button"
+                        type="button"
+                    >
+                        下一回合
+                    </button>
+
+                    <button
+                        id="resultLobbyButton"
+                        class="game-button secondary-button"
+                        type="button"
+                    >
+                        返回遊戲大廳
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        "use strict";
+
+        /* ==================================================
+           常數
+        ================================================== */
+
+        const BOARD_SIZE = 15;
+
+        const EMPTY = 0;
+        const PLAYER = 1;
+        const AI = 2;
+
+        const MAX_HEALTH = 100;
+        const WINNING_SCORE = 2;
+
+        const AI_MOVE_DELAY = 520;
+        const RESULT_DELAY = 650;
+
+        const DIRECTIONS = [
+            { row: 0, col: 1 },
+            { row: 1, col: 0 },
+            { row: 1, col: 1 },
+            { row: 1, col: -1 }
+        ];
+
+        const STAR_POINTS = [
+            [3, 3],
+            [3, 11],
+            [7, 7],
+            [11, 3],
+            [11, 11]
+        ];
+
+        /* ==================================================
+           DOM
+        ================================================== */
+
+        const gameApp =
+            document.getElementById("gameApp");
+
+        const loadingScreen =
+            document.getElementById("loadingScreen");
+
+        const battleScreen =
+            document.getElementById("battleScreen");
+
+        const loadingStatus =
+            document.getElementById("loadingStatus");
+
+        const loadingPercentage =
+            document.getElementById("loadingPercentage");
+
+        const loadingProgressBar =
+            document.getElementById("loadingProgressBar");
+
+        const startGameButton =
+            document.getElementById("startGameButton");
+
+        const playerHealthBar =
+            document.getElementById("playerHealthBar");
+
+        const aiHealthBar =
+            document.getElementById("aiHealthBar");
+
+        const playerHpText =
+            document.getElementById("playerHpText");
+
+        const aiHpText =
+            document.getElementById("aiHpText");
+
+        const playerScoreElement =
+            document.getElementById("playerScore");
+
+        const aiScoreElement =
+            document.getElementById("aiScore");
+
+        const roundText =
+            document.getElementById("roundText");
+
+        const turnStone =
+            document.getElementById("turnStone");
+
+        const turnMessage =
+            document.getElementById("turnMessage");
+
+        const moveCounter =
+            document.getElementById("moveCounter");
+
+        const boardFrame =
+            document.getElementById("boardFrame");
+
+        const boardPoints =
+            document.getElementById("boardPoints");
+
+        const starPoints =
+            document.getElementById("starPoints");
+
+        const lobbyButton =
+            document.getElementById("lobbyButton");
+
+        const restartMatchButton =
+            document.getElementById("restartMatchButton");
+
+        const resultOverlay =
+            document.getElementById("resultOverlay");
+
+        const resultKicker =
+            document.getElementById("resultKicker");
+
+        const resultTitle =
+            document.getElementById("resultTitle");
+
+        const resultDescription =
+            document.getElementById("resultDescription");
+
+        const damageWinner =
+            document.getElementById("damageWinner");
+
+        const damageLoser =
+            document.getElementById("damageLoser");
+
+        const damageNumber =
+            document.getElementById("damageNumber");
+
+        const damageDetails =
+            document.getElementById("damageDetails");
+
+        const continueButton =
+            document.getElementById("continueButton");
+
+        const resultLobbyButton =
+            document.getElementById("resultLobbyButton");
+
+        /* ==================================================
+           遊戲狀態
+        ================================================== */
+
+        let board = [];
+
+        let currentPlayer = PLAYER;
+        let roundNumber = 1;
+        let moveCount = 0;
+
+        let playerScore = 0;
+        let aiScore = 0;
+
+        let playerHealth = MAX_HEALTH;
+        let aiHealth = MAX_HEALTH;
+
+        let roundEnded = false;
+        let matchEnded = false;
+        let aiThinking = false;
+
+        let lastMove = null;
+        let winningPositions = [];
+
+        /* ==================================================
+           Loading
+        ================================================== */
+
+        const loadingSteps = [
+            {
+                progress: 18,
+                text: "建立棋盤資料"
+            },
+            {
+                progress: 38,
+                text: "載入戰鬥介面"
+            },
+            {
+                progress: 57,
+                text: "初始化 AI 邏輯"
+            },
+            {
+                progress: 76,
+                text: "同步對戰規則"
+            },
+            {
+                progress: 92,
+                text: "準備玩家資料"
+            },
+            {
+                progress: 100,
+                text: "載入完成"
+            }
+        ];
+
+        function runLoadingSequence() {
+            let currentProgress = 0;
+            let stepIndex = 0;
+
+            const loadingTimer = window.setInterval(() => {
+                const targetStep = loadingSteps[stepIndex];
+
+                currentProgress +=
+                    Math.max(
+                        1,
+                        Math.ceil(
+                            (targetStep.progress - currentProgress) * 0.16
+                        )
+                    );
+
+                if (currentProgress >= targetStep.progress) {
+                    currentProgress = targetStep.progress;
+                    loadingStatus.textContent = targetStep.text;
+                    stepIndex += 1;
+                }
+
+                loadingProgressBar.style.width =
+                    `${currentProgress}%`;
+
+                loadingPercentage.textContent =
+                    `${currentProgress}%`;
+
+                if (currentProgress >= 100) {
+                    window.clearInterval(loadingTimer);
+
+                    window.setTimeout(() => {
+                        startGameButton.classList.remove(
+                            "fade-hidden"
+                        );
+
+                        startGameButton.classList.add(
+                            "fade-visible"
+                        );
+                    }, 350);
+                }
+            }, 70);
+        }
+
+        function enterBattleScreen() {
+            startGameButton.classList.remove(
+                "fade-visible"
+            );
+
+            startGameButton.classList.add(
+                "fade-hidden"
+            );
+
+            loadingScreen.classList.add("fade-out");
+
+            window.setTimeout(() => {
+                loadingScreen.classList.remove(
+                    "active",
+                    "fade-out"
+                );
+
+                battleScreen.classList.add("active");
+
+                initializeMatch();
+            }, 700);
+        }
+
+        /* ==================================================
+           比賽初始化
+        ================================================== */
+
+        function initializeMatch() {
+            playerScore = 0;
+            aiScore = 0;
+
+            playerHealth = MAX_HEALTH;
+            aiHealth = MAX_HEALTH;
+
+            roundNumber = 1;
+            matchEnded = false;
+
+            updateBattleInterface(false);
+            startRound();
+        }
+
+        function startRound() {
+            board = createEmptyBoard();
+
+            currentPlayer = PLAYER;
+            moveCount = 0;
+
+            roundEnded = false;
+            aiThinking = false;
+
+            lastMove = null;
+            winningPositions = [];
+
+            createBoardPoints();
+            createStarPoints();
+
+            hideResultOverlay();
+            renderBoard();
+            updateTurnInterface();
+
+            roundText.textContent =
+                `ROUND ${roundNumber}`;
+
+            turnMessage.textContent =
+                "玩家回合";
+
+            boardFrame.classList.remove("locked");
+            boardFrame.classList.add("player-turn");
+        }
+
+        function createEmptyBoard() {
+            return Array.from(
+                { length: BOARD_SIZE },
+                () => Array(BOARD_SIZE).fill(EMPTY)
+            );
+        }
+
+        /* ==================================================
+           建立棋盤
+        ================================================== */
+
+        function createBoardPoints() {
+            boardPoints.innerHTML = "";
+
+            for (
+                let row = 0;
+                row < BOARD_SIZE;
+                row += 1
+            ) {
+                for (
+                    let col = 0;
+                    col < BOARD_SIZE;
+                    col += 1
+                ) {
+                    const intersection =
+                        document.createElement("button");
+
+                    intersection.type = "button";
+                    intersection.className =
+                        "intersection";
+
+                    intersection.dataset.row =
+                        String(row);
+
+                    intersection.dataset.col =
+                        String(col);
+
+                    intersection.style.left =
+                        `${(col / (BOARD_SIZE - 1)) * 100}%`;
+
+                    intersection.style.top =
+                        `${(row / (BOARD_SIZE - 1)) * 100}%`;
+
+                    intersection.setAttribute(
+                        "aria-label",
+                        `第 ${row + 1} 列，第 ${col + 1} 行`
+                    );
+
+                    intersection.addEventListener(
+                        "click",
+                        handlePlayerMove
+                    );
+
+                    boardPoints.appendChild(
+                        intersection
+                    );
+                }
+            }
+        }
+
+        function createStarPoints() {
+            starPoints.innerHTML = "";
+
+            STAR_POINTS.forEach(([row, col]) => {
+                const starPoint =
+                    document.createElement("span");
+
+                starPoint.className =
+                    "star-point";
+
+                starPoint.style.left =
+                    `${(col / (BOARD_SIZE - 1)) * 100}%`;
+
+                starPoint.style.top =
+                    `${(row / (BOARD_SIZE - 1)) * 100}%`;
+
+                starPoints.appendChild(starPoint);
+            });
+        }
+
+        /* ==================================================
+           玩家操作
+        ================================================== */
+
+        function handlePlayerMove(event) {
+            if (
+                roundEnded ||
+                matchEnded ||
+                aiThinking ||
+                currentPlayer !== PLAYER
+            ) {
+                return;
+            }
+
+            const intersection =
+                event.currentTarget;
+
+            const row =
+                Number(intersection.dataset.row);
+
+            const col =
+                Number(intersection.dataset.col);
+
+            if (
+                !isInsideBoard(row, col) ||
+                board[row][col] !== EMPTY
+            ) {
+                return;
+            }
+
+            placeStone(row, col, PLAYER);
+        }
+
+        /* ==================================================
+           落子流程
+        ================================================== */
+
+        function placeStone(row, col, player) {
+            if (
+                roundEnded ||
+                board[row][col] !== EMPTY
+            ) {
+                return;
+            }
+
+            board[row][col] = player;
+            moveCount += 1;
+
+            lastMove = {
+                row,
+                col,
+                player
+            };
+
+            renderBoard();
+
+            const winResult =
+                checkWin(row, col, player);
+
+            if (winResult.hasWon) {
+                winningPositions =
+                    winResult.positions;
+
+                renderBoard();
+
+                finishRound(player);
+                return;
+            }
+
+            if (
+                moveCount >=
+                BOARD_SIZE * BOARD_SIZE
+            ) {
+                finishRound(EMPTY);
+                return;
+            }
+
+            if (player === PLAYER) {
+                beginAiTurn();
+            } else {
+                beginPlayerTurn();
+            }
+        }
+
+        function beginPlayerTurn() {
+            currentPlayer = PLAYER;
+            aiThinking = false;
+
+            boardFrame.classList.remove("locked");
+            boardFrame.classList.add("player-turn");
+
+            updateTurnInterface();
+        }
+
+        function beginAiTurn() {
+            currentPlayer = AI;
+            aiThinking = true;
+
+            boardFrame.classList.add("locked");
+            boardFrame.classList.remove("player-turn");
+
+            updateTurnInterface();
+
+            window.setTimeout(() => {
+                if (
+                    roundEnded ||
+                    matchEnded
+                ) {
+                    return;
+                }
+
+                const aiMove =
+                    chooseAiMove();
+
+                if (aiMove) {
+                    placeStone(
+                        aiMove.row,
+                        aiMove.col,
+                        AI
+                    );
+                }
+            }, AI_MOVE_DELAY);
+        }
+
+        /* ==================================================
+           基礎 AI
+        ================================================== */
+
+        function chooseAiMove() {
+            const emptyPositions =
+                getEmptyPositions();
+
+            if (emptyPositions.length === 0) {
+                return null;
+            }
+
+           
