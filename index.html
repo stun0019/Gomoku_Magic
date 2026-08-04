@@ -498,16 +498,19 @@ button:focus-visible{
 }
 
 .mode-icon{
-  width:36px;
-  aspect-ratio:1;
+  min-width:48px;
+  width:auto;
+  height:36px;
+  padding:0 9px;
   display:grid;
   place-items:center;
   border-radius:10px;
   color:var(--violet-light);
   background:rgba(155,124,255,.11);
   border:1px solid rgba(155,124,255,.2);
-  font-size:.7rem;
+  font-size:.62rem;
   font-weight:950;
+  letter-spacing:.05em;
 }
 
 .mode-name{
@@ -1262,7 +1265,7 @@ button:focus-visible{
       <button class="mode-card locked" data-mode="ranked" type="button">
         <div class="mode-top">
           <span class="mode-number">MODE 03</span>
-          <span class="mode-icon">R</span>
+          <span class="mode-icon">RANK</span>
         </div>
         <h3 class="mode-name">競技模式</h3>
         <p class="mode-desc">
@@ -1271,14 +1274,14 @@ button:focus-visible{
         <span class="mode-status locked">未開放</span>
       </button>
 
-      <button class="mode-card locked" data-mode="special" type="button">
+      <button class="mode-card locked" data-mode="limited" type="button">
         <div class="mode-top">
           <span class="mode-number">MODE 04</span>
-          <span class="mode-icon">EX</span>
+          <span class="mode-icon">EVENT</span>
         </div>
-        <h3 class="mode-name">特殊玩法</h3>
+        <h3 class="mode-name">限時模式</h3>
         <p class="mode-desc">
-          加入魔法棋子、技能效果與特殊勝利條件。
+          配合節慶、賽季與限時活動推出特殊規則玩法。
         </p>
         <span class="mode-status locked">未開放</span>
       </button>
