@@ -1121,37 +1121,35 @@ button:focus-visible{
 }
 
 .character-card.role-sword .character-core{
-  border-radius:8px 8px 18px 18px;
-  transform:rotate(0);
+  border-radius:50%;
+  transform:none;
   background:
-    linear-gradient(
-      90deg,
-      #4a4d5a 0 15%,
-      #d9e1ed 16% 42%,
-      #ffffff 43% 53%,
-      #aab5c5 54% 79%,
-      #3f4350 80% 100%
-    );
-  clip-path:polygon(45% 0,55% 0,62% 70%,86% 76%,86% 84%,58% 82%,55% 100%,45% 100%,42% 82%,14% 84%,14% 76%,38% 70%);
+    radial-gradient(circle at 42% 36%,#fff7d3 0 7%,#ffe39a 8% 18%,#d4b56a 32%,#70607d 56%,#1a1f30 100%);
   box-shadow:
-    0 0 14px rgba(241,200,106,.4),
-    inset 0 0 6px rgba(255,255,255,.52);
+    0 0 15px rgba(241,200,106,.42),
+    inset 0 0 8px rgba(255,255,255,.36);
+}
+
+.character-card.role-sword .character-core::after{
+  content:"";
+  position:absolute;
+  inset:23%;
+  border-radius:50%;
+  background:
+    conic-gradient(from 210deg,#fff4c6 0 15%,#d7ddec 16% 34%,#fff4c6 35% 52%,#8088a0 53% 72%,#fff4c6 73% 88%,#60677f 89% 100%);
+  box-shadow:
+    0 0 10px rgba(255,226,150,.34),
+    inset 0 0 6px rgba(255,255,255,.45);
+  clip-path:polygon(50% 0,64% 36%,100% 50%,64% 64%,50% 100%,36% 64%,0 50%,36% 36%);
 }
 
 .character-card.enemy.role-sword .character-core{
-  border-radius:8px 8px 18px 18px;
+  border-radius:50%;
   background:
-    linear-gradient(
-      90deg,
-      #521d2b 0 15%,
-      #e2b6bc 16% 42%,
-      #fff1e5 43% 53%,
-      #bd6a78 54% 79%,
-      #401321 80% 100%
-    );
+    radial-gradient(circle at 42% 36%,#ffe8db 0 7%,#ffb49c 8% 18%,#d36a75 32%,#762a45 56%,#220f1c 100%);
   box-shadow:
-    0 0 14px rgba(255,104,113,.38),
-    inset 0 0 6px rgba(255,255,255,.4);
+    0 0 15px rgba(255,104,113,.38),
+    inset 0 0 8px rgba(255,255,255,.3);
 }
 
 .character-state.spinning{
@@ -1163,7 +1161,7 @@ button:focus-visible{
 .stone.sword-player{
   border:1px solid rgba(255,228,164,.75);
   background:
-    radial-gradient(circle at 50% 50%,#fff4c8 0 12%,#c6d4e6 13% 30%,#58657b 48%,#171c2b 76%,#080b14 100%);
+    radial-gradient(circle at 44% 38%,#fff7d9 0 8%,#ffe7a3 9% 18%,#cfd7e8 29%,#69758a 49%,#21283b 72%,#0c1019 100%);
   box-shadow:
     0 0 11px rgba(241,200,106,.52),
     0 4px 8px rgba(0,0,0,.4),
@@ -1173,20 +1171,20 @@ button:focus-visible{
 .stone.sword-player::after{
   content:"";
   position:absolute;
-  left:46%;
-  top:15%;
-  width:8%;
-  height:70%;
-  border-radius:4px;
-  background:linear-gradient(#fff,#c9d6e8 65%,#f1c86a 66% 78%,#7b5530 79%);
-  transform:rotate(45deg);
-  box-shadow:0 0 4px rgba(255,255,255,.7);
+  inset:21%;
+  border-radius:50%;
+  background:
+    conic-gradient(from 210deg,#fff2b7 0 15%,#d4dceb 16% 34%,#fff2b7 35% 52%,#9098ad 53% 72%,#fff2b7 73% 88%,#6d7488 89% 100%);
+  clip-path:polygon(50% 0,66% 34%,100% 50%,66% 66%,50% 100%,34% 66%,0 50%,34% 34%);
+  box-shadow:
+    0 0 5px rgba(255,241,187,.48),
+    inset 0 0 4px rgba(255,255,255,.45);
 }
 
 .stone.sword-ai{
   border:1px solid rgba(255,159,146,.72);
   background:
-    radial-gradient(circle at 50% 50%,#ffe0c9 0 12%,#df8c96 13% 30%,#7d2b45 48%,#2c1223 76%,#100916 100%);
+    radial-gradient(circle at 44% 38%,#ffe8db 0 8%,#ffb9a4 9% 18%,#da8a96 29%,#8a3954 49%,#351423 72%,#140a12 100%);
   box-shadow:
     0 0 11px rgba(255,99,105,.48),
     0 4px 8px rgba(0,0,0,.4),
@@ -1196,26 +1194,26 @@ button:focus-visible{
 .stone.sword-ai::after{
   content:"";
   position:absolute;
-  left:46%;
-  top:15%;
-  width:8%;
-  height:70%;
-  border-radius:4px;
-  background:linear-gradient(#fff0e1,#e7a6ad 65%,#ff8b72 66% 78%,#5b2032 79%);
-  transform:rotate(-45deg);
-  box-shadow:0 0 4px rgba(255,210,200,.66);
+  inset:21%;
+  border-radius:50%;
+  background:
+    conic-gradient(from 210deg,#ffe5c2 0 15%,#efb8bf 16% 34%,#ffe5c2 35% 52%,#a24d67 53% 72%,#ffe5c2 73% 88%,#712841 89% 100%);
+  clip-path:polygon(50% 0,66% 34%,100% 50%,66% 66%,50% 100%,34% 66%,0 50%,34% 34%);
+  box-shadow:
+    0 0 5px rgba(255,220,198,.42),
+    inset 0 0 4px rgba(255,255,255,.38);
 }
 
 .turn-stone.sword-player{
   background:
-    radial-gradient(circle,#fff1bf 0 15%,#aebed3 17% 38%,#344054 60%,#111622 100%);
+    radial-gradient(circle at 44% 38%,#fff7d9 0 10%,#ffe7a3 11% 22%,#b9c3d6 33%,#5f6c80 54%,#1e2534 100%);
   border:1px solid rgba(241,200,106,.72);
   box-shadow:0 0 10px rgba(241,200,106,.42);
 }
 
 .turn-stone.sword-ai{
   background:
-    radial-gradient(circle,#ffe0c6 0 15%,#d77d89 17% 38%,#6f263f 60%,#25101f 100%);
+    radial-gradient(circle at 44% 38%,#ffe8db 0 10%,#ffb9a4 11% 22%,#d98592 33%,#7d314b 54%,#24101d 100%);
   border:1px solid rgba(255,139,124,.7);
   box-shadow:0 0 10px rgba(255,90,100,.38);
 }
@@ -1457,19 +1455,31 @@ button:focus-visible{
   height:36px;
   margin:8px auto 4px;
   border:1px solid rgba(255,230,167,.72);
-  border-radius:12px;
-  transform:rotate(45deg);
+  border-radius:50%;
+  transform:none;
   background:
-    conic-gradient(from 210deg,#ff674f 0 42%,#8bdfff 44% 86%,#a97fff 88% 100%);
+    radial-gradient(circle at 38% 32%,#ffffff 0 8%,#c2f1ff 9% 18%,#8a7cff 34%,#39286b 62%,#121426 100%);
   box-shadow:
     0 0 17px rgba(155,124,255,.46),
-    inset 0 0 9px rgba(255,255,255,.45);
+    inset 0 0 9px rgba(255,255,255,.35);
+}
+
+.character-core::after{
+  content:"";
+  position:absolute;
+  inset:24%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 45% 40%,#fffde7 0 20%,rgba(255,255,255,.85) 21% 36%,rgba(255,255,255,.08) 37% 100%);
+  box-shadow:
+    0 0 10px rgba(140,224,255,.45),
+    0 0 18px rgba(255,216,140,.18);
 }
 
 .character-card.enemy .character-core{
   border-radius:50%;
   background:
-    radial-gradient(circle,#ffd6b0 0 14%,#ef6b73 30%,#681d4a 68%,#211025 100%);
+    radial-gradient(circle at 42% 36%,#fff0da 0 8%,#ff8b78 9% 24%,#b62f4d 43%,#4b122b 70%,#170918 100%);
   box-shadow:0 0 17px rgba(255,90,100,.4);
 }
 
