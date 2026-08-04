@@ -1063,7 +1063,7 @@ button:focus-visible{
 
 
 /* ==================================================
-   Slot 角色卡與劍士定位
+   Slot 角色卡與劍定位
 ================================================== */
 
 .character-card{
@@ -1231,7 +1231,7 @@ button:focus-visible{
 }
 
 /* ==================================================
-   元素法師角色與技能
+   杖角色與技能
 ================================================== */
 
 .stone.element-player{
@@ -2228,7 +2228,7 @@ button:focus-visible{
         </div>
         <h3 class="mode-name">單機模式</h3>
         <p class="mode-desc">
-          使用元素法師與 AI 進行三戰兩勝，施放火焰或冰霜扭轉棋局。
+          使用杖與 AI 進行三戰兩勝，施放火焰或冰霜扭轉棋局。
         </p>
         <span class="mode-status">可遊玩</span>
       </button>
@@ -2361,7 +2361,7 @@ button:focus-visible{
           <div id="playerSlotReel" class="slot-reel">
             <div class="character-core" aria-hidden="true"></div>
             <strong id="playerRoleName" class="character-name">等待 Spin</strong>
-            <span id="playerRoleType" class="character-role">50% 元素／50% 劍士</span>
+            <span id="playerRoleType" class="character-role">50% 元素／50% 劍</span>
             <span id="playerSkillState" class="character-state spinning">SPIN</span>
             <span class="slot-rule">每次落子前</span>
           </div>
@@ -2400,7 +2400,7 @@ button:focus-visible{
           <div id="aiSlotReel" class="slot-reel">
             <div class="character-core" aria-hidden="true"></div>
             <strong id="aiRoleName" class="character-name">等待 Spin</strong>
-            <span id="aiRoleType" class="character-role">50% 元素／50% 劍士</span>
+            <span id="aiRoleType" class="character-role">50% 元素／50% 劍</span>
             <span id="aiRoleState" class="character-state spinning">SPIN</span>
             <span class="slot-rule">每次落子前</span>
           </div>
@@ -2966,19 +2966,19 @@ function placeStone(row, col, player) {
 function getRoleConfig(player, role) {
   if (role === "sword") {
     return {
-      name: "劍士",
-      type: "近戰突擊型",
+      name: "劍",
+      type: "劍定位",
       state: "SWORD"
     };
   }
 
   return {
     name: player === PLAYER
-      ? "元素法師"
+      ? "杖"
       : "赤晶術師",
     type: player === PLAYER
-      ? "元素控制型"
-      : "元素攻擊型",
+      ? "杖定位"
+      : "杖定位",
     state: "ELEMENT"
   };
 }
@@ -3017,12 +3017,12 @@ function spinRole(player, onComplete) {
   stateElement.textContent = "SPIN";
 
   const previewRoles = [
-    "元素法師",
-    "劍士",
+    "杖",
+    "劍",
     player === PLAYER
-      ? "元素法師"
+      ? "杖"
       : "赤晶術師",
-    "劍士"
+    "劍"
   ];
 
   let previewIndex = 0;
@@ -3037,8 +3037,8 @@ function spinRole(player, onComplete) {
 
       typeElement.textContent =
         previewIndex % 2 === 0
-          ? "元素定位"
-          : "劍士定位";
+          ? "杖定位"
+          : "劍定位";
 
       previewIndex += 1;
     }, 90);
@@ -3809,8 +3809,8 @@ function updateMagicUi() {
     $("magicMessage").classList.remove("active");
     $("magicMessage").textContent =
       currentRole[PLAYER] === "element"
-        ? "元素結果：可施放 FIRE 或 ICE"
-        : "劍士結果：本回合只能正常落子";
+        ? "杖結果：可施放 FIRE 或 ICE"
+        : "劍結果：本回合只能正常落子";
   }
 
   if (
@@ -4009,13 +4009,13 @@ function updateTurn() {
       playerTurn
         ? (
             role === "sword"
-              ? "玩家回合｜劍士"
-              : "玩家回合｜元素法師"
+              ? "玩家回合｜劍"
+              : "玩家回合｜杖"
           )
         : (
             role === "sword"
-              ? "AI 回合｜劍士"
-              : "AI 回合｜赤晶術師"
+              ? "AI 回合｜劍"
+              : "AI 回合｜杖"
           );
   }
 
