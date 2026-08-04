@@ -760,6 +760,20 @@ button:focus-visible{
   box-shadow:0 3px 7px rgba(0,0,0,.25);
 }
 
+.turn-stone.element-player{
+  background:
+    radial-gradient(circle at 35% 30%,#fff 0 8%,#8ee6ff 11% 22%,#7055db 48%,#211744 100%);
+  border:1px solid rgba(255,228,164,.72);
+  box-shadow:0 0 10px rgba(111,213,255,.52);
+}
+
+.turn-stone.element-ai{
+  background:
+    radial-gradient(circle at 35% 30%,#fff3dc 0 8%,#ff9a79 12% 23%,#c84263 48%,#43152f 100%);
+  border:1px solid rgba(255,180,145,.68);
+  box-shadow:0 0 10px rgba(255,100,105,.46);
+}
+
 .turn-text{
   overflow:hidden;
   font-size:.84rem;
@@ -953,6 +967,383 @@ button:focus-visible{
 @keyframes winnerPulse{
   to{
     filter:brightness(1.4);
+  }
+}
+
+
+/* ==================================================
+   元素法師角色與技能
+================================================== */
+
+.stone.element-player{
+  background:
+    radial-gradient(circle at 35% 30%,#ffffff 0 7%,#b8efff 8% 17%,#7658e8 38%,#271753 72%,#0b0d20 100%);
+  border:1px solid rgba(255,232,174,.72);
+  box-shadow:
+    0 0 10px rgba(111,213,255,.62),
+    0 0 18px rgba(155,124,255,.36),
+    0 4px 8px rgba(0,0,0,.38),
+    inset 0 0 0 2px rgba(255,255,255,.13);
+}
+
+.stone.element-player::after{
+  content:"";
+  position:absolute;
+  inset:22%;
+  border:1px solid rgba(255,226,154,.8);
+  transform:rotate(45deg);
+  border-radius:3px;
+}
+
+.stone.element-ai{
+  background:
+    radial-gradient(circle at 34% 28%,#fff4e1 0 7%,#ffb37b 10% 19%,#d64e68 40%,#5b1637 72%,#160b1d 100%);
+  border:1px solid rgba(255,185,150,.7);
+  box-shadow:
+    0 0 10px rgba(255,103,105,.55),
+    0 0 18px rgba(171,65,120,.3),
+    0 4px 8px rgba(0,0,0,.36),
+    inset 0 0 0 2px rgba(255,255,255,.12);
+}
+
+.stone.element-ai::after{
+  content:"";
+  position:absolute;
+  inset:25%;
+  border:1px solid rgba(255,216,185,.72);
+  border-radius:50%;
+}
+
+.stone.just-placed::before{
+  content:"";
+  position:absolute;
+  inset:-24%;
+  border:2px solid currentColor;
+  border-radius:50%;
+  opacity:0;
+  animation:magicImpact .55s ease-out;
+}
+
+.stone.element-player.just-placed::before{
+  color:#85dcff;
+}
+
+.stone.element-ai.just-placed::before{
+  color:#ff826f;
+}
+
+@keyframes magicImpact{
+  0%{
+    opacity:.9;
+    transform:scale(.25);
+  }
+  100%{
+    opacity:0;
+    transform:scale(1.25);
+  }
+}
+
+.intersection.skill-target{
+  cursor:crosshair;
+}
+
+.intersection.skill-target::after{
+  content:"";
+  position:absolute;
+  inset:7%;
+  border:2px solid rgba(255,211,116,.95);
+  border-radius:50%;
+  box-shadow:0 0 12px rgba(255,211,116,.75);
+  animation:targetPulse .75s ease-in-out infinite alternate;
+}
+
+.intersection.fire-preview::after{
+  border-color:#ff765e;
+  box-shadow:0 0 14px rgba(255,95,66,.9);
+}
+
+.intersection.ice-preview::after{
+  border-color:#7ddcff;
+  box-shadow:0 0 14px rgba(91,204,255,.9);
+}
+
+.intersection.frozen-cell::before{
+  display:block;
+  inset:10%;
+  opacity:.82;
+  transform:scale(1);
+  border:1px solid rgba(220,248,255,.95);
+  background:
+    linear-gradient(135deg,rgba(230,250,255,.76),rgba(89,180,255,.43));
+  box-shadow:
+    0 0 12px rgba(99,207,255,.72),
+    inset 0 0 9px rgba(255,255,255,.65);
+  clip-path:polygon(50% 0,62% 32%,96% 20%,71% 50%,100% 70%,63% 66%,50% 100%,38% 67%,0 80%,28% 50%,4% 27%,38% 33%);
+}
+
+@keyframes targetPulse{
+  from{transform:scale(.88);opacity:.55}
+  to{transform:scale(1.04);opacity:1}
+}
+
+.mage-panel{
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr) 76px;
+  align-items:center;
+  gap:10px;
+  min-height:112px;
+  margin-top:2.3%;
+}
+
+.character-card{
+  position:relative;
+  width:76px;
+  height:100px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:15px;
+  background:
+    linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,.035));
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.2);
+  backdrop-filter:blur(12px);
+}
+
+.character-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.18),transparent 34%),
+    radial-gradient(circle at 50% 24%,rgba(155,124,255,.28),transparent 45%);
+}
+
+.character-card.enemy::before{
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.15),transparent 34%),
+    radial-gradient(circle at 50% 24%,rgba(255,93,101,.25),transparent 45%);
+}
+
+.character-core{
+  position:relative;
+  width:38px;
+  height:38px;
+  margin:10px auto 5px;
+  border:1px solid rgba(255,230,167,.72);
+  border-radius:12px;
+  transform:rotate(45deg);
+  background:
+    conic-gradient(from 210deg,#ff674f 0 42%,#8bdfff 44% 86%,#a97fff 88% 100%);
+  box-shadow:
+    0 0 17px rgba(155,124,255,.46),
+    inset 0 0 9px rgba(255,255,255,.45);
+}
+
+.character-card.enemy .character-core{
+  border-radius:50%;
+  background:
+    radial-gradient(circle,#ffd6b0 0 14%,#ef6b73 30%,#681d4a 68%,#211025 100%);
+  box-shadow:0 0 17px rgba(255,90,100,.4);
+}
+
+.character-name{
+  position:relative;
+  display:block;
+  padding:0 4px;
+  overflow:hidden;
+  color:var(--text);
+  font-size:.68rem;
+  font-weight:900;
+  line-height:1.25;
+  text-align:center;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.character-role{
+  position:relative;
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.55rem;
+  font-weight:750;
+  text-align:center;
+}
+
+.character-state{
+  position:relative;
+  display:block;
+  width:max-content;
+  max-width:64px;
+  margin:5px auto 0;
+  padding:3px 6px;
+  overflow:hidden;
+  color:#241808;
+  background:var(--gold);
+  border-radius:999px;
+  font-size:.48rem;
+  font-weight:950;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.character-state.used{
+  color:var(--muted);
+  background:rgba(255,255,255,.09);
+}
+
+.magic-console{
+  min-width:0;
+  padding:9px 10px;
+  background:rgba(10,14,28,.58);
+  border:1px solid rgba(255,255,255,.095);
+  border-radius:15px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.magic-console-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:7px;
+}
+
+.magic-console-title strong{
+  font-size:.68rem;
+  letter-spacing:.08em;
+}
+
+.magic-console-title span{
+  color:var(--muted);
+  font-size:.54rem;
+}
+
+.element-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.element-btn{
+  min-width:0;
+  min-height:44px;
+  padding:7px 5px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  cursor:pointer;
+  background:rgba(255,255,255,.055);
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease,
+    opacity .2s ease;
+}
+
+.element-btn:hover:not(:disabled){
+  transform:translateY(-2px);
+}
+
+.element-btn.fire:hover:not(:disabled),
+.element-btn.fire.active{
+  border-color:rgba(255,108,79,.75);
+  background:rgba(255,91,62,.14);
+  box-shadow:0 0 16px rgba(255,82,49,.15);
+}
+
+.element-btn.ice:hover:not(:disabled),
+.element-btn.ice.active{
+  border-color:rgba(100,211,255,.8);
+  background:rgba(75,184,255,.14);
+  box-shadow:0 0 16px rgba(64,190,255,.15);
+}
+
+.element-btn:disabled{
+  opacity:.38;
+  cursor:not-allowed;
+}
+
+.element-code{
+  display:block;
+  font-size:.68rem;
+  font-weight:950;
+  letter-spacing:.08em;
+}
+
+.element-btn.fire .element-code{
+  color:#ff9d83;
+}
+
+.element-btn.ice .element-code{
+  color:#9ce5ff;
+}
+
+.element-name{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:.5rem;
+}
+
+.magic-message{
+  min-height:16px;
+  margin-top:6px;
+  overflow:hidden;
+  color:var(--muted);
+  font-size:.52rem;
+  line-height:1.4;
+  text-align:center;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.magic-message.active{
+  color:var(--gold-light);
+}
+
+.cancel-skill{
+  width:100%;
+  margin-top:6px;
+  padding:5px;
+  color:var(--muted);
+  background:transparent;
+  border:0;
+  border-top:1px solid rgba(255,255,255,.07);
+  cursor:pointer;
+  font-size:.52rem;
+}
+
+.cancel-skill[hidden]{
+  display:none;
+}
+
+.battle-screen.skill-mode .board-frame{
+  box-shadow:
+    0 24px 46px rgba(0,0,0,.42),
+    0 0 0 2px rgba(241,200,106,.32),
+    0 0 28px rgba(155,124,255,.2),
+    inset 0 0 0 2px rgba(255,255,255,.1);
+}
+
+@media(max-height:850px){
+  .mage-panel{
+    min-height:102px;
+    margin-top:1.5%;
+  }
+
+  .character-card{
+    height:94px;
+  }
+
+  .magic-console{
+    padding:7px 8px;
+  }
+
+  .battle-footer{
+    min-height:44px;
+    margin-top:1.2%;
   }
 }
 
@@ -1245,7 +1636,7 @@ button:focus-visible{
         </div>
         <h3 class="mode-name">單機模式</h3>
         <p class="mode-desc">
-          與 AI 進行三戰兩勝對決，勝方依棋盤走勢造成傷害。
+          使用元素法師與 AI 進行三戰兩勝，施放火焰或冰霜扭轉棋局。
         </p>
         <span class="mode-status">可遊玩</span>
       </button>
@@ -1350,7 +1741,7 @@ button:focus-visible{
 
     <div class="status-bar">
       <div class="turn-box">
-        <span id="turnStone" class="turn-stone black"></span>
+        <span id="turnStone" class="turn-stone element-player"></span>
         <span id="turnText" class="turn-text">
           等待回合開始
         </span>
@@ -1368,6 +1759,50 @@ button:focus-visible{
           <div id="boardPoints" class="board-points"></div>
         </div>
       </div>
+    </section>
+
+
+    <section class="mage-panel" aria-label="角色與元素技能">
+      <article class="character-card">
+        <div class="character-core" aria-hidden="true"></div>
+        <strong class="character-name">元素法師</strong>
+        <span class="character-role">戰場控制型</span>
+        <span id="playerSkillState" class="character-state">READY</span>
+      </article>
+
+      <section class="magic-console">
+        <div class="magic-console-title">
+          <strong>元素轉換</strong>
+          <span>每局一次</span>
+        </div>
+
+        <div class="element-buttons">
+          <button id="fireSkillButton" class="element-btn fire" type="button">
+            <span class="element-code">FIRE</span>
+            <span class="element-name">烈焰穿透</span>
+          </button>
+
+          <button id="iceSkillButton" class="element-btn ice" type="button">
+            <span class="element-code">ICE</span>
+            <span class="element-name">霜封領域</span>
+          </button>
+        </div>
+
+        <p id="magicMessage" class="magic-message">
+          玩家回合可選擇元素技能
+        </p>
+
+        <button id="cancelSkillButton" class="cancel-skill" type="button" hidden>
+          取消技能選擇
+        </button>
+      </section>
+
+      <article class="character-card enemy">
+        <div class="character-core" aria-hidden="true"></div>
+        <strong class="character-name">赤晶術師</strong>
+        <span class="character-role">AI 對手</span>
+        <span class="character-state used">PASSIVE</span>
+      </article>
     </section>
 
     <footer class="battle-footer">
@@ -1533,6 +1968,11 @@ let transitionRunning = false;
 let lastMove = null;
 let winningPositions = [];
 
+let selectedElement = null;
+let playerElementUsed = false;
+let frozenCells = [];
+let freezePendingForAi = false;
+
 let timers = [];
 
 function setTimer(callback, delay) {
@@ -1613,6 +2053,19 @@ $("playAgainButton").addEventListener("click", () => {
   initializeMatch();
 });
 
+
+$("fireSkillButton").addEventListener("click", () => {
+  beginElementTargeting("fire");
+});
+
+$("iceSkillButton").addEventListener("click", () => {
+  beginElementTargeting("ice");
+});
+
+$("cancelSkillButton").addEventListener("click", () => {
+  cancelElementTargeting();
+});
+
 function initializeMatch() {
   clearTimers();
 
@@ -1658,6 +2111,11 @@ function startRound() {
   lastMove = null;
   winningPositions = [];
 
+  selectedElement = null;
+  playerElementUsed = false;
+  frozenCells = [];
+  freezePendingForAi = false;
+
   createBoard();
   createStars();
   renderBoard();
@@ -1671,6 +2129,7 @@ function startRound() {
   boardFrame.classList.add("locked");
   boardFrame.classList.remove("player-turn");
 
+  updateMagicUi();
   showRoundIntro();
 }
 
@@ -1780,6 +2239,11 @@ function handlePlayerMove(event) {
   const col =
     Number(event.currentTarget.dataset.col);
 
+  if (selectedElement) {
+    handleElementTarget(row, col);
+    return;
+  }
+
   if (board[row][col] !== EMPTY) {
     return;
   }
@@ -1832,6 +2296,12 @@ function placeStone(row, col, player) {
   if (player === PLAYER) {
     beginAiTurn();
   } else {
+    if (freezePendingForAi) {
+      frozenCells = [];
+      freezePendingForAi = false;
+      renderBoard();
+    }
+
     beginPlayerTurn();
   }
 }
@@ -1844,10 +2314,15 @@ function beginPlayerTurn() {
   currentPlayer = PLAYER;
   aiThinking = false;
 
+  selectedElement = null;
+
   boardFrame.classList.remove("locked");
   boardFrame.classList.add("player-turn");
+  battle.classList.remove("skill-mode");
 
   updateTurn();
+  updateMagicUi();
+  renderBoard();
 }
 
 function beginAiTurn() {
@@ -1858,10 +2333,15 @@ function beginAiTurn() {
   currentPlayer = AI;
   aiThinking = true;
 
+  selectedElement = null;
+  battle.classList.remove("skill-mode");
+
   boardFrame.classList.add("locked");
   boardFrame.classList.remove("player-turn");
 
   updateTurn();
+  updateMagicUi();
+  renderBoard();
 
   setTimer(() => {
     if (
@@ -1890,7 +2370,10 @@ function chooseAiMove() {
 
   for (let row = 0; row < BOARD_SIZE; row += 1) {
     for (let col = 0; col < BOARD_SIZE; col += 1) {
-      if (board[row][col] === EMPTY) {
+      if (
+        board[row][col] === EMPTY &&
+        !isCellFrozenFor(AI, row, col)
+      ) {
         emptyPositions.push({
           row,
           col
@@ -1967,7 +2450,10 @@ function chooseAiMove() {
 function findImmediateMove(player) {
   for (let row = 0; row < BOARD_SIZE; row += 1) {
     for (let col = 0; col < BOARD_SIZE; col += 1) {
-      if (board[row][col] !== EMPTY) {
+      if (
+        board[row][col] !== EMPTY ||
+        isCellFrozenFor(player, row, col)
+      ) {
         continue;
       }
 
@@ -2282,6 +2768,252 @@ function analyzeDirection(
   };
 }
 
+
+function beginElementTargeting(elementType) {
+  if (
+    currentPlayer !== PLAYER ||
+    playerElementUsed ||
+    roundEnded ||
+    matchEnded ||
+    aiThinking ||
+    transitionRunning
+  ) {
+    return;
+  }
+
+  selectedElement = elementType;
+  battle.classList.add("skill-mode");
+
+  $("magicMessage").classList.add("active");
+  $("cancelSkillButton").hidden = false;
+
+  if (elementType === "fire") {
+    $("magicMessage").textContent =
+      "選擇自己的棋子，燃燒其正上與正下敵棋";
+  } else {
+    $("magicMessage").textContent =
+      "選擇對方棋子，冰封其上下左右空格";
+  }
+
+  updateMagicUi();
+  renderBoard();
+}
+
+function cancelElementTargeting() {
+  selectedElement = null;
+  battle.classList.remove("skill-mode");
+
+  $("magicMessage").classList.remove("active");
+  $("magicMessage").textContent =
+    "玩家回合可選擇元素技能";
+
+  $("cancelSkillButton").hidden = true;
+
+  updateMagicUi();
+  renderBoard();
+}
+
+function handleElementTarget(row, col) {
+  if (selectedElement === "fire") {
+    if (board[row][col] !== PLAYER) {
+      showMagicMessage("火元素必須選擇自己的棋子");
+      return;
+    }
+
+    castFireElement(row, col);
+    return;
+  }
+
+  if (selectedElement === "ice") {
+    if (board[row][col] !== AI) {
+      showMagicMessage("冰元素必須選擇對方棋子");
+      return;
+    }
+
+    castIceElement(row, col);
+  }
+}
+
+function castFireElement(row, col) {
+  const targets = [
+    [row - 1, col],
+    [row + 1, col]
+  ];
+
+  let removedCount = 0;
+
+  targets.forEach(([targetRow, targetCol]) => {
+    if (
+      isInsideBoard(targetRow, targetCol) &&
+      board[targetRow][targetCol] === AI
+    ) {
+      board[targetRow][targetCol] = EMPTY;
+      removedCount += 1;
+    }
+  });
+
+  completeElementCast(
+    removedCount > 0
+      ? `火元素燃燒 ${removedCount} 顆敵方落子`
+      : "火元素啟動，但範圍內沒有敵方落子"
+  );
+}
+
+function castIceElement(row, col) {
+  const targets = [
+    [row - 1, col],
+    [row + 1, col],
+    [row, col - 1],
+    [row, col + 1]
+  ];
+
+  frozenCells = targets
+    .filter(([targetRow, targetCol]) => {
+      return (
+        isInsideBoard(targetRow, targetCol) &&
+        board[targetRow][targetCol] === EMPTY
+      );
+    })
+    .map(([targetRow, targetCol]) => {
+      return {
+        row: targetRow,
+        col: targetCol,
+        blockedPlayer: AI
+      };
+    });
+
+  freezePendingForAi =
+    frozenCells.length > 0;
+
+  completeElementCast(
+    frozenCells.length > 0
+      ? `冰元素封鎖 ${frozenCells.length} 個空格`
+      : "冰元素啟動，但周圍沒有可冰封空格"
+  );
+}
+
+function completeElementCast(message) {
+  playerElementUsed = true;
+  selectedElement = null;
+
+  battle.classList.remove("skill-mode");
+
+  $("cancelSkillButton").hidden = true;
+  $("magicMessage").classList.add("active");
+  $("magicMessage").textContent = message;
+
+  renderBoard();
+  updateMagicUi();
+
+  setTimer(() => {
+    if (!roundEnded && !matchEnded) {
+      beginAiTurn();
+    }
+  }, 720);
+}
+
+function showMagicMessage(message) {
+  $("magicMessage").classList.add("active");
+  $("magicMessage").textContent = message;
+
+  setTimer(() => {
+    if (selectedElement === "fire") {
+      $("magicMessage").textContent =
+        "選擇自己的棋子，燃燒其正上與正下敵棋";
+    } else if (selectedElement === "ice") {
+      $("magicMessage").textContent =
+        "選擇對方棋子，冰封其上下左右空格";
+    }
+  }, 900);
+}
+
+function isInsideBoard(row, col) {
+  return (
+    row >= 0 &&
+    row < BOARD_SIZE &&
+    col >= 0 &&
+    col < BOARD_SIZE
+  );
+}
+
+function isCellFrozenFor(player, row, col) {
+  return frozenCells.some((cell) => {
+    return (
+      cell.blockedPlayer === player &&
+      cell.row === row &&
+      cell.col === col
+    );
+  });
+}
+
+function updateMagicUi() {
+  const canUse =
+    currentPlayer === PLAYER &&
+    !playerElementUsed &&
+    !roundEnded &&
+    !matchEnded &&
+    !aiThinking &&
+    !transitionRunning;
+
+  $("fireSkillButton").disabled =
+    !canUse;
+
+  $("iceSkillButton").disabled =
+    !canUse;
+
+  $("fireSkillButton").classList.toggle(
+    "active",
+    selectedElement === "fire"
+  );
+
+  $("iceSkillButton").classList.toggle(
+    "active",
+    selectedElement === "ice"
+  );
+
+  $("playerSkillState").textContent =
+    playerElementUsed
+      ? "USED"
+      : "READY";
+
+  $("playerSkillState").classList.toggle(
+    "used",
+    playerElementUsed
+  );
+
+  if (
+    !selectedElement &&
+    !playerElementUsed &&
+    currentPlayer === PLAYER &&
+    !transitionRunning
+  ) {
+    $("magicMessage").classList.remove("active");
+    $("magicMessage").textContent =
+      "玩家回合可選擇元素技能";
+  }
+
+  if (
+    playerElementUsed &&
+    !selectedElement
+  ) {
+    $("magicMessage").classList.remove("active");
+    $("magicMessage").textContent =
+      "本局元素技能已使用";
+  }
+
+  if (
+    currentPlayer === AI &&
+    !selectedElement
+  ) {
+    $("magicMessage").classList.remove("active");
+    $("magicMessage").textContent =
+      freezePendingForAi
+        ? "霜封領域正在限制 AI 落點"
+        : "等待 AI 完成回合";
+  }
+}
+
+
 function calculateDamage() {
   const speedBonus =
     Math.max(
@@ -2436,8 +3168,8 @@ function updateTurn() {
 
   $("turnStone").className =
     playerTurn
-      ? "turn-stone black"
-      : "turn-stone white";
+      ? "turn-stone element-player"
+      : "turn-stone element-ai";
 
   $("turnText").textContent =
     playerTurn
@@ -2467,8 +3199,37 @@ function renderBoard() {
 
       element.classList.remove(
         "occupied",
-        "winner"
+        "winner",
+        "skill-target",
+        "fire-preview",
+        "ice-preview",
+        "frozen-cell"
       );
+
+      if (
+        isCellFrozenFor(AI, row, col) &&
+        cell === EMPTY
+      ) {
+        element.classList.add("frozen-cell");
+      }
+
+      if (selectedElement === "fire") {
+        if (cell === PLAYER) {
+          element.classList.add(
+            "skill-target",
+            "fire-preview"
+          );
+        }
+      }
+
+      if (selectedElement === "ice") {
+        if (cell === AI) {
+          element.classList.add(
+            "skill-target",
+            "ice-preview"
+          );
+        }
+      }
 
       if (cell === EMPTY) {
         return;
@@ -2481,8 +3242,16 @@ function renderBoard() {
 
       stone.className =
         cell === PLAYER
-          ? "stone black"
-          : "stone white";
+          ? "stone element-player"
+          : "stone element-ai";
+
+      if (
+        lastMove &&
+        lastMove.row === row &&
+        lastMove.col === col
+      ) {
+        stone.classList.add("just-placed");
+      }
 
       element.appendChild(stone);
 
