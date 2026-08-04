@@ -1230,6 +1230,67 @@ button:focus-visible{
   letter-spacing:.04em;
 }
 
+.fixed-opponent{
+  cursor:default;
+}
+
+.fixed-opponent .slot-reel{
+  justify-content:center;
+  gap:8px;
+}
+
+.fixed-opponent .character-name{
+  margin-top:0;
+}
+
+.opponent-piece-icon{
+  position:relative;
+  width:38px;
+  height:38px;
+  flex:0 0 auto;
+  border-radius:50%;
+  transition:
+    background .24s ease,
+    border-color .24s ease,
+    box-shadow .24s ease,
+    transform .24s ease;
+}
+
+.opponent-piece-icon.element-ai{
+  border:1px solid rgba(255,135,128,.72);
+  background:
+    radial-gradient(circle at 42% 36%,#fff0da 0 8%,#ff8b78 9% 24%,#b62f4d 43%,#4b122b 70%,#170918 100%);
+  box-shadow:
+    0 0 15px rgba(255,78,92,.52),
+    inset 0 0 0 2px rgba(255,255,255,.1);
+}
+
+.opponent-piece-icon.sword-ai{
+  border:1px solid rgba(255,159,146,.72);
+  background:
+    radial-gradient(circle at 50% 50%,#ffe0c9 0 12%,#df8c96 13% 30%,#7d2b45 48%,#2c1223 76%,#100916 100%);
+  box-shadow:
+    0 0 13px rgba(255,99,105,.46),
+    inset 0 0 0 2px rgba(255,255,255,.1);
+}
+
+.opponent-piece-icon.sword-ai::after{
+  content:"";
+  position:absolute;
+  left:46%;
+  top:15%;
+  width:8%;
+  height:70%;
+  border-radius:4px;
+  background:linear-gradient(#fff0e1,#e7a6ad 65%,#ff8b72 66% 78%,#5b2032 79%);
+  transform:rotate(-45deg);
+  box-shadow:0 0 4px rgba(255,210,200,.66);
+}
+
+.opponent-piece-icon.result-flash{
+  animation:slotResultFlash .42s ease;
+}
+
 /* ==================================================
    杖角色與技能
 ================================================== */
@@ -2395,14 +2456,11 @@ button:focus-visible{
         </button>
       </section>
 
-      <article id="aiSlotCard" class="character-card enemy" aria-label="AI 角色 Slot">
+      <article id="aiSlotCard" class="character-card enemy fixed-opponent" aria-label="對手赤焰術師">
         <div class="slot-window">
-          <div id="aiSlotReel" class="slot-reel">
-            <div class="character-core" aria-hidden="true"></div>
-            <strong id="aiRoleName" class="character-name">等待 Spin</strong>
-            <span id="aiRoleType" class="character-role">50% 元素／50% 劍</span>
-            <span id="aiRoleState" class="character-state spinning">SPIN</span>
-            <span class="slot-rule">每次落子前</span>
+          <div class="slot-reel">
+            <div id="aiPieceIcon" class="opponent-piece-icon element-ai" aria-hidden="true"></div>
+            <strong class="character-name">赤焰術師</strong>
           </div>
         </div>
       </article>
@@ -2986,25 +3044,42 @@ function getRoleConfig(player, role) {
 function spinRole(player, onComplete) {
   spinInProgress = true;
 
-  const card =
-    player === PLAYER
-      ? $("playerSlotCard")
-      : $("aiSlotCard");
+  if (player === AI) {
+    const role =
+      Math.random() < 0.5
+        ? "element"
+        : "sword";
 
-  const nameElement =
-    player === PLAYER
-      ? $("playerRoleName")
-      : $("aiRoleName");
+    currentRole[AI] = role;
 
-  const typeElement =
-    player === PLAYER
-      ? $("playerRoleType")
-      : $("aiRoleType");
+    const icon = $("aiPieceIcon");
 
-  const stateElement =
-    player === PLAYER
-      ? $("playerSkillState")
-      : $("aiRoleState");
+    icon.className =
+      role === "sword"
+        ? "opponent-piece-icon sword-ai"
+        : "opponent-piece-icon element-ai";
+
+    icon.classList.add("result-flash");
+
+    setTimer(() => {
+      icon.classList.remove("result-flash");
+    }, 430);
+
+    spinInProgress = false;
+    updateTurn();
+    updateMagicUi();
+
+    if (typeof onComplete === "function") {
+      onComplete(role);
+    }
+
+    return;
+  }
+
+  const card = $("playerSlotCard");
+  const nameElement = $("playerRoleName");
+  const typeElement = $("playerRoleType");
+  const stateElement = $("playerSkillState");
 
   card.classList.add("spinning");
   card.classList.remove(
@@ -3016,15 +3091,7 @@ function spinRole(player, onComplete) {
   stateElement.classList.remove("used");
   stateElement.textContent = "SPIN";
 
-  const previewRoles = [
-    "杖",
-    "劍",
-    player === PLAYER
-      ? "杖"
-      : "赤晶術師",
-    "劍"
-  ];
-
+  const previewRoles = ["杖", "劍", "杖", "劍"];
   let previewIndex = 0;
 
   const previewTimer =
@@ -3037,16 +3104,8 @@ function spinRole(player, onComplete) {
 
       typeElement.textContent =
         previewIndex % 2 === 0
-          ? (
-              player === PLAYER
-                ? "戰場控制型"
-                : "元素攻擊型"
-            )
-          : (
-              player === PLAYER
-                ? "單體破壞型"
-                : "近戰壓制型"
-            );
+          ? "戰場控制型"
+          : "單體破壞型";
 
       previewIndex += 1;
     }, 90);
@@ -3059,10 +3118,10 @@ function spinRole(player, onComplete) {
         ? "element"
         : "sword";
 
-    currentRole[player] = role;
+    currentRole[PLAYER] = role;
 
     const config =
-      getRoleConfig(player, role);
+      getRoleConfig(PLAYER, role);
 
     nameElement.textContent =
       config.name;
@@ -3146,7 +3205,7 @@ function beginAiTurn() {
   boardFrame.classList.remove("player-turn");
 
   $("turnText").textContent =
-    "AI 角色 Spin 中";
+    "赤焰術師準備落子";
 
   updateMagicUi();
   renderBoard();
@@ -3837,9 +3896,7 @@ function updateMagicUi() {
   ) {
     $("magicMessage").classList.remove("active");
     $("magicMessage").textContent =
-      freezePendingForAi
-        ? "霜封領域正在限制 AI 落點"
-        : "等待 AI 完成回合";
+      "赤焰術師正在準備落子";
   }
 }
 
@@ -4020,11 +4077,7 @@ function updateTurn() {
               ? "玩家回合｜劍"
               : "玩家回合｜杖"
           )
-        : (
-            role === "sword"
-              ? "AI 回合｜劍"
-              : "AI 回合｜杖"
-          );
+        : "赤焰術師回合";
   }
 
   boardFrame.classList.toggle(
