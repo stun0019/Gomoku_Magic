@@ -905,28 +905,47 @@ button:focus-visible{
   position:relative;
   width:100%;
   height:100%;
-  background-image:
-    linear-gradient(
-      to right,
-      transparent calc(100% - 1px),
-      var(--board-line) calc(100% - 1px)
-    ),
-    linear-gradient(
-      to bottom,
-      transparent calc(100% - 1px),
-      var(--board-line) calc(100% - 1px)
-    );
-  background-size:
-    calc(100% / 14)
-    calc(100% / 14);
-  border-top:1px solid var(--board-line);
-  border-left:1px solid var(--board-line);
 }
 
+.grid-lines,
 .board-points,
 .star-points{
   position:absolute;
   inset:0;
+}
+
+.grid-lines{
+  z-index:0;
+  pointer-events:none;
+}
+
+.grid-line{
+  position:absolute;
+  background:var(--board-line);
+  box-shadow:0 0 0 .15px rgba(255,255,255,.08);
+}
+
+.grid-line.horizontal{
+  left:0;
+  width:100%;
+  height:1px;
+  transform:translateY(-.5px);
+}
+
+.grid-line.vertical{
+  top:0;
+  width:1px;
+  height:100%;
+  transform:translateX(-.5px);
+}
+
+.star-points{
+  z-index:1;
+  pointer-events:none;
+}
+
+.board-points{
+  z-index:2;
 }
 
 .star-point{
@@ -1041,6 +1060,175 @@ button:focus-visible{
   }
 }
 
+
+
+/* ==================================================
+   Slot 角色卡與劍士定位
+================================================== */
+
+.character-card{
+  cursor:default;
+}
+
+.slot-window{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+.slot-reel{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transition:filter .2s ease;
+}
+
+.character-card.spinning .slot-reel{
+  animation:slotReelSpin .12s linear infinite;
+  filter:blur(.45px) brightness(1.35);
+}
+
+.character-card.spinning{
+  border-color:rgba(241,200,106,.68);
+  box-shadow:
+    0 0 20px rgba(241,200,106,.24),
+    0 12px 24px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.26);
+}
+
+.character-card.result-flash{
+  animation:slotResultFlash .46s ease;
+}
+
+@keyframes slotReelSpin{
+  0%{transform:translateY(-3px)}
+  50%{transform:translateY(4px)}
+  100%{transform:translateY(-3px)}
+}
+
+@keyframes slotResultFlash{
+  0%{transform:scale(.95);filter:brightness(1.5)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+.character-card.role-sword::before{
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.2),transparent 34%),
+    radial-gradient(circle at 50% 24%,rgba(241,200,106,.28),transparent 48%);
+}
+
+.character-card.role-sword .character-core{
+  border-radius:8px 8px 18px 18px;
+  transform:rotate(0);
+  background:
+    linear-gradient(
+      90deg,
+      #4a4d5a 0 15%,
+      #d9e1ed 16% 42%,
+      #ffffff 43% 53%,
+      #aab5c5 54% 79%,
+      #3f4350 80% 100%
+    );
+  clip-path:polygon(45% 0,55% 0,62% 70%,86% 76%,86% 84%,58% 82%,55% 100%,45% 100%,42% 82%,14% 84%,14% 76%,38% 70%);
+  box-shadow:
+    0 0 14px rgba(241,200,106,.4),
+    inset 0 0 6px rgba(255,255,255,.52);
+}
+
+.character-card.enemy.role-sword .character-core{
+  border-radius:8px 8px 18px 18px;
+  background:
+    linear-gradient(
+      90deg,
+      #521d2b 0 15%,
+      #e2b6bc 16% 42%,
+      #fff1e5 43% 53%,
+      #bd6a78 54% 79%,
+      #401321 80% 100%
+    );
+  box-shadow:
+    0 0 14px rgba(255,104,113,.38),
+    inset 0 0 6px rgba(255,255,255,.4);
+}
+
+.character-state.spinning{
+  color:var(--gold-light);
+  background:rgba(241,200,106,.12);
+  border:1px solid rgba(241,200,106,.28);
+}
+
+.stone.sword-player{
+  border:1px solid rgba(255,228,164,.75);
+  background:
+    radial-gradient(circle at 50% 50%,#fff4c8 0 12%,#c6d4e6 13% 30%,#58657b 48%,#171c2b 76%,#080b14 100%);
+  box-shadow:
+    0 0 11px rgba(241,200,106,.52),
+    0 4px 8px rgba(0,0,0,.4),
+    inset 0 0 0 2px rgba(255,255,255,.12);
+}
+
+.stone.sword-player::after{
+  content:"";
+  position:absolute;
+  left:46%;
+  top:15%;
+  width:8%;
+  height:70%;
+  border-radius:4px;
+  background:linear-gradient(#fff,#c9d6e8 65%,#f1c86a 66% 78%,#7b5530 79%);
+  transform:rotate(45deg);
+  box-shadow:0 0 4px rgba(255,255,255,.7);
+}
+
+.stone.sword-ai{
+  border:1px solid rgba(255,159,146,.72);
+  background:
+    radial-gradient(circle at 50% 50%,#ffe0c9 0 12%,#df8c96 13% 30%,#7d2b45 48%,#2c1223 76%,#100916 100%);
+  box-shadow:
+    0 0 11px rgba(255,99,105,.48),
+    0 4px 8px rgba(0,0,0,.4),
+    inset 0 0 0 2px rgba(255,255,255,.1);
+}
+
+.stone.sword-ai::after{
+  content:"";
+  position:absolute;
+  left:46%;
+  top:15%;
+  width:8%;
+  height:70%;
+  border-radius:4px;
+  background:linear-gradient(#fff0e1,#e7a6ad 65%,#ff8b72 66% 78%,#5b2032 79%);
+  transform:rotate(-45deg);
+  box-shadow:0 0 4px rgba(255,210,200,.66);
+}
+
+.turn-stone.sword-player{
+  background:
+    radial-gradient(circle,#fff1bf 0 15%,#aebed3 17% 38%,#344054 60%,#111622 100%);
+  border:1px solid rgba(241,200,106,.72);
+  box-shadow:0 0 10px rgba(241,200,106,.42);
+}
+
+.turn-stone.sword-ai{
+  background:
+    radial-gradient(circle,#ffe0c6 0 15%,#d77d89 17% 38%,#6f263f 60%,#25101f 100%);
+  border:1px solid rgba(255,139,124,.7);
+  box-shadow:0 0 10px rgba(255,90,100,.38);
+}
+
+.slot-rule{
+  display:block;
+  margin-top:3px;
+  color:rgba(255,255,255,.42);
+  font-size:.43rem;
+  font-weight:800;
+  text-align:center;
+  letter-spacing:.04em;
+}
 
 /* ==================================================
    元素法師角色與技能
@@ -2159,6 +2347,7 @@ button:focus-visible{
     <section class="board-section">
       <div id="boardFrame" class="board-frame locked">
         <div class="board-grid">
+          <div id="gridLines" class="grid-lines"></div>
           <div id="starPoints" class="star-points"></div>
           <div id="boardPoints" class="board-points"></div>
         </div>
@@ -2167,17 +2356,22 @@ button:focus-visible{
 
 
     <section class="mage-panel" aria-label="角色與元素技能">
-      <article class="character-card">
-        <div class="character-core" aria-hidden="true"></div>
-        <strong class="character-name">元素法師</strong>
-        <span class="character-role">戰場控制型</span>
-        <span id="playerSkillState" class="character-state">READY</span>
+      <article id="playerSlotCard" class="character-card" aria-label="玩家角色 Slot">
+        <div class="slot-window">
+          <div id="playerSlotReel" class="slot-reel">
+            <div class="character-core" aria-hidden="true"></div>
+            <strong id="playerRoleName" class="character-name">等待 Spin</strong>
+            <span id="playerRoleType" class="character-role">50% 元素／50% 劍士</span>
+            <span id="playerSkillState" class="character-state spinning">SPIN</span>
+            <span class="slot-rule">每次落子前</span>
+          </div>
+        </div>
       </article>
 
       <section class="magic-console">
         <div class="magic-console-title">
-          <strong>元素轉換</strong>
-          <span>每局一次</span>
+          <strong>角色結果</strong>
+          <span>Spin 後行動</span>
         </div>
 
         <div class="element-buttons">
@@ -2201,11 +2395,16 @@ button:focus-visible{
         </button>
       </section>
 
-      <article class="character-card enemy">
-        <div class="character-core" aria-hidden="true"></div>
-        <strong class="character-name">赤晶術師</strong>
-        <span class="character-role">AI 對手</span>
-        <span class="character-state used">PASSIVE</span>
+      <article id="aiSlotCard" class="character-card enemy" aria-label="AI 角色 Slot">
+        <div class="slot-window">
+          <div id="aiSlotReel" class="slot-reel">
+            <div class="character-core" aria-hidden="true"></div>
+            <strong id="aiRoleName" class="character-name">等待 Spin</strong>
+            <span id="aiRoleType" class="character-role">50% 元素／50% 劍士</span>
+            <span id="aiRoleState" class="character-state spinning">SPIN</span>
+            <span class="slot-rule">每次落子前</span>
+          </div>
+        </div>
       </article>
     </section>
 
@@ -2343,6 +2542,7 @@ const modes = $("modeScreen");
 const battle = $("battleScreen");
 
 const boardFrame = $("boardFrame");
+const gridLines = $("gridLines");
 const boardPoints = $("boardPoints");
 const starPoints = $("starPoints");
 
@@ -2351,6 +2551,7 @@ const resultOverlay = $("resultOverlay");
 const lockedToast = $("lockedToast");
 
 let board = [];
+let roleBoard = [];
 
 let currentPlayer = PLAYER;
 let startingPlayer = PLAYER;
@@ -2376,6 +2577,12 @@ let selectedElement = null;
 let playerElementUsed = false;
 let frozenCells = [];
 let freezePendingForAi = false;
+
+let spinInProgress = false;
+let currentRole = {
+  [PLAYER]: "element",
+  [AI]: "element"
+};
 
 let timers = [];
 
@@ -2500,6 +2707,11 @@ function startRound() {
     () => Array(BOARD_SIZE).fill(EMPTY)
   );
 
+  roleBoard = Array.from(
+    { length: BOARD_SIZE },
+    () => Array(BOARD_SIZE).fill(null)
+  );
+
   startingPlayer =
     roundNumber % 2 === 1
       ? PLAYER
@@ -2519,7 +2731,11 @@ function startRound() {
   playerElementUsed = false;
   frozenCells = [];
   freezePendingForAi = false;
+  spinInProgress = false;
+  currentRole[PLAYER] = "element";
+  currentRole[AI] = "element";
 
+  createGridLines();
   createBoard();
   createStars();
   renderBoard();
@@ -2577,6 +2793,37 @@ function showRoundIntro() {
   }, 2050);
 }
 
+
+function createGridLines() {
+  gridLines.innerHTML = "";
+
+  for (let index = 0; index < BOARD_SIZE; index += 1) {
+    const position =
+      (index / (BOARD_SIZE - 1)) * 100;
+
+    const horizontal =
+      document.createElement("span");
+
+    horizontal.className =
+      "grid-line horizontal";
+
+    horizontal.style.top =
+      `${position}%`;
+
+    const vertical =
+      document.createElement("span");
+
+    vertical.className =
+      "grid-line vertical";
+
+    vertical.style.left =
+      `${position}%`;
+
+    gridLines.appendChild(horizontal);
+    gridLines.appendChild(vertical);
+  }
+}
+
 function createBoard() {
   boardPoints.innerHTML = "";
 
@@ -2631,6 +2878,7 @@ function handlePlayerMove(event) {
     roundEnded ||
     matchEnded ||
     aiThinking ||
+    spinInProgress ||
     transitionRunning ||
     currentPlayer !== PLAYER
   ) {
@@ -2666,12 +2914,16 @@ function placeStone(row, col, player) {
   }
 
   board[row][col] = player;
+  roleBoard[row][col] =
+    currentRole[player];
+
   moveCount += 1;
 
   lastMove = {
     row,
     col,
-    player
+    player,
+    role:currentRole[player]
   };
 
   renderBoard();
@@ -2710,6 +2962,134 @@ function placeStone(row, col, player) {
   }
 }
 
+
+function getRoleConfig(player, role) {
+  if (role === "sword") {
+    return {
+      name: "劍士",
+      type: "近戰突擊型",
+      state: "SWORD"
+    };
+  }
+
+  return {
+    name: player === PLAYER
+      ? "元素法師"
+      : "赤晶術師",
+    type: player === PLAYER
+      ? "元素控制型"
+      : "元素攻擊型",
+    state: "ELEMENT"
+  };
+}
+
+function spinRole(player, onComplete) {
+  spinInProgress = true;
+
+  const card =
+    player === PLAYER
+      ? $("playerSlotCard")
+      : $("aiSlotCard");
+
+  const nameElement =
+    player === PLAYER
+      ? $("playerRoleName")
+      : $("aiRoleName");
+
+  const typeElement =
+    player === PLAYER
+      ? $("playerRoleType")
+      : $("aiRoleType");
+
+  const stateElement =
+    player === PLAYER
+      ? $("playerSkillState")
+      : $("aiRoleState");
+
+  card.classList.add("spinning");
+  card.classList.remove(
+    "result-flash",
+    "role-sword"
+  );
+
+  stateElement.classList.add("spinning");
+  stateElement.classList.remove("used");
+  stateElement.textContent = "SPIN";
+
+  const previewRoles = [
+    "元素法師",
+    "劍士",
+    player === PLAYER
+      ? "元素法師"
+      : "赤晶術師",
+    "劍士"
+  ];
+
+  let previewIndex = 0;
+
+  const previewTimer =
+    window.setInterval(() => {
+      nameElement.textContent =
+        previewRoles[
+          previewIndex %
+          previewRoles.length
+        ];
+
+      typeElement.textContent =
+        previewIndex % 2 === 0
+          ? "元素定位"
+          : "劍士定位";
+
+      previewIndex += 1;
+    }, 90);
+
+  setTimer(() => {
+    window.clearInterval(previewTimer);
+
+    const role =
+      Math.random() < 0.5
+        ? "element"
+        : "sword";
+
+    currentRole[player] = role;
+
+    const config =
+      getRoleConfig(player, role);
+
+    nameElement.textContent =
+      config.name;
+
+    typeElement.textContent =
+      config.type;
+
+    stateElement.textContent =
+      config.state;
+
+    stateElement.classList.remove("spinning");
+
+    card.classList.remove("spinning");
+    card.classList.toggle(
+      "role-sword",
+      role === "sword"
+    );
+
+    card.classList.add("result-flash");
+
+    setTimer(() => {
+      card.classList.remove("result-flash");
+    }, 480);
+
+    spinInProgress = false;
+    updateTurn();
+    updateMagicUi();
+
+    if (typeof onComplete === "function") {
+      onComplete(role);
+    }
+  }, 760);
+}
+
+
 function beginPlayerTurn() {
   if (roundEnded || matchEnded) {
     return;
@@ -2717,16 +3097,30 @@ function beginPlayerTurn() {
 
   currentPlayer = PLAYER;
   aiThinking = false;
-
   selectedElement = null;
 
-  boardFrame.classList.remove("locked");
-  boardFrame.classList.add("player-turn");
+  boardFrame.classList.add("locked");
+  boardFrame.classList.remove("player-turn");
   battle.classList.remove("skill-mode");
 
-  updateTurn();
+  $("turnText").textContent =
+    "玩家角色 Spin 中";
+
   updateMagicUi();
   renderBoard();
+
+  spinRole(PLAYER, () => {
+    if (roundEnded || matchEnded) {
+      return;
+    }
+
+    boardFrame.classList.remove("locked");
+    boardFrame.classList.add("player-turn");
+
+    updateTurn();
+    updateMagicUi();
+    renderBoard();
+  });
 }
 
 function beginAiTurn() {
@@ -2736,18 +3130,20 @@ function beginAiTurn() {
 
   currentPlayer = AI;
   aiThinking = true;
-
   selectedElement = null;
+
   battle.classList.remove("skill-mode");
 
   boardFrame.classList.add("locked");
   boardFrame.classList.remove("player-turn");
 
-  updateTurn();
+  $("turnText").textContent =
+    "AI 角色 Spin 中";
+
   updateMagicUi();
   renderBoard();
 
-  setTimer(() => {
+  spinRole(AI, () => {
     if (
       roundEnded ||
       matchEnded ||
@@ -2756,17 +3152,30 @@ function beginAiTurn() {
       return;
     }
 
-    const move =
-      chooseAiMove();
+    $("turnText").textContent =
+      "AI 思考中";
 
-    if (move) {
-      placeStone(
-        move.row,
-        move.col,
-        AI
-      );
-    }
-  }, 520);
+    setTimer(() => {
+      if (
+        roundEnded ||
+        matchEnded ||
+        transitionRunning
+      ) {
+        return;
+      }
+
+      const move =
+        chooseAiMove();
+
+      if (move) {
+        placeStone(
+          move.row,
+          move.col,
+          AI
+        );
+      }
+    }, 460);
+  });
 }
 
 function chooseAiMove() {
@@ -3176,7 +3585,9 @@ function analyzeDirection(
 function beginElementTargeting(elementType) {
   if (
     currentPlayer !== PLAYER ||
+    currentRole[PLAYER] !== "element" ||
     playerElementUsed ||
+    spinInProgress ||
     roundEnded ||
     matchEnded ||
     aiThinking ||
@@ -3252,6 +3663,7 @@ function castFireElement(row, col) {
       board[targetRow][targetCol] === AI
     ) {
       board[targetRow][targetCol] = EMPTY;
+      roleBoard[targetRow][targetCol] = null;
       removedCount += 1;
     }
   });
@@ -3353,7 +3765,9 @@ function isCellFrozenFor(player, row, col) {
 function updateMagicUi() {
   const canUse =
     currentPlayer === PLAYER &&
+    currentRole[PLAYER] === "element" &&
     !playerElementUsed &&
+    !spinInProgress &&
     !roundEnded &&
     !matchEnded &&
     !aiThinking &&
@@ -3389,11 +3803,14 @@ function updateMagicUi() {
     !selectedElement &&
     !playerElementUsed &&
     currentPlayer === PLAYER &&
-    !transitionRunning
+    !transitionRunning &&
+    !spinInProgress
   ) {
     $("magicMessage").classList.remove("active");
     $("magicMessage").textContent =
-      "玩家回合可選擇元素技能";
+      currentRole[PLAYER] === "element"
+        ? "元素結果：可施放 FIRE 或 ICE"
+        : "劍士結果：本回合只能正常落子";
   }
 
   if (
@@ -3407,7 +3824,8 @@ function updateMagicUi() {
 
   if (
     currentPlayer === AI &&
-    !selectedElement
+    !selectedElement &&
+    !spinInProgress
   ) {
     $("magicMessage").classList.remove("active");
     $("magicMessage").textContent =
@@ -3570,15 +3988,36 @@ function updateTurn() {
   const playerTurn =
     currentPlayer === PLAYER;
 
+  const role =
+    currentRole[currentPlayer];
+
   $("turnStone").className =
     playerTurn
-      ? "turn-stone element-player"
-      : "turn-stone element-ai";
+      ? (
+          role === "sword"
+            ? "turn-stone sword-player"
+            : "turn-stone element-player"
+        )
+      : (
+          role === "sword"
+            ? "turn-stone sword-ai"
+            : "turn-stone element-ai"
+        );
 
-  $("turnText").textContent =
-    playerTurn
-      ? "玩家回合"
-      : "AI 思考中";
+  if (!spinInProgress) {
+    $("turnText").textContent =
+      playerTurn
+        ? (
+            role === "sword"
+              ? "玩家回合｜劍士"
+              : "玩家回合｜元素法師"
+          )
+        : (
+            role === "sword"
+              ? "AI 回合｜劍士"
+              : "AI 回合｜赤晶術師"
+          );
+  }
 
   boardFrame.classList.toggle(
     "player-turn",
@@ -3644,10 +4083,20 @@ function renderBoard() {
       const stone =
         document.createElement("span");
 
-      stone.className =
-        cell === PLAYER
-          ? "stone element-player"
-          : "stone element-ai";
+      const stoneRole =
+        roleBoard[row][col] || "element";
+
+      if (cell === PLAYER) {
+        stone.className =
+          stoneRole === "sword"
+            ? "stone sword-player"
+            : "stone element-player";
+      } else {
+        stone.className =
+          stoneRole === "sword"
+            ? "stone sword-ai"
+            : "stone element-ai";
+      }
 
       if (
         lastMove &&
