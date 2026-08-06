@@ -9,1171 +9,3548 @@
   >
 
   <meta
-    name="theme-color"
-    content="#0b0d19"
-  >
-
-  <meta
     name="description"
-    content="魔法の五目並べ｜結合角色、技能與五子棋規則的 2D 戰棋對戰遊戲"
+    content="魔法の五目並べ｜9:16 魔法戰棋五子棋 Demo"
   >
 
   <title>魔法の五目並べ</title>
 
-  <link
-    rel="stylesheet"
-    href="./css/styles.css"
-  >
+  <style>
+    :root {
+      --bg-deep: #070a14;
+      --bg-middle: #10162b;
+      --bg-top: #1b2342;
 
-  <script
-    type="module"
-    src="./js/app.js"
-  ></script>
+      --panel: rgba(16, 22, 42, 0.92);
+      --panel-soft: rgba(255, 255, 255, 0.05);
+      --line: rgba(255, 255, 255, 0.11);
+
+      --text: #f7f4ff;
+      --muted: #aaa8bb;
+
+      --gold: #f3ca70;
+      --gold-light: #ffe8aa;
+
+      --violet: #9b7cff;
+      --violet-light: #c8b9ff;
+
+      --cyan: #6fdcff;
+      --red: #ff7e88;
+      --green: #7be3a4;
+
+      --tile-a: #5f518f;
+      --tile-a-dark: #31294f;
+
+      --tile-b: #4c4278;
+      --tile-b-dark: #292344;
+
+      --radius-large: 22px;
+      --radius-medium: 16px;
+      --radius-small: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+
+      color: var(--text);
+
+      font-family:
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        Arial,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(118, 95, 255, 0.2),
+          transparent 34%
+        ),
+        linear-gradient(
+          160deg,
+          #11162a,
+          #04060d
+        );
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+    }
+
+    button,
+    .cell {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--gold-light);
+      outline-offset: 3px;
+    }
+
+    .app {
+      position: relative;
+
+      width: min(
+        100vw,
+        56.25vh,
+        720px
+      );
+
+      max-height: 100vh;
+      aspect-ratio: 9 / 16;
+
+      overflow: hidden;
+      isolation: isolate;
+
+      background:
+        radial-gradient(
+          circle at 50% 8%,
+          rgba(155, 124, 255, 0.18),
+          transparent 31%
+        ),
+        radial-gradient(
+          circle at 50% 88%,
+          rgba(111, 220, 255, 0.08),
+          transparent 34%
+        ),
+        linear-gradient(
+          180deg,
+          var(--bg-top) 0%,
+          var(--bg-middle) 45%,
+          var(--bg-deep) 100%
+        );
+
+      box-shadow:
+        0 0 90px
+        rgba(0, 0, 0, 0.7);
+    }
+
+    .app::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+
+      opacity: 0.045;
+
+      background-image:
+        linear-gradient(
+          rgba(255, 255, 255, 0.8) 1px,
+          transparent 1px
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.8) 1px,
+          transparent 1px
+        );
+
+      background-size: 52px 52px;
+    }
+
+    .app::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+
+      pointer-events: none;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.025),
+          transparent 16%,
+          transparent 84%,
+          rgba(255, 255, 255, 0.025)
+        ),
+        radial-gradient(
+          circle at center,
+          transparent 56%,
+          rgba(0, 0, 0, 0.32)
+        );
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+
+      transform: scale(1.015);
+
+      transition:
+        opacity 0.4s ease,
+        visibility 0.4s ease,
+        transform 0.4s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+
+      transform: scale(1);
+    }
+
+    .primary-button,
+    .secondary-button,
+    .small-button {
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.16);
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .primary-button {
+      min-width: 230px;
+      padding: 16px 28px;
+
+      color: #271c0a;
+
+      background:
+        linear-gradient(
+          180deg,
+          var(--gold-light),
+          var(--gold)
+        );
+
+      border-radius: 14px;
+
+      font-weight: 950;
+      letter-spacing: 0.08em;
+
+      box-shadow:
+        0 14px 34px
+        rgba(243, 202, 112, 0.22);
+    }
+
+    .primary-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.06);
+    }
+
+    .secondary-button,
+    .small-button {
+      color: var(--text);
+      background:
+        rgba(255, 255, 255, 0.06);
+
+      border-radius: 12px;
+    }
+
+    .secondary-button {
+      padding: 13px 22px;
+    }
+
+    .small-button {
+      padding: 9px 12px;
+      font-size: 0.76rem;
+    }
+
+    .secondary-button:hover,
+    .small-button:hover {
+      background:
+        rgba(255, 255, 255, 0.1);
+    }
+
+    .muted-text {
+      color: var(--muted);
+    }
+
+    /* =========================================
+       首頁
+    ========================================= */
+
+    .home-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding: 9%;
+
+      text-align: center;
+    }
+
+    .home-logo {
+      position: relative;
+
+      width: 38%;
+      aspect-ratio: 1;
+
+      margin-bottom: 7%;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+      border-radius: 28px;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(155, 124, 255, 0.16),
+          transparent 58%
+        ),
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.02)
+        );
+
+      box-shadow:
+        0 0 55px
+        rgba(155, 124, 255, 0.18);
+    }
+
+    .home-logo::before {
+      content: "";
+
+      position: absolute;
+      inset: 19%;
+
+      border:
+        1px solid
+        rgba(243, 202, 112, 0.45);
+
+      border-radius: 16px;
+
+      transform: rotate(45deg);
+    }
+
+    .home-logo::after {
+      content: "";
+
+      position: absolute;
+      inset: 30%;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #ffffff,
+          #c8b9ff 24%,
+          #5a3eb8 61%,
+          #21184b
+        );
+
+      box-shadow:
+        0 0 30px
+        rgba(155, 124, 255, 0.6);
+    }
+
+    .home-title {
+      color: var(--gold-light);
+
+      font-size:
+        clamp(
+          2rem,
+          7vw,
+          4rem
+        );
+
+      font-weight: 950;
+      letter-spacing: 0.1em;
+
+      text-shadow:
+        0 0 22px
+        rgba(243, 202, 112, 0.2);
+    }
+
+    .home-subtitle {
+      margin-top: 10px;
+
+      color: var(--violet-light);
+
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+    }
+
+    .home-description {
+      width: min(82%, 480px);
+
+      margin: 7% 0;
+
+      color: var(--muted);
+
+      font-size: 0.86rem;
+      line-height: 1.8;
+    }
+
+    /* =========================================
+       模式選擇
+    ========================================= */
+
+    .mode-screen {
+      display: grid;
+
+      grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+      gap: 20px;
+
+      padding: 5.5%;
+    }
+
+    .mode-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+
+      gap: 16px;
+    }
+
+    .section-kicker {
+      color: var(--gold);
+
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+    }
+
+    .mode-title {
+      margin-top: 6px;
+
+      font-size:
+        clamp(
+          1.65rem,
+          5vw,
+          2.6rem
+        );
+    }
+
+    .mode-badge {
+      padding: 8px 12px;
+
+      color: var(--violet-light);
+
+      background:
+        rgba(155, 124, 255, 0.1);
+
+      border:
+        1px solid
+        rgba(155, 124, 255, 0.26);
+
+      border-radius: 999px;
+
+      font-size: 0.64rem;
+    }
+
+    .mode-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      grid-template-rows:
+        repeat(2, 1fr);
+
+      gap: 14px;
+
+      min-height: 0;
+    }
+
+    .mode-card {
+      position: relative;
+
+      display: flex;
+      flex-direction: column;
+
+      padding: 18px;
+      padding-bottom: 48px;
+
+      overflow: hidden;
+
+      text-align: left;
+
+      color: var(--text);
+
+      background:
+        linear-gradient(
+          155deg,
+          rgba(255, 255, 255, 0.075),
+          rgba(255, 255, 255, 0.025)
+        );
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.11);
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 12px 28px
+        rgba(0, 0, 0, 0.18);
+
+      cursor: pointer;
+
+      transition:
+        transform 0.22s ease,
+        border-color 0.22s ease;
+    }
+
+    .mode-card:hover {
+      transform: translateY(-3px);
+
+      border-color:
+        rgba(243, 202, 112, 0.35);
+    }
+
+    .mode-card.locked {
+      opacity: 0.52;
+      cursor: not-allowed;
+    }
+
+    .mode-number {
+      color: var(--gold);
+
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .mode-tag {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+
+      padding: 7px 9px;
+
+      background:
+        rgba(155, 124, 255, 0.12);
+
+      border-radius: 9px;
+
+      font-size: 0.58rem;
+      font-weight: 900;
+    }
+
+    .mode-card h3 {
+      margin-top: 22px;
+
+      font-size: 1.18rem;
+    }
+
+    .mode-card p {
+      margin-top: 9px;
+
+      color: var(--muted);
+
+      font-size: 0.72rem;
+      line-height: 1.55;
+    }
+
+    .mode-state {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+
+      padding: 6px 9px;
+
+      color: #241908;
+      background: var(--gold);
+
+      border-radius: 999px;
+
+      font-size: 0.58rem;
+      font-weight: 950;
+    }
+
+    .mode-card.locked .mode-state {
+      color: var(--muted);
+      background:
+        rgba(255, 255, 255, 0.08);
+    }
+
+    .mode-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 14px;
+    }
+
+    .mode-footer-note {
+      color: var(--muted);
+
+      font-size: 0.7rem;
+    }
+
+    /* =========================================
+       對戰主畫面
+    ========================================= */
+
+    .battle-screen {
+      display: grid;
+
+      grid-template-rows:
+        auto
+        auto
+        minmax(0, 1fr)
+        auto
+        auto;
+
+      gap: 10px;
+
+      padding:
+        14px
+        14px
+        12px;
+    }
+
+    .battle-hud {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        minmax(0, 1fr);
+
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 11px;
+
+      background:
+        rgba(8, 12, 25, 0.72);
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius: 17px;
+
+      box-shadow:
+        0 12px 24px
+        rgba(0, 0, 0, 0.18);
+    }
+
+    .fighter-status {
+      min-width: 0;
+    }
+
+    .fighter-status.ai {
+      text-align: right;
+    }
+
+    .fighter-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 7px;
+
+      font-size: 0.68rem;
+      font-weight: 900;
+    }
+
+    .fighter-status.ai .fighter-top {
+      flex-direction: row-reverse;
+    }
+
+    .hp-track {
+      height: 8px;
+
+      margin-top: 7px;
+
+      overflow: hidden;
+
+      background:
+        rgba(255, 255, 255, 0.08);
+
+      border-radius: 999px;
+    }
+
+    .hp-bar {
+      width: 100%;
+      height: 100%;
+
+      border-radius: inherit;
+
+      transition:
+        width 0.5s ease;
+    }
+
+    .hp-bar.player {
+      background:
+        linear-gradient(
+          90deg,
+          #6b79ff,
+          #81e6ff
+        );
+    }
+
+    .hp-bar.ai {
+      background:
+        linear-gradient(
+          90deg,
+          #ff7e88,
+          #ffb46f
+        );
+    }
+
+    .score-panel {
+      text-align: center;
+    }
+
+    .score-values {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      gap: 7px;
+
+      font-size: 1.45rem;
+      font-weight: 950;
+    }
+
+    .round-text {
+      display: block;
+
+      margin-top: 2px;
+
+      color: var(--muted);
+
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+    }
+
+    .turn-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 9px 12px;
+
+      background:
+        rgba(255, 255, 255, 0.045);
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius: 13px;
+    }
+
+    .turn-left {
+      display: flex;
+      align-items: center;
+
+      gap: 9px;
+
+      min-width: 0;
+    }
+
+    .turn-dot {
+      width: 14px;
+      height: 14px;
+
+      flex-shrink: 0;
+
+      background: var(--cyan);
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 0 12px
+        rgba(111, 220, 255, 0.7);
+    }
+
+    .turn-message {
+      overflow: hidden;
+
+      font-size: 0.76rem;
+      font-weight: 900;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .move-count {
+      flex-shrink: 0;
+
+      color: var(--muted);
+
+      font-size: 0.65rem;
+    }
+
+    /* =========================================
+       10×10 棋盤
+    ========================================= */
+
+    .board-wrapper {
+      display: grid;
+      place-items: center;
+
+      min-height: 0;
+    }
+
+    .board {
+      position: relative;
+
+      width:
+        min(
+          100%,
+          calc(100vh - 390px)
+        );
+
+      aspect-ratio: 1;
+
+      padding: 10px;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(38, 46, 83, 0.95),
+          rgba(14, 18, 34, 0.96)
+        );
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 22px 40px
+        rgba(0, 0, 0, 0.34),
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.05);
+    }
+
+    .board.locked {
+      pointer-events: none;
+      filter: saturate(0.8);
+    }
+
+    .board-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(10, 1fr);
+
+      grid-template-rows:
+        repeat(10, 1fr);
+
+      gap: 3px;
+
+      width: 100%;
+      height: 100%;
+    }
+
+    .cell {
+      position: relative;
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+      border-radius: 6px;
+
+      cursor: pointer;
+
+      background:
+        linear-gradient(
+          180deg,
+          var(--tile-a),
+          var(--tile-a-dark)
+        );
+
+      box-shadow:
+        0 3px 0
+        rgba(3, 4, 10, 0.7);
+
+      transition:
+        transform 0.12s ease,
+        filter 0.12s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .cell:nth-child(odd) {
+      background:
+        linear-gradient(
+          180deg,
+          var(--tile-b),
+          var(--tile-b-dark)
+        );
+    }
+
+    .cell:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.18);
+    }
+
+    .cell.occupied {
+      cursor: default;
+    }
+
+    .cell.last-move {
+      box-shadow:
+        0 0 0 2px
+        var(--gold),
+        0 0 14px
+        rgba(243, 202, 112, 0.7);
+    }
+
+    .cell.winning {
+      filter: brightness(1.35);
+
+      box-shadow:
+        0 0 0 2px
+        var(--green),
+        0 0 16px
+        rgba(123, 227, 164, 0.8);
+    }
+
+    .cell.frozen {
+      background:
+        linear-gradient(
+          180deg,
+          #bfefff,
+          #4fa7d5
+        );
+
+      box-shadow:
+        0 0 12px
+        rgba(111, 220, 255, 0.8);
+    }
+
+    .cell.skill-target {
+      animation:
+        targetPulse
+        0.7s
+        ease-in-out
+        infinite
+        alternate;
+    }
+
+    @keyframes targetPulse {
+      to {
+        transform:
+          translateY(-3px)
+          scale(1.04);
+
+        filter:
+          brightness(1.35);
+      }
+    }
+
+    /* =========================================
+       暫代 Character 棋子
+    ========================================= */
+
+    .unit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+
+      width: 58%;
+      aspect-ratio: 0.75;
+
+      transform:
+        translate(-50%, -73%);
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.28);
+
+      border-radius:
+        45%
+        45%
+        34%
+        34%;
+
+      pointer-events: none;
+
+      filter:
+        drop-shadow(
+          0 5px 4px
+          rgba(0, 0, 0, 0.45)
+        );
+
+      animation:
+        unitDrop
+        0.2s
+        ease-out;
+    }
+
+    .unit::before {
+      content: "";
+
+      position: absolute;
+      top: -31%;
+      left: 50%;
+
+      width: 70%;
+      aspect-ratio: 1;
+
+      transform:
+        translateX(-50%);
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.32);
+
+      border-radius: 50%;
+    }
+
+    .unit::after {
+      content: "";
+
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+
+      width: 55%;
+      height: 35%;
+
+      transform:
+        translateX(-50%);
+
+      background:
+        rgba(255, 255, 255, 0.28);
+
+      border-radius: 50%;
+    }
+
+    .unit.player.staff {
+      background:
+        linear-gradient(
+          165deg,
+          #a8eeff,
+          #786be0 46%,
+          #27244d
+        );
+    }
+
+    .unit.player.staff::before {
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #ffffff,
+          #b7efff 22%,
+          #746de0 55%,
+          #27244d
+        );
+    }
+
+    .unit.player.sword {
+      background:
+        linear-gradient(
+          165deg,
+          #fff0b6,
+          #abb4c7 44%,
+          #3d4658
+        );
+    }
+
+    .unit.player.sword::before {
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #fffbe1,
+          #f0d88f 22%,
+          #83766e 56%,
+          #2e2a36
+        );
+    }
+
+    .unit.ai {
+      background:
+        linear-gradient(
+          165deg,
+          #ffb49c,
+          #c6425d 46%,
+          #45152c
+        );
+    }
+
+    .unit.ai::before {
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #fff1df,
+          #ff9b86 22%,
+          #a62c4d 55%,
+          #391227
+        );
+    }
+
+    @keyframes unitDrop {
+      from {
+        opacity: 0;
+
+        transform:
+          translate(-50%, -45%)
+          scale(0.45);
+      }
+
+      to {
+        opacity: 1;
+
+        transform:
+          translate(-50%, -73%)
+          scale(1);
+      }
+    }
+
+    /* =========================================
+       角色與技能控制區
+    ========================================= */
+
+    .control-panel {
+      display: grid;
+
+      grid-template-columns:
+        1fr
+        1.25fr
+        1fr;
+
+      gap: 9px;
+    }
+
+    .character-card,
+    .skill-panel {
+      min-height: 112px;
+
+      padding: 11px;
+
+      background:
+        linear-gradient(
+          160deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.025)
+        );
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius: 16px;
+    }
+
+    .character-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+    }
+
+    .character-icon {
+      width: 38px;
+      height: 38px;
+
+      margin-bottom: 7px;
+
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #ffffff,
+          #b9a8ff 25%,
+          #6247bc 62%,
+          #21184b
+        );
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 0 14px
+        rgba(155, 124, 255, 0.5);
+    }
+
+    .character-card.enemy .character-icon {
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #fff4e3,
+          #ff9a82 25%,
+          #a42b4b 62%,
+          #391227
+        );
+
+      box-shadow:
+        0 0 14px
+        rgba(255, 126, 136, 0.45);
+    }
+
+    .character-card strong {
+      font-size: 0.78rem;
+    }
+
+    .character-card span {
+      margin-top: 4px;
+
+      color: var(--muted);
+
+      font-size: 0.62rem;
+    }
+
+    .skill-panel {
+      display: flex;
+      flex-direction: column;
+
+      gap: 8px;
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .skill-header strong {
+      font-size: 0.76rem;
+    }
+
+    .skill-header span {
+      color: var(--muted);
+
+      font-size: 0.58rem;
+    }
+
+    .skill-buttons {
+      display: grid;
+
+      grid-template-columns:
+        1fr
+        1fr;
+
+      gap: 7px;
+    }
+
+    .skill-button {
+      min-height: 46px;
+
+      background:
+        rgba(255, 255, 255, 0.05);
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+      border-radius: 11px;
+
+      cursor: pointer;
+
+      font-size: 0.66rem;
+      font-weight: 900;
+    }
+
+    .skill-button.fire {
+      box-shadow:
+        inset 0 0 20px
+        rgba(255, 91, 74, 0.08);
+    }
+
+    .skill-button.ice {
+      box-shadow:
+        inset 0 0 20px
+        rgba(91, 201, 255, 0.08);
+    }
+
+    .skill-button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .skill-button.active {
+      outline:
+        2px solid
+        var(--gold);
+    }
+
+    .skill-message {
+      min-height: 26px;
+
+      color: var(--muted);
+
+      font-size: 0.61rem;
+      line-height: 1.4;
+
+      text-align: center;
+    }
+
+    .battle-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 9px;
+    }
+
+    .best-of {
+      color: var(--muted);
+
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+    }
+
+    /* =========================================
+       Overlay
+    ========================================= */
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+
+      display: grid;
+      place-items: center;
+
+      padding: 8%;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+
+      background:
+        rgba(4, 6, 13, 0.76);
+
+      backdrop-filter:
+        blur(8px);
+
+      transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: 100%;
+
+      padding: 28px;
+
+      text-align: center;
+
+      background:
+        linear-gradient(
+          160deg,
+          rgba(28, 34, 62, 0.98),
+          rgba(11, 14, 27, 0.98)
+        );
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.55);
+    }
+
+    .modal h2 {
+      margin-top: 8px;
+
+      font-size: 1.7rem;
+    }
+
+    .modal-description {
+      margin-top: 10px;
+
+      color: var(--muted);
+
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .result-score {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      gap: 26px;
+
+      margin: 24px 0;
+    }
+
+    .result-score strong {
+      font-size: 2.4rem;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      gap: 10px;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      z-index: 30;
+
+      padding: 10px 15px;
+
+      opacity: 0;
+
+      transform:
+        translate(-50%, 20px);
+
+      background:
+        rgba(8, 11, 22, 0.94);
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius: 999px;
+
+      font-size: 0.7rem;
+
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+
+      transform:
+        translate(-50%, 0);
+    }
+
+    .damage-text {
+      position: absolute;
+      z-index: 18;
+
+      opacity: 0;
+
+      color: #fff1b9;
+
+      font-size: 1.6rem;
+      font-weight: 950;
+
+      text-shadow:
+        0 0 14px
+        rgba(255, 113, 74, 0.9);
+
+      pointer-events: none;
+    }
+
+    .damage-text.show {
+      animation:
+        damageFloat
+        0.8s
+        ease-out;
+    }
+
+    @keyframes damageFloat {
+      0% {
+        opacity: 0;
+
+        transform:
+          translateY(10px)
+          scale(0.6);
+      }
+
+      30% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+
+        transform:
+          translateY(-35px)
+          scale(1.15);
+      }
+    }
+
+    @media (max-height: 760px) {
+      .battle-screen {
+        gap: 7px;
+        padding: 10px;
+      }
+
+      .battle-hud {
+        padding: 8px;
+      }
+
+      .board {
+        width:
+          min(
+            100%,
+            calc(100vh - 345px)
+          );
+      }
+
+      .control-panel {
+        gap: 7px;
+      }
+
+      .character-card,
+      .skill-panel {
+        min-height: 95px;
+        padding: 8px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <main
-    id="app"
-    class="game-app"
-  >
-    <!-- ==================================================
-         全域背景
-    ================================================== -->
-
-    <div
-      class="app-background"
-      aria-hidden="true"
-    >
-      <span class="background-orb background-orb--one"></span>
-      <span class="background-orb background-orb--two"></span>
-      <span class="background-orb background-orb--three"></span>
-
-      <span class="background-grid"></span>
-      <span class="background-vignette"></span>
-    </div>
-
-    <noscript>
-      <section class="noscript-message">
-        <h1>無法啟動遊戲</h1>
-
-        <p>
-          此遊戲需要 JavaScript，請開啟瀏覽器的 JavaScript 功能。
-        </p>
-      </section>
-    </noscript>
-
-    <!-- ==================================================
-         首頁
-    ================================================== -->
-
+  <main id="app" class="app">
+    <!-- 首頁 -->
     <section
       id="homeScreen"
-      class="screen screen--home is-active"
-      data-screen="home"
-      aria-labelledby="homeTitle"
+      class="screen home-screen active"
     >
       <div
-        class="screen-frame"
+        class="home-logo"
         aria-hidden="true"
       ></div>
 
-      <header class="home-header">
-        <p class="home-eyebrow">
-          PORTFOLIO GAME 02
-        </p>
+      <h1 class="home-title">
+        魔法の五目並べ
+      </h1>
 
-        <h1
-          id="homeTitle"
-          class="home-title"
-        >
-          魔法の五目並べ
-        </h1>
-
-        <p class="home-subtitle">
-          ARCANE GOMOKU DUEL
-        </p>
-      </header>
-
-      <section
-        class="home-showcase"
-        aria-label="遊戲主視覺"
-      >
-        <div
-          class="arcane-emblem"
-          aria-hidden="true"
-        >
-          <span class="arcane-emblem__ring"></span>
-          <span class="arcane-emblem__diamond"></span>
-          <span class="arcane-emblem__core"></span>
-          <span class="arcane-emblem__line arcane-emblem__line--x"></span>
-          <span class="arcane-emblem__line arcane-emblem__line--y"></span>
-        </div>
-
-        <div class="home-feature-list">
-          <article class="home-feature">
-            <span class="home-feature__code">
-              10×10
-            </span>
-
-            <strong>
-              戰術棋盤
-            </strong>
-          </article>
-
-          <article class="home-feature">
-            <span class="home-feature__code">
-              SLOT
-            </span>
-
-            <strong>
-              隨機職業
-            </strong>
-          </article>
-
-          <article class="home-feature">
-            <span class="home-feature__code">
-              BO3
-            </span>
-
-            <strong>
-              三戰兩勝
-            </strong>
-          </article>
-        </div>
-      </section>
-
-      <p class="home-description">
-        每次落子前，玩家將隨機取得「杖」或「劍」。
-        使用角色能力改變棋盤局勢，率先完成五連並取得兩勝。
+      <p class="home-subtitle">
+        ARCANE BOARD DUEL
       </p>
 
-      <nav
-        class="home-actions"
-        aria-label="首頁操作"
+      <p class="home-description">
+        在 10×10 魔法戰棋盤上進行五子連線。
+        每回合抽取杖或劍，率先取得兩勝的一方贏得整場對決。
+      </p>
+
+      <button
+        id="startButton"
+        class="primary-button"
+        type="button"
       >
-        <button
-          id="openModesButton"
-          class="button button--primary"
-          type="button"
-        >
-          <span class="button__label">
-            開始遊戲
-          </span>
-
-          <span class="button__sub">
-            SELECT MODE
-          </span>
-        </button>
-
-        <button
-          id="openRulesButton"
-          class="button button--secondary"
-          type="button"
-        >
-          遊戲說明
-        </button>
-      </nav>
-
-      <footer class="home-footer">
-        <span>
-          DEMO VERSION
-        </span>
-
-        <span>
-          V0.2
-        </span>
-      </footer>
+        開始遊玩
+      </button>
     </section>
 
-    <!-- ==================================================
-         模式選擇
-    ================================================== -->
-
+    <!-- 模式選擇 -->
     <section
       id="modeScreen"
-      class="screen screen--modes"
-      data-screen="modes"
-      aria-labelledby="modeTitle"
-      aria-hidden="true"
+      class="screen mode-screen"
     >
-      <header class="screen-header">
-        <button
-          id="backToHomeButton"
-          class="icon-button"
-          type="button"
-          aria-label="返回首頁"
-        >
-          <span aria-hidden="true">
-            ←
-          </span>
-        </button>
-
-        <div class="screen-header__content">
-          <p class="screen-eyebrow">
-            GAME MODE
+      <header class="mode-header">
+        <div>
+          <p class="section-kicker">
+            SELECT MODE
           </p>
 
-          <h2
-            id="modeTitle"
-            class="screen-title"
-          >
+          <h2 class="mode-title">
             選擇遊戲模式
           </h2>
         </div>
 
-        <span class="version-badge">
-          DEMO
+        <span class="mode-badge">
+          9:16 DEMO
         </span>
       </header>
 
       <div class="mode-grid">
         <button
-          id="singleModeButton"
-          class="mode-card mode-card--available"
-          type="button"
+          class="mode-card"
           data-mode="single"
+          type="button"
         >
-          <span class="mode-card__index">
+          <span class="mode-number">
             MODE 01
           </span>
 
-          <span class="mode-card__tag">
+          <span class="mode-tag">
             AI
           </span>
 
-          <span
-            class="mode-card__visual mode-card__visual--single"
-            aria-hidden="true"
-          >
-            <span></span>
-          </span>
+          <h3>
+            單機模式
+          </h3>
 
-          <span class="mode-card__content">
-            <strong class="mode-card__title">
-              單機模式
-            </strong>
+          <p>
+            與赤焰術師進行三戰兩勝，使用 FIRE 與 ICE 改變棋局。
+          </p>
 
-            <span class="mode-card__description">
-              與赤焰術師進行三戰兩勝，使用角色能力改變棋盤局勢。
-            </span>
-          </span>
-
-          <span class="mode-card__status">
+          <span class="mode-state">
             可遊玩
           </span>
         </button>
 
         <button
-          class="mode-card is-locked"
+          class="mode-card locked"
           type="button"
-          data-mode="online"
-          aria-disabled="true"
         >
-          <span class="mode-card__index">
+          <span class="mode-number">
             MODE 02
           </span>
 
-          <span class="mode-card__tag">
+          <span class="mode-tag">
             PVP
           </span>
 
-          <span
-            class="mode-card__visual mode-card__visual--online"
-            aria-hidden="true"
-          >
-            <span></span>
-          </span>
+          <h3>
+            連線對戰
+          </h3>
 
-          <span class="mode-card__content">
-            <strong class="mode-card__title">
-              連線對戰
-            </strong>
+          <p>
+            即時配對與私人房間。
+          </p>
 
-            <span class="mode-card__description">
-              與其他玩家建立房間或進行即時配對。
-            </span>
-          </span>
-
-          <span class="mode-card__status">
+          <span class="mode-state">
             未開放
           </span>
         </button>
 
         <button
-          class="mode-card is-locked"
+          class="mode-card locked"
           type="button"
-          data-mode="ranked"
-          aria-disabled="true"
         >
-          <span class="mode-card__index">
+          <span class="mode-number">
             MODE 03
           </span>
 
-          <span class="mode-card__tag">
+          <span class="mode-tag">
             RANK
           </span>
 
-          <span
-            class="mode-card__visual mode-card__visual--ranked"
-            aria-hidden="true"
-          >
-            <span></span>
-          </span>
+          <h3>
+            競技模式
+          </h3>
 
-          <span class="mode-card__content">
-            <strong class="mode-card__title">
-              競技模式
-            </strong>
+          <p>
+            積分、段位與賽季競技。
+          </p>
 
-            <span class="mode-card__description">
-              使用積分、段位與賽季規則進行正式競技。
-            </span>
-          </span>
-
-          <span class="mode-card__status">
+          <span class="mode-state">
             未開放
           </span>
         </button>
 
         <button
-          class="mode-card is-locked"
+          class="mode-card locked"
           type="button"
-          data-mode="event"
-          aria-disabled="true"
         >
-          <span class="mode-card__index">
+          <span class="mode-number">
             MODE 04
           </span>
 
-          <span class="mode-card__tag">
+          <span class="mode-tag">
             EVENT
           </span>
 
-          <span
-            class="mode-card__visual mode-card__visual--event"
-            aria-hidden="true"
-          >
-            <span></span>
-          </span>
+          <h3>
+            限時模式
+          </h3>
 
-          <span class="mode-card__content">
-            <strong class="mode-card__title">
-              限時模式
-            </strong>
+          <p>
+            特殊規則與期間限定活動。
+          </p>
 
-            <span class="mode-card__description">
-              使用特殊棋盤、角色與期間限定規則進行挑戰。
-            </span>
-          </span>
-
-          <span class="mode-card__status">
+          <span class="mode-state">
             未開放
           </span>
         </button>
       </div>
 
       <footer class="mode-footer">
-        <span class="mode-footer__line"></span>
+        <button
+          id="modeBackButton"
+          class="secondary-button"
+          type="button"
+        >
+          返回
+        </button>
 
-        <p>
-          目前版本開放單機模式
-        </p>
-
-        <span class="mode-footer__line"></span>
+        <span class="mode-footer-note">
+          選擇單機模式開始 Demo
+        </span>
       </footer>
     </section>
 
-    <!-- ==================================================
-         戰鬥畫面
-    ================================================== -->
-
+    <!-- 對戰畫面 -->
     <section
       id="battleScreen"
-      class="screen screen--battle"
-      data-screen="battle"
-      aria-labelledby="battleTitle"
-      aria-hidden="true"
+      class="screen battle-screen"
     >
-      <!-- 戰鬥工具列 -->
+      <header class="battle-hud">
+        <section class="fighter-status">
+          <div class="fighter-top">
+            <span>
+              PLAYER
+            </span>
 
-      <header class="battle-toolbar">
-        <button
-          id="exitBattleButton"
-          class="icon-button"
-          type="button"
-          aria-label="離開對戰"
-        >
-          <span aria-hidden="true">
-            ←
-          </span>
-        </button>
-
-        <div class="battle-toolbar__title">
-          <span>
-            SINGLE BATTLE
-          </span>
-
-          <strong id="battleTitle">
-            魔法棋盤
-          </strong>
-        </div>
-
-        <button
-          id="soundToggleButton"
-          class="icon-button"
-          type="button"
-          aria-label="切換音效"
-          aria-pressed="true"
-        >
-          <span class="sound-icon sound-icon--on">
-            ON
-          </span>
-        </button>
-      </header>
-
-      <!-- 玩家與 AI 狀態 -->
-
-      <section
-        class="combat-hud"
-        aria-label="對戰狀態"
-      >
-        <article class="combatant combatant--player">
-          <div
-            id="playerAvatar"
-            class="combatant__avatar combatant__avatar--player"
-            aria-hidden="true"
-          >
-            <span></span>
+            <span id="playerHpText">
+              100
+            </span>
           </div>
 
-          <div class="combatant__info">
-            <div class="combatant__heading">
-              <div>
-                <span class="combatant__label">
-                  PLAYER
-                </span>
-
-                <strong
-                  id="playerDisplayName"
-                  class="combatant__name"
-                >
-                  挑戰者
-                </strong>
-              </div>
-
-              <span
-                id="playerHpText"
-                class="combatant__hp-text"
-              >
-                100 / 100
-              </span>
-            </div>
-
+          <div class="hp-track">
             <div
-              class="hp-bar"
-              role="progressbar"
-              aria-label="玩家生命值"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow="100"
-            >
-              <span
-                id="playerHpFill"
-                class="hp-bar__fill hp-bar__fill--player"
-              ></span>
-
-              <span class="hp-bar__shine"></span>
-            </div>
+              id="playerHpBar"
+              class="hp-bar player"
+            ></div>
           </div>
-        </article>
+        </section>
 
-        <section
-          class="match-status"
-          aria-label="比賽比分"
-        >
+        <section class="score-panel">
+          <div class="score-values">
+            <span id="playerScore">
+              0
+            </span>
+
+            <span>
+              :
+            </span>
+
+            <span id="aiScore">
+              0
+            </span>
+          </div>
+
           <span
-            id="roundLabel"
-            class="match-status__round"
+            id="roundText"
+            class="round-text"
           >
             ROUND 1
           </span>
-
-          <div class="match-status__score">
-            <strong
-              id="playerRoundWins"
-              class="match-status__number match-status__number--player"
-            >
-              0
-            </strong>
-
-            <span>
-              VS
-            </span>
-
-            <strong
-              id="aiRoundWins"
-              class="match-status__number match-status__number--ai"
-            >
-              0
-            </strong>
-          </div>
-
-          <span class="match-status__rule">
-            FIRST TO 2
-          </span>
         </section>
 
-        <article class="combatant combatant--ai">
-          <div class="combatant__info">
-            <div class="combatant__heading">
-              <div>
-                <span class="combatant__label">
-                  OPPONENT
-                </span>
-
-                <strong
-                  id="aiDisplayName"
-                  class="combatant__name"
-                >
-                  赤焰術師
-                </strong>
-              </div>
-
-              <span
-                id="aiHpText"
-                class="combatant__hp-text"
-              >
-                100 / 100
-              </span>
-            </div>
-
-            <div
-              class="hp-bar"
-              role="progressbar"
-              aria-label="對手生命值"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow="100"
-            >
-              <span
-                id="aiHpFill"
-                class="hp-bar__fill hp-bar__fill--ai"
-              ></span>
-
-              <span class="hp-bar__shine"></span>
-            </div>
-          </div>
-
-          <div
-            id="aiAvatar"
-            class="combatant__avatar combatant__avatar--ai"
-            aria-hidden="true"
-          >
-            <span></span>
-          </div>
-        </article>
-      </section>
-
-      <!-- 回合狀態 -->
-
-      <section
-        class="turn-banner"
-        aria-live="polite"
-      >
-        <div
-          id="turnRoleIcon"
-          class="turn-banner__icon turn-banner__icon--staff"
-          aria-hidden="true"
-        >
-          <span></span>
-        </div>
-
-        <div class="turn-banner__content">
-          <span class="turn-banner__label">
-            CURRENT TURN
-          </span>
-
-          <strong id="turnMessage">
-            等待對戰開始
-          </strong>
-        </div>
-
-        <div class="turn-banner__meta">
-          <span id="moveCounter">
-            MOVE 0
-          </span>
-
-          <span id="turnOwner">
-            PLAYER
-          </span>
-        </div>
-      </section>
-
-      <!-- 棋盤 -->
-
-      <section
-        class="board-area"
-        aria-label="遊戲棋盤"
-      >
-        <div class="board-decoration board-decoration--top"></div>
-
-        <div
-          id="boardFrame"
-          class="board-frame is-locked"
-        >
-          <div
-            id="boardSurface"
-            class="board-surface"
-            role="grid"
-            aria-label="10 乘 10 魔法五子棋棋盤"
-            aria-rowcount="10"
-            aria-colcount="10"
-          >
-            <div
-              id="boardBaseLayer"
-              class="board-layer board-layer--base"
-              aria-hidden="true"
-            ></div>
-
-            <div
-              id="boardGridLayer"
-              class="board-layer board-layer--grid"
-              aria-hidden="true"
-            ></div>
-
-            <div
-              id="boardCellLayer"
-              class="board-layer board-layer--cells"
-            ></div>
-
-            <div
-              id="boardUnitLayer"
-              class="board-layer board-layer--units"
-              aria-hidden="true"
-            ></div>
-
-            <div
-              id="boardEffectLayer"
-              class="board-layer board-layer--effects"
-              aria-hidden="true"
-            ></div>
-          </div>
-        </div>
-
-        <div class="board-decoration board-decoration--bottom"></div>
-      </section>
-
-      <!-- 操作區 -->
-
-      <section
-        class="command-dock"
-        aria-label="角色與技能操作"
-      >
-        <div class="role-panels">
-          <!-- 玩家 Slot -->
-
-          <article
-            id="playerRoleCard"
-            class="role-card role-card--player is-spinning"
-          >
-            <div
-              id="playerRoleVisual"
-              class="role-card__visual role-card__visual--staff"
-              aria-hidden="true"
-            >
-              <span class="role-card__aura"></span>
-              <span class="role-card__symbol"></span>
-            </div>
-
-            <div class="role-card__content">
-              <span class="role-card__label">
-                SLOT RESULT
-              </span>
-
-              <strong
-                id="playerRoleName"
-                class="role-card__name"
-              >
-                等待抽取
-              </strong>
-
-              <span
-                id="playerRoleDescription"
-                class="role-card__description"
-              >
-                每次落子前隨機取得杖或劍
-              </span>
-            </div>
-
-            <span
-              id="playerRoleState"
-              class="role-card__state"
-            >
-              SPIN
-            </span>
-          </article>
-
-          <!-- AI 固定角色 -->
-
-          <article
-            id="aiRoleCard"
-            class="role-card role-card--ai"
-          >
-            <div
-              class="role-card__visual role-card__visual--enemy"
-              aria-hidden="true"
-            >
-              <span class="role-card__aura"></span>
-              <span class="role-card__symbol"></span>
-            </div>
-
-            <div class="role-card__content">
-              <span class="role-card__label">
-                OPPONENT
-              </span>
-
-              <strong class="role-card__name">
-                赤焰術師
-              </strong>
-
-              <span class="role-card__description">
-                攻擊型魔法對手
-              </span>
-            </div>
-
-            <span class="role-card__state role-card__state--enemy">
+        <section class="fighter-status ai">
+          <div class="fighter-top">
+            <span>
               AI
             </span>
-          </article>
+
+            <span id="aiHpText">
+              100
+            </span>
+          </div>
+
+          <div class="hp-track">
+            <div
+              id="aiHpBar"
+              class="hp-bar ai"
+            ></div>
+          </div>
+        </section>
+      </header>
+
+      <div class="turn-bar">
+        <div class="turn-left">
+          <span
+            id="turnDot"
+            class="turn-dot"
+          ></span>
+
+          <span
+            id="turnMessage"
+            class="turn-message"
+          >
+            準備開始
+          </span>
         </div>
 
-        <div class="command-panel">
+        <span
+          id="moveCount"
+          class="move-count"
+        >
+          MOVE 0
+        </span>
+      </div>
+
+      <div class="board-wrapper">
+        <div
+          id="board"
+          class="board locked"
+        >
           <div
-            id="commandMessage"
-            class="command-message"
-            aria-live="polite"
-          >
-            <span class="command-message__label">
-              ACTION
-            </span>
+            id="boardGrid"
+            class="board-grid"
+          ></div>
+        </div>
+      </div>
 
+      <section class="control-panel">
+        <article class="character-card">
+          <div
+            class="character-icon"
+            aria-hidden="true"
+          ></div>
+
+          <strong id="playerRoleName">
+            等待 Spin
+          </strong>
+
+          <span id="playerRoleDescription">
+            50% 杖 / 50% 劍
+          </span>
+        </article>
+
+        <section class="skill-panel">
+          <header class="skill-header">
             <strong>
-              等待角色抽取
+              角色行動
             </strong>
-          </div>
 
-          <div class="skill-grid">
+            <span id="skillState">
+              SPIN
+            </span>
+          </header>
+
+          <div class="skill-buttons">
             <button
-              id="fireSkillButton"
-              class="skill-button skill-button--fire"
+              id="fireButton"
+              class="skill-button fire"
               type="button"
               disabled
             >
-              <span class="skill-button__code">
-                FIRE
-              </span>
-
-              <strong>
-                烈焰穿透
-              </strong>
-
-              <span class="skill-button__description">
-                燃燒所選棋子上下方的敵方單位
-              </span>
-
-              <span class="skill-button__status">
-                READY
-              </span>
+              FIRE
             </button>
 
             <button
-              id="iceSkillButton"
-              class="skill-button skill-button--ice"
+              id="iceButton"
+              class="skill-button ice"
               type="button"
               disabled
             >
-              <span class="skill-button__code">
-                ICE
-              </span>
-
-              <strong>
-                霜封領域
-              </strong>
-
-              <span class="skill-button__description">
-                冰封敵方棋子周圍的空白格
-              </span>
-
-              <span class="skill-button__status">
-                READY
-              </span>
+              ICE
             </button>
           </div>
+
+          <p
+            id="skillMessage"
+            class="skill-message"
+          >
+            每次玩家落子前會進行角色抽取
+          </p>
 
           <button
             id="cancelSkillButton"
-            class="cancel-action-button"
+            class="small-button"
             type="button"
             hidden
           >
-            取消技能選擇
+            取消技能
           </button>
-        </div>
-      </section>
+        </section>
 
-      <!-- 底部操作 -->
+        <article class="character-card enemy">
+          <div
+            class="character-icon"
+            aria-hidden="true"
+          ></div>
+
+          <strong>
+            赤焰術師
+          </strong>
+
+          <span>
+            固定對手
+          </span>
+        </article>
+      </section>
 
       <footer class="battle-footer">
         <button
-          id="restartMatchButton"
-          class="battle-footer__button"
+          id="battleBackButton"
+          class="small-button"
+          type="button"
+        >
+          模式選擇
+        </button>
+
+        <span class="best-of">
+          BEST OF 3
+        </span>
+
+        <button
+          id="restartButton"
+          class="small-button"
           type="button"
         >
           重新對戰
         </button>
-
-        <div class="battle-footer__status">
-          <span>
-            BEST OF 3
-          </span>
-
-          <span class="battle-footer__dot"></span>
-
-          <span>
-            FIVE IN A ROW
-          </span>
-        </div>
-
-        <button
-          id="openBattleRulesButton"
-          class="battle-footer__button"
-          type="button"
-        >
-          規則
-        </button>
       </footer>
     </section>
 
-    <!-- ==================================================
-         回合轉場
-    ================================================== -->
-
-    <section
-      id="roundTransition"
-      class="overlay overlay--round"
-      aria-hidden="true"
-      aria-live="assertive"
+    <!-- 回合開始 -->
+    <div
+      id="roundOverlay"
+      class="overlay"
     >
-      <div
-        class="overlay-backdrop"
-        aria-hidden="true"
-      ></div>
-
-      <div class="round-transition-card">
-        <div
-          class="round-transition-card__sigil"
-          aria-hidden="true"
-        >
-          <span></span>
-        </div>
-
-        <p
-          id="transitionRoundLabel"
-          class="round-transition-card__label"
-        >
-          ROUND 1
+      <section class="modal">
+        <p class="section-kicker">
+          ROUND START
         </p>
 
-        <h2
-          id="transitionTitle"
-          class="round-transition-card__title"
-        >
+        <h2 id="roundTitle">
           玩家先攻
         </h2>
 
         <p
-          id="transitionDescription"
-          class="round-transition-card__description"
+          id="roundDescription"
+          class="modal-description"
         >
           PLAYER ATTACKS FIRST
         </p>
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <!-- ==================================================
-         最終結果
-    ================================================== -->
-
-    <section
+    <!-- 最終結果 -->
+    <div
       id="resultOverlay"
-      class="overlay overlay--result"
-      aria-hidden="true"
-      aria-labelledby="resultTitle"
+      class="overlay"
     >
-      <div
-        class="overlay-backdrop"
-        aria-hidden="true"
-      ></div>
-
-      <article class="result-card">
-        <p class="result-card__eyebrow">
+      <section class="modal">
+        <p class="section-kicker">
           MATCH RESULT
         </p>
 
-        <div
-          id="resultEmblem"
-          class="result-card__emblem result-card__emblem--victory"
-          aria-hidden="true"
-        >
-          <span></span>
-        </div>
-
-        <h2
-          id="resultTitle"
-          class="result-card__title"
-        >
-          玩家取得最終勝利
+        <h2 id="resultTitle">
+          玩家取得勝利
         </h2>
 
         <p
           id="resultDescription"
-          class="result-card__description"
+          class="modal-description"
         >
           三戰兩勝對決結束。
         </p>
 
         <div class="result-score">
-          <div class="result-score__side">
-            <span>
-              PLAYER
-            </span>
+          <strong id="finalPlayerScore">
+            2
+          </strong>
 
-            <strong
-              id="resultPlayerScore"
-              class="result-score__number result-score__number--player"
-            >
-              2
-            </strong>
-          </div>
-
-          <span class="result-score__versus">
+          <span>
             VS
           </span>
 
-          <div class="result-score__side">
-            <span>
-              AI
-            </span>
-
-            <strong
-              id="resultAiScore"
-              class="result-score__number result-score__number--ai"
-            >
-              0
-            </strong>
-          </div>
+          <strong id="finalAiScore">
+            0
+          </strong>
         </div>
 
-        <div class="result-card__actions">
+        <div class="result-actions">
           <button
             id="playAgainButton"
-            class="button button--primary"
+            class="primary-button"
             type="button"
           >
-            再次對戰
+            重新對戰
           </button>
 
           <button
-            id="resultToModesButton"
-            class="button button--secondary"
+            id="resultModeButton"
+            class="secondary-button"
             type="button"
           >
-            返回模式選擇
+            模式選擇
           </button>
         </div>
-      </article>
-    </section>
-
-    <!-- ==================================================
-         遊戲規則
-    ================================================== -->
-
-    <section
-      id="rulesOverlay"
-      class="overlay overlay--rules"
-      aria-hidden="true"
-      aria-labelledby="rulesTitle"
-    >
-      <div
-        class="overlay-backdrop"
-        data-action="close-rules"
-        aria-hidden="true"
-      ></div>
-
-      <article class="rules-card">
-        <header class="rules-card__header">
-          <div>
-            <p class="rules-card__eyebrow">
-              HOW TO PLAY
-            </p>
-
-            <h2 id="rulesTitle">
-              遊戲說明
-            </h2>
-          </div>
-
-          <button
-            id="closeRulesButton"
-            class="icon-button"
-            type="button"
-            aria-label="關閉遊戲說明"
-          >
-            ×
-          </button>
-        </header>
-
-        <div class="rules-list">
-          <article class="rule-item">
-            <span class="rule-item__number">
-              01
-            </span>
-
-            <div>
-              <strong>
-                完成五連
-              </strong>
-
-              <p>
-                在橫向、縱向或斜向率先連成五個自己的單位。
-              </p>
-            </div>
-          </article>
-
-          <article class="rule-item">
-            <span class="rule-item__number">
-              02
-            </span>
-
-            <div>
-              <strong>
-                隨機角色
-              </strong>
-
-              <p>
-                每次玩家落子前，都會以相同機率取得杖或劍。
-              </p>
-            </div>
-          </article>
-
-          <article class="rule-item">
-            <span class="rule-item__number">
-              03
-            </span>
-
-            <div>
-              <strong>
-                杖技能
-              </strong>
-
-              <p>
-                杖可以使用 FIRE 或 ICE，技能每局只能使用一次。
-              </p>
-            </div>
-          </article>
-
-          <article class="rule-item">
-            <span class="rule-item__number">
-              04
-            </span>
-
-            <div>
-              <strong>
-                三戰兩勝
-              </strong>
-
-              <p>
-                每局勝利會對敵方造成傷害，率先取得兩勝者贏得比賽。
-              </p>
-            </div>
-          </article>
-        </div>
-
-        <button
-          id="rulesConfirmButton"
-          class="button button--primary"
-          type="button"
-        >
-          了解
-        </button>
-      </article>
-    </section>
-
-    <!-- ==================================================
-         確認離開對戰
-    ================================================== -->
-
-    <section
-      id="exitConfirmOverlay"
-      class="overlay overlay--confirm"
-      aria-hidden="true"
-      aria-labelledby="exitConfirmTitle"
-    >
-      <div
-        class="overlay-backdrop"
-        aria-hidden="true"
-      ></div>
-
-      <article class="confirm-card">
-        <p class="confirm-card__eyebrow">
-          LEAVE MATCH
-        </p>
-
-        <h2 id="exitConfirmTitle">
-          確定離開對戰？
-        </h2>
-
-        <p>
-          目前的對戰進度將會被重置。
-        </p>
-
-        <div class="confirm-card__actions">
-          <button
-            id="cancelExitButton"
-            class="button button--secondary"
-            type="button"
-          >
-            繼續對戰
-          </button>
-
-          <button
-            id="confirmExitButton"
-            class="button button--danger"
-            type="button"
-          >
-            離開
-          </button>
-        </div>
-      </article>
-    </section>
-
-    <!-- ==================================================
-         全域提示
-    ================================================== -->
+      </section>
+    </div>
 
     <div
-      id="gameToast"
-      class="game-toast"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
+      id="toast"
+      class="toast"
     >
-      <span
-        id="gameToastMessage"
-        class="game-toast__message"
-      >
-        提示訊息
-      </span>
+      此模式尚未開放
+    </div>
+
+    <div
+      id="damageText"
+      class="damage-text"
+    >
+      -50
     </div>
   </main>
+
+  <script>
+    "use strict";
+
+    /* =========================================
+       基礎常數
+    ========================================= */
+
+    const PLAYER = 1;
+    const AI = 2;
+    const EMPTY = 0;
+
+    const BOARD_SIZE = 10;
+    const WIN_SCORE = 2;
+    const MAX_HP = 100;
+
+    const DIRECTIONS = [
+      [1, 0],
+      [0, 1],
+      [1, 1],
+      [1, -1]
+    ];
+
+    const $ = (id) =>
+      document.getElementById(id);
+
+    /* =========================================
+       遊戲狀態
+    ========================================= */
+
+    let board = [];
+    let roleBoard = [];
+
+    let currentPlayer = PLAYER;
+    let playerRole = "staff";
+
+    let roundNumber = 1;
+    let moveNumber = 0;
+
+    let playerScore = 0;
+    let aiScore = 0;
+
+    let playerHp = MAX_HP;
+    let aiHp = MAX_HP;
+
+    let roundEnded = false;
+    let matchEnded = false;
+    let aiThinking = false;
+
+    let selectedSkill = null;
+    let playerSkillUsed = false;
+
+    let lastMove = null;
+    let winningCells = [];
+    let frozenCells = [];
+
+    let activeTimers = [];
+
+    /* =========================================
+       Timer
+    ========================================= */
+
+    function setGameTimer(
+      callback,
+      delay
+    ) {
+      const timerId =
+        window.setTimeout(
+          callback,
+          delay
+        );
+
+      activeTimers.push(timerId);
+
+      return timerId;
+    }
+
+    function clearGameTimers() {
+      activeTimers.forEach(
+        (timerId) =>
+          window.clearTimeout(timerId)
+      );
+
+      activeTimers = [];
+    }
+
+    /* =========================================
+       畫面切換
+    ========================================= */
+
+    function showScreen(screenId) {
+      document
+        .querySelectorAll(".screen")
+        .forEach((screen) => {
+          screen.classList.remove("active");
+        });
+
+      $(screenId).classList.add("active");
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      setGameTimer(() => {
+        toast.classList.remove("show");
+      }, 1100);
+    }
+
+    /* =========================================
+       棋盤建立
+    ========================================= */
+
+    function createBoardGrid() {
+      const boardGrid =
+        $("boardGrid");
+
+      boardGrid.innerHTML = "";
+
+      for (
+        let row = 0;
+        row < BOARD_SIZE;
+        row += 1
+      ) {
+        for (
+          let col = 0;
+          col < BOARD_SIZE;
+          col += 1
+        ) {
+          const cell =
+            document.createElement(
+              "button"
+            );
+
+          cell.type = "button";
+          cell.className = "cell";
+
+          cell.dataset.row =
+            String(row);
+
+          cell.dataset.col =
+            String(col);
+
+          cell.setAttribute(
+            "aria-label",
+            `第 ${row + 1} 列，第 ${col + 1} 格`
+          );
+
+          cell.addEventListener(
+            "click",
+            handleCellClick
+          );
+
+          boardGrid.appendChild(cell);
+        }
+      }
+    }
+
+    function resetRoundState() {
+      board =
+        Array.from(
+          {
+            length:
+              BOARD_SIZE
+          },
+          () =>
+            Array(
+              BOARD_SIZE
+            ).fill(EMPTY)
+        );
+
+      roleBoard =
+        Array.from(
+          {
+            length:
+              BOARD_SIZE
+          },
+          () =>
+            Array(
+              BOARD_SIZE
+            ).fill(null)
+        );
+
+      moveNumber = 0;
+
+      roundEnded = false;
+      aiThinking = false;
+
+      selectedSkill = null;
+      playerSkillUsed = false;
+
+      lastMove = null;
+      winningCells = [];
+      frozenCells = [];
+
+      updateInterface();
+      renderBoard();
+    }
+
+    /* =========================================
+       對戰流程
+    ========================================= */
+
+    function startMatch() {
+      clearGameTimers();
+
+      roundNumber = 1;
+
+      playerScore = 0;
+      aiScore = 0;
+
+      playerHp = MAX_HP;
+      aiHp = MAX_HP;
+
+      matchEnded = false;
+
+      $("resultOverlay")
+        .classList
+        .remove("show");
+
+      showScreen("battleScreen");
+
+      startRound();
+    }
+
+    function startRound() {
+      resetRoundState();
+
+      $("roundText").textContent =
+        `ROUND ${roundNumber}`;
+
+      const playerStarts =
+        roundNumber % 2 === 1;
+
+      $("roundTitle").textContent =
+        playerStarts
+          ? "玩家先攻"
+          : "赤焰術師先攻";
+
+      $("roundDescription").textContent =
+        playerStarts
+          ? "PLAYER ATTACKS FIRST"
+          : "AI ATTACKS FIRST";
+
+      $("roundOverlay")
+        .classList
+        .add("show");
+
+      setGameTimer(() => {
+        $("roundOverlay")
+          .classList
+          .remove("show");
+
+        if (playerStarts) {
+          beginPlayerTurn();
+        } else {
+          beginAiTurn();
+        }
+      }, 900);
+    }
+
+    function beginPlayerTurn() {
+      if (
+        roundEnded ||
+        matchEnded
+      ) {
+        return;
+      }
+
+      currentPlayer = PLAYER;
+      aiThinking = false;
+      selectedSkill = null;
+
+      $("turnMessage").textContent =
+        "玩家角色抽取中";
+
+      $("turnDot").style.background =
+        "var(--cyan)";
+
+      $("turnDot").style.boxShadow =
+        "0 0 12px rgba(111,220,255,.7)";
+
+      spinPlayerRole();
+    }
+
+    function beginAiTurn() {
+      if (
+        roundEnded ||
+        matchEnded
+      ) {
+        return;
+      }
+
+      currentPlayer = AI;
+      aiThinking = true;
+      selectedSkill = null;
+
+      $("board").classList.add("locked");
+
+      $("turnMessage").textContent =
+        "赤焰術師思考中";
+
+      $("turnDot").style.background =
+        "var(--red)";
+
+      $("turnDot").style.boxShadow =
+        "0 0 12px rgba(255,126,136,.7)";
+
+      updateInterface();
+
+      setGameTimer(() => {
+        const move =
+          chooseAiMove();
+
+        if (move) {
+          placeStone(
+            move.row,
+            move.col,
+            AI
+          );
+        }
+      }, 520);
+    }
+
+    /* =========================================
+       玩家角色 Spin
+    ========================================= */
+
+    function spinPlayerRole() {
+      $("board")
+        .classList
+        .add("locked");
+
+      $("playerRoleName").textContent =
+        "抽取中…";
+
+      $("playerRoleDescription").textContent =
+        "杖 / 劍";
+
+      $("skillState").textContent =
+        "SPIN";
+
+      const previewRoles = [
+        "杖｜戰場控制型",
+        "劍｜單體破壞型"
+      ];
+
+      let previewIndex = 0;
+
+      const previewTimer =
+        window.setInterval(() => {
+          $("playerRoleName").textContent =
+            previewRoles[
+              previewIndex %
+              previewRoles.length
+            ];
+
+          previewIndex += 1;
+        }, 90);
+
+      setGameTimer(() => {
+        window.clearInterval(
+          previewTimer
+        );
+
+        playerRole =
+          Math.random() < 0.5
+            ? "staff"
+            : "sword";
+
+        if (
+          playerRole === "staff"
+        ) {
+          $("playerRoleName").textContent =
+            "杖";
+
+          $("playerRoleDescription").textContent =
+            "戰場控制型";
+
+          $("skillMessage").textContent =
+            "可使用 FIRE 或 ICE";
+        } else {
+          $("playerRoleName").textContent =
+            "劍";
+
+          $("playerRoleDescription").textContent =
+            "單體破壞型";
+
+          $("skillMessage").textContent =
+            "本回合只能正常落子";
+        }
+
+        $("skillState").textContent =
+          "READY";
+
+        $("board")
+          .classList
+          .remove("locked");
+
+        $("turnMessage").textContent =
+          playerRole === "staff"
+            ? "玩家回合｜杖"
+            : "玩家回合｜劍";
+
+        updateInterface();
+      }, 650);
+    }
+
+    /* =========================================
+       落子
+    ========================================= */
+
+    function handleCellClick(event) {
+      if (
+        roundEnded ||
+        matchEnded ||
+        aiThinking ||
+        currentPlayer !== PLAYER
+      ) {
+        return;
+      }
+
+      const row =
+        Number(
+          event.currentTarget.dataset.row
+        );
+
+      const col =
+        Number(
+          event.currentTarget.dataset.col
+        );
+
+      if (selectedSkill) {
+        handleSkillTarget(
+          row,
+          col
+        );
+
+        return;
+      }
+
+      if (
+        board[row][col] !== EMPTY
+      ) {
+        return;
+      }
+
+      placeStone(
+        row,
+        col,
+        PLAYER
+      );
+    }
+
+    function placeStone(
+      row,
+      col,
+      player
+    ) {
+      if (
+        board[row][col] !== EMPTY ||
+        isCellFrozenFor(
+          player,
+          row,
+          col
+        )
+      ) {
+        return;
+      }
+
+      board[row][col] =
+        player;
+
+      roleBoard[row][col] =
+        player === PLAYER
+          ? playerRole
+          : "staff";
+
+      moveNumber += 1;
+
+      lastMove = {
+        row,
+        col
+      };
+
+      renderBoard();
+
+      const winResult =
+        checkWin(
+          row,
+          col,
+          player
+        );
+
+      if (winResult.hasWon) {
+        winningCells =
+          winResult.cells;
+
+        renderBoard();
+        finishRound(player);
+
+        return;
+      }
+
+      if (
+        moveNumber >=
+        BOARD_SIZE *
+        BOARD_SIZE
+      ) {
+        finishRound(EMPTY);
+        return;
+      }
+
+      if (player === PLAYER) {
+        if (
+          frozenCells.length > 0
+        ) {
+          frozenCells = [];
+        }
+
+        beginAiTurn();
+      } else {
+        beginPlayerTurn();
+      }
+    }
+
+    /* =========================================
+       五連判定
+    ========================================= */
+
+    function checkWin(
+      row,
+      col,
+      player
+    ) {
+      for (
+        const [
+          rowStep,
+          colStep
+        ] of DIRECTIONS
+      ) {
+        const cells = [
+          {
+            row,
+            col
+          }
+        ];
+
+        collectConnectedCells(
+          row,
+          col,
+          player,
+          rowStep,
+          colStep,
+          cells
+        );
+
+        collectConnectedCells(
+          row,
+          col,
+          player,
+          -rowStep,
+          -colStep,
+          cells
+        );
+
+        if (
+          cells.length >= 5
+        ) {
+          return {
+            hasWon: true,
+            cells
+          };
+        }
+      }
+
+      return {
+        hasWon: false,
+        cells: []
+      };
+    }
+
+    function collectConnectedCells(
+      row,
+      col,
+      player,
+      rowStep,
+      colStep,
+      cells
+    ) {
+      let targetRow =
+        row + rowStep;
+
+      let targetCol =
+        col + colStep;
+
+      while (
+        isInsideBoard(
+          targetRow,
+          targetCol
+        ) &&
+        board[targetRow][targetCol] ===
+          player
+      ) {
+        cells.push({
+          row: targetRow,
+          col: targetCol
+        });
+
+        targetRow += rowStep;
+        targetCol += colStep;
+      }
+    }
+
+    function isInsideBoard(
+      row,
+      col
+    ) {
+      return (
+        row >= 0 &&
+        row < BOARD_SIZE &&
+        col >= 0 &&
+        col < BOARD_SIZE
+      );
+    }
+
+    /* =========================================
+       AI
+    ========================================= */
+
+    function chooseAiMove() {
+      const winningMove =
+        findImmediateMove(AI);
+
+      if (winningMove) {
+        return winningMove;
+      }
+
+      const blockingMove =
+        findImmediateMove(PLAYER);
+
+      if (blockingMove) {
+        return blockingMove;
+      }
+
+      let bestScore =
+        -Infinity;
+
+      let bestMoves = [];
+
+      for (
+        let row = 0;
+        row < BOARD_SIZE;
+        row += 1
+      ) {
+        for (
+          let col = 0;
+          col < BOARD_SIZE;
+          col += 1
+        ) {
+          if (
+            board[row][col] !== EMPTY ||
+            isCellFrozenFor(
+              AI,
+              row,
+              col
+            )
+          ) {
+            continue;
+          }
+
+          const score =
+            evaluateMove(
+              row,
+              col
+            );
+
+          if (
+            score > bestScore
+          ) {
+            bestScore = score;
+
+            bestMoves = [
+              {
+                row,
+                col
+              }
+            ];
+          } else if (
+            score === bestScore
+          ) {
+            bestMoves.push({
+              row,
+              col
+            });
+          }
+        }
+      }
+
+      if (
+        bestMoves.length === 0
+      ) {
+        return null;
+      }
+
+      return bestMoves[
+        Math.floor(
+          Math.random() *
+          bestMoves.length
+        )
+      ];
+    }
+
+    function findImmediateMove(
+      player
+    ) {
+      for (
+        let row = 0;
+        row < BOARD_SIZE;
+        row += 1
+      ) {
+        for (
+          let col = 0;
+          col < BOARD_SIZE;
+          col += 1
+        ) {
+          if (
+            board[row][col] !== EMPTY ||
+            isCellFrozenFor(
+              player,
+              row,
+              col
+            )
+          ) {
+            continue;
+          }
+
+          board[row][col] =
+            player;
+
+          const wins =
+            checkWin(
+              row,
+              col,
+              player
+            ).hasWon;
+
+          board[row][col] =
+            EMPTY;
+
+          if (wins) {
+            return {
+              row,
+              col
+            };
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function evaluateMove(
+      row,
+      col
+    ) {
+      board[row][col] = AI;
+
+      let score =
+        evaluatePatterns(
+          row,
+          col,
+          AI
+        ) * 1.15;
+
+      board[row][col] =
+        PLAYER;
+
+      score +=
+        evaluatePatterns(
+          row,
+          col,
+          PLAYER
+        );
+
+      board[row][col] =
+        EMPTY;
+
+      score +=
+        Math.max(
+          0,
+          12 -
+          (
+            Math.abs(
+              row - 4.5
+            ) +
+            Math.abs(
+              col - 4.5
+            )
+          )
+        );
+
+      return score;
+    }
+
+    function evaluatePatterns(
+      row,
+      col,
+      player
+    ) {
+      let total = 0;
+
+      for (
+        const [
+          rowStep,
+          colStep
+        ] of DIRECTIONS
+      ) {
+        let count = 1;
+        let openEnds = 0;
+
+        let targetRow =
+          row + rowStep;
+
+        let targetCol =
+          col + colStep;
+
+        while (
+          isInsideBoard(
+            targetRow,
+            targetCol
+          ) &&
+          board[targetRow][targetCol] ===
+            player
+        ) {
+          count += 1;
+
+          targetRow += rowStep;
+          targetCol += colStep;
+        }
+
+        if (
+          isInsideBoard(
+            targetRow,
+            targetCol
+          ) &&
+          board[targetRow][targetCol] ===
+            EMPTY
+        ) {
+          openEnds += 1;
+        }
+
+        targetRow =
+          row - rowStep;
+
+        targetCol =
+          col - colStep;
+
+        while (
+          isInsideBoard(
+            targetRow,
+            targetCol
+          ) &&
+          board[targetRow][targetCol] ===
+            player
+        ) {
+          count += 1;
+
+          targetRow -= rowStep;
+          targetCol -= colStep;
+        }
+
+        if (
+          isInsideBoard(
+            targetRow,
+            targetCol
+          ) &&
+          board[targetRow][targetCol] ===
+            EMPTY
+        ) {
+          openEnds += 1;
+        }
+
+        if (count >= 5) {
+          total += 100000;
+        } else if (
+          count === 4 &&
+          openEnds === 2
+        ) {
+          total += 12000;
+        } else if (
+          count === 4
+        ) {
+          total += 4200;
+        } else if (
+          count === 3 &&
+          openEnds === 2
+        ) {
+          total += 1100;
+        } else if (
+          count === 3
+        ) {
+          total += 260;
+        } else if (
+          count === 2 &&
+          openEnds === 2
+        ) {
+          total += 80;
+        } else {
+          total += 12;
+        }
+      }
+
+      return total;
+    }
+
+    /* =========================================
+       技能
+    ========================================= */
+
+    function selectSkill(
+      skillType
+    ) {
+      const canUseSkill =
+        currentPlayer === PLAYER &&
+        playerRole === "staff" &&
+        !playerSkillUsed &&
+        !aiThinking &&
+        !roundEnded;
+
+      if (!canUseSkill) {
+        return;
+      }
+
+      selectedSkill =
+        skillType;
+
+      $("skillMessage").textContent =
+        skillType === "fire"
+          ? "選擇自己的棋子：移除其正上與正下敵棋"
+          : "選擇敵方棋子：冰封其上下左右空格";
+
+      $("cancelSkillButton").hidden =
+        false;
+
+      updateInterface();
+      renderBoard();
+    }
+
+    function handleSkillTarget(
+      row,
+      col
+    ) {
+      if (
+        selectedSkill === "fire"
+      ) {
+        castFire(
+          row,
+          col
+        );
+
+        return;
+      }
+
+      if (
+        selectedSkill === "ice"
+      ) {
+        castIce(
+          row,
+          col
+        );
+      }
+    }
+
+    function castFire(
+      row,
+      col
+    ) {
+      if (
+        board[row][col] !== PLAYER
+      ) {
+        $("skillMessage").textContent =
+          "FIRE 必須選擇自己的棋子";
+
+        return;
+      }
+
+      let removedCount = 0;
+
+      const targets = [
+        [row - 1, col],
+        [row + 1, col]
+      ];
+
+      targets.forEach(
+        ([
+          targetRow,
+          targetCol
+        ]) => {
+          if (
+            isInsideBoard(
+              targetRow,
+              targetCol
+            ) &&
+            board[targetRow][targetCol] ===
+              AI
+          ) {
+            board[targetRow][targetCol] =
+              EMPTY;
+
+            roleBoard[targetRow][targetCol] =
+              null;
+
+            removedCount += 1;
+          }
+        }
+      );
+
+      completeSkill(
+        removedCount > 0
+          ? `FIRE 移除 ${removedCount} 顆敵棋`
+          : "FIRE 啟動，但沒有命中敵棋"
+      );
+    }
+
+    function castIce(
+      row,
+      col
+    ) {
+      if (
+        board[row][col] !== AI
+      ) {
+        $("skillMessage").textContent =
+          "ICE 必須選擇敵方棋子";
+
+        return;
+      }
+
+      const targets = [
+        [row - 1, col],
+        [row + 1, col],
+        [row, col - 1],
+        [row, col + 1]
+      ];
+
+      frozenCells =
+        targets
+          .filter(
+            ([
+              targetRow,
+              targetCol
+            ]) =>
+              isInsideBoard(
+                targetRow,
+                targetCol
+              ) &&
+              board[targetRow][targetCol] ===
+                EMPTY
+          )
+          .map(
+            ([
+              targetRow,
+              targetCol
+            ]) => ({
+              row: targetRow,
+              col: targetCol,
+              blockedPlayer: AI
+            })
+          );
+
+      completeSkill(
+        frozenCells.length > 0
+          ? `ICE 冰封 ${frozenCells.length} 個格子`
+          : "ICE 啟動，但沒有可冰封格"
+      );
+    }
+
+    function completeSkill(
+      message
+    ) {
+      playerSkillUsed = true;
+      selectedSkill = null;
+
+      $("cancelSkillButton").hidden =
+        true;
+
+      $("skillMessage").textContent =
+        message;
+
+      renderBoard();
+      updateInterface();
+
+      setGameTimer(() => {
+        beginAiTurn();
+      }, 650);
+    }
+
+    function cancelSkillSelection() {
+      selectedSkill = null;
+
+      $("cancelSkillButton").hidden =
+        true;
+
+      $("skillMessage").textContent =
+        "已取消技能";
+
+      updateInterface();
+      renderBoard();
+    }
+
+    function isCellFrozenFor(
+      player,
+      row,
+      col
+    ) {
+      return frozenCells.some(
+        (cell) =>
+          cell.blockedPlayer ===
+            player &&
+          cell.row === row &&
+          cell.col === col
+      );
+    }
+
+    /* =========================================
+       單局結算
+    ========================================= */
+
+    function finishRound(
+      winner
+    ) {
+      roundEnded = true;
+
+      $("board")
+        .classList
+        .add("locked");
+
+      if (
+        winner === EMPTY
+      ) {
+        $("turnMessage").textContent =
+          "本局和棋";
+
+        setGameTimer(() => {
+          roundNumber += 1;
+          startRound();
+        }, 1500);
+
+        return;
+      }
+
+      const damage =
+        Math.max(
+          50,
+          Math.min(
+            64,
+            50 +
+            Math.floor(
+              (
+                55 -
+                moveNumber
+              ) /
+              5
+            )
+          )
+        );
+
+      if (
+        winner === PLAYER
+      ) {
+        playerScore += 1;
+
+        aiHp =
+          Math.max(
+            0,
+            aiHp - damage
+          );
+
+        showDamage(
+          damage,
+          false
+        );
+      } else {
+        aiScore += 1;
+
+        playerHp =
+          Math.max(
+            0,
+            playerHp - damage
+          );
+
+        showDamage(
+          damage,
+          true
+        );
+      }
+
+      updateInterface();
+
+      $("turnMessage").textContent =
+        winner === PLAYER
+          ? `玩家勝利｜造成 ${damage} 傷害`
+          : `AI 勝利｜造成 ${damage} 傷害`;
+
+      matchEnded =
+        playerScore >= WIN_SCORE ||
+        aiScore >= WIN_SCORE;
+
+      setGameTimer(() => {
+        if (matchEnded) {
+          showMatchResult();
+        } else {
+          roundNumber += 1;
+          startRound();
+        }
+      }, 1500);
+    }
+
+    function showDamage(
+      damage,
+      toPlayer
+    ) {
+      const damageText =
+        $("damageText");
+
+      damageText.textContent =
+        `-${damage}`;
+
+      damageText.style.left =
+        toPlayer
+          ? "22%"
+          : "72%";
+
+      damageText.style.top =
+        "11%";
+
+      damageText.classList.remove(
+        "show"
+      );
+
+      void damageText.offsetWidth;
+
+      damageText.classList.add(
+        "show"
+      );
+    }
+
+    function showMatchResult() {
+      $("finalPlayerScore").textContent =
+        String(playerScore);
+
+      $("finalAiScore").textContent =
+        String(aiScore);
+
+      $("resultTitle").textContent =
+        playerScore > aiScore
+          ? "玩家取得最終勝利"
+          : "赤焰術師取得最終勝利";
+
+      $("resultDescription").textContent =
+        `${playerScore} VS ${aiScore}，三戰兩勝對決結束。`;
+
+      $("resultOverlay")
+        .classList
+        .add("show");
+    }
+
+    /* =========================================
+       UI 更新
+    ========================================= */
+
+    function updateInterface() {
+      $("playerScore").textContent =
+        String(playerScore);
+
+      $("aiScore").textContent =
+        String(aiScore);
+
+      $("playerHpText").textContent =
+        String(playerHp);
+
+      $("aiHpText").textContent =
+        String(aiHp);
+
+      $("playerHpBar").style.width =
+        `${playerHp}%`;
+
+      $("aiHpBar").style.width =
+        `${aiHp}%`;
+
+      $("moveCount").textContent =
+        `MOVE ${moveNumber}`;
+
+      const canUseSkill =
+        currentPlayer === PLAYER &&
+        playerRole === "staff" &&
+        !playerSkillUsed &&
+        !aiThinking &&
+        !roundEnded;
+
+      $("fireButton").disabled =
+        !canUseSkill;
+
+      $("iceButton").disabled =
+        !canUseSkill;
+
+      $("fireButton")
+        .classList
+        .toggle(
+          "active",
+          selectedSkill === "fire"
+        );
+
+      $("iceButton")
+        .classList
+        .toggle(
+          "active",
+          selectedSkill === "ice"
+        );
+
+      if (playerSkillUsed) {
+        $("skillState").textContent =
+          "USED";
+      } else if (
+        currentPlayer === PLAYER
+      ) {
+        $("skillState").textContent =
+          playerRole === "staff"
+            ? "READY"
+            : "NORMAL";
+      }
+    }
+
+    function renderBoard() {
+      document
+        .querySelectorAll(".cell")
+        .forEach((cell) => {
+          const row =
+            Number(
+              cell.dataset.row
+            );
+
+          const col =
+            Number(
+              cell.dataset.col
+            );
+
+          cell.className =
+            "cell";
+
+          if (
+            lastMove &&
+            lastMove.row === row &&
+            lastMove.col === col
+          ) {
+            cell.classList.add(
+              "last-move"
+            );
+          }
+
+          if (
+            winningCells.some(
+              (winningCell) =>
+                winningCell.row === row &&
+                winningCell.col === col
+            )
+          ) {
+            cell.classList.add(
+              "winning"
+            );
+          }
+
+          if (
+            isCellFrozenFor(
+              AI,
+              row,
+              col
+            ) &&
+            board[row][col] === EMPTY
+          ) {
+            cell.classList.add(
+              "frozen"
+            );
+          }
+
+          if (
+            selectedSkill === "fire" &&
+            board[row][col] === PLAYER
+          ) {
+            cell.classList.add(
+              "skill-target"
+            );
+          }
+
+          if (
+            selectedSkill === "ice" &&
+            board[row][col] === AI
+          ) {
+            cell.classList.add(
+              "skill-target"
+            );
+          }
+
+          cell.innerHTML = "";
+
+          if (
+            board[row][col] === EMPTY
+          ) {
+            return;
+          }
+
+          cell.classList.add(
+            "occupied"
+          );
+
+          const unit =
+            document.createElement(
+              "span"
+            );
+
+          if (
+            board[row][col] === PLAYER
+          ) {
+            unit.className =
+              `unit player ${
+                roleBoard[row][col] ||
+                "staff"
+              }`;
+          } else {
+            unit.className =
+              "unit ai";
+          }
+
+          cell.appendChild(unit);
+        });
+    }
+
+    /* =========================================
+       事件
+    ========================================= */
+
+    $("startButton")
+      .addEventListener(
+        "click",
+        () => {
+          showScreen(
+            "modeScreen"
+          );
+        }
+      );
+
+    $("modeBackButton")
+      .addEventListener(
+        "click",
+        () => {
+          showScreen(
+            "homeScreen"
+          );
+        }
+      );
+
+    document
+      .querySelectorAll(
+        ".mode-card"
+      )
+      .forEach((modeCard) => {
+        modeCard.addEventListener(
+          "click",
+          () => {
+            if (
+              modeCard.dataset.mode ===
+              "single"
+            ) {
+              startMatch();
+            } else {
+              showToast(
+                "此模式尚未開放"
+              );
+            }
+          }
+        );
+      });
+
+    $("battleBackButton")
+      .addEventListener(
+        "click",
+        () => {
+          clearGameTimers();
+
+          showScreen(
+            "modeScreen"
+          );
+        }
+      );
+
+    $("restartButton")
+      .addEventListener(
+        "click",
+        startMatch
+      );
+
+    $("playAgainButton")
+      .addEventListener(
+        "click",
+        startMatch
+      );
+
+    $("resultModeButton")
+      .addEventListener(
+        "click",
+        () => {
+          $("resultOverlay")
+            .classList
+            .remove("show");
+
+          showScreen(
+            "modeScreen"
+          );
+        }
+      );
+
+    $("fireButton")
+      .addEventListener(
+        "click",
+        () => {
+          selectSkill("fire");
+        }
+      );
+
+    $("iceButton")
+      .addEventListener(
+        "click",
+        () => {
+          selectSkill("ice");
+        }
+      );
+
+    $("cancelSkillButton")
+      .addEventListener(
+        "click",
+        cancelSkillSelection
+      );
+
+    /* =========================================
+       啟動
+    ========================================= */
+
+    createBoardGrid();
+  </script>
 </body>
 </html>
