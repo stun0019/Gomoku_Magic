@@ -2925,6 +2925,212 @@ button:focus-visible{
   }
 }
 
+
+/* ==================================================
+   正向 2.5D 戰棋棋盤
+   保留透視深度，但不旋轉為菱形
+================================================== */
+
+.board-frame{
+  width:
+    min(
+      94cqw,
+      100%,
+      calc(100cqh - 326px),
+      640px
+    );
+  aspect-ratio:1 / 1.05;
+  overflow:visible;
+  perspective:900px;
+}
+
+.board-grid::before{
+  left:50%;
+  top:50%;
+  width:96%;
+  height:76%;
+  transform:translate(-50%,-50%);
+  clip-path:
+    polygon(
+      15% 8%,
+      85% 8%,
+      98% 91%,
+      2% 91%
+    );
+  background:
+    linear-gradient(
+      180deg,
+      rgba(83,68,139,.34),
+      rgba(24,24,48,.94)
+    );
+  box-shadow:
+    0 24px 34px rgba(0,0,0,.4);
+}
+
+.board-grid::after{
+  left:50%;
+  top:48%;
+  width:91%;
+  height:68%;
+  transform:translate(-50%,-50%);
+  clip-path:
+    polygon(
+      14% 4%,
+      86% 4%,
+      99% 96%,
+      1% 96%
+    );
+  border:1px solid rgba(156,139,255,.2);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(139,113,255,.06),
+      rgba(70,54,122,.09)
+    );
+  box-shadow:
+    inset 0 0 32px rgba(132,106,255,.08);
+}
+
+.iso-depth,
+.intersection{
+  clip-path:
+    polygon(
+      5% 0,
+      95% 0,
+      100% 100%,
+      0 100%
+    );
+}
+
+.iso-depth{
+  transform:translate(-50%,-50%);
+  border:
+    1px solid
+    rgba(160,146,226,.16);
+}
+
+.iso-depth.tile-a{
+  background:
+    linear-gradient(
+      180deg,
+      #3a3161,
+      #211d3b
+    );
+}
+
+.iso-depth.tile-b{
+  background:
+    linear-gradient(
+      180deg,
+      #302950,
+      #19192f
+    );
+}
+
+.intersection{
+  transform:translate(-50%,-50%);
+  border:
+    1px solid
+    rgba(151,139,218,.2);
+}
+
+.intersection.tile-a{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(105,91,168,.97),
+      rgba(55,47,99,.98)
+    );
+}
+
+.intersection.tile-b{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(83,75,142,.97),
+      rgba(40,38,79,.98)
+    );
+}
+
+.board-frame.player-turn
+.intersection:not(.occupied):hover{
+  transform:
+    translate(-50%,-57%)
+    scale(1.02);
+}
+
+.intersection.skill-target{
+  animation:
+    perspectiveTargetPulse
+    .72s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes perspectiveTargetPulse{
+  from{
+    transform:
+      translate(-50%,-50%)
+      scale(.96);
+  }
+  to{
+    transform:
+      translate(-50%,-57%)
+      scale(1.035);
+  }
+}
+
+.unit-base{
+  transform:translate(-50%,-28%);
+}
+
+.stone{
+  transform:
+    translate(-50%,-94%)
+    scale(0);
+}
+
+.last-marker{
+  transform:translate(-50%,-27%);
+}
+
+@keyframes unitDeploy{
+  0%{
+    opacity:0;
+    transform:
+      translate(-50%,-68%)
+      scale(.35);
+  }
+  100%{
+    opacity:1;
+    transform:
+      translate(-50%,-94%)
+      scale(1);
+  }
+}
+
+@keyframes markerPulse{
+  to{
+    opacity:.45;
+    transform:
+      translate(-50%,-27%)
+      scale(1.12);
+  }
+}
+
+@media(max-height:760px){
+  .board-frame{
+    width:
+      min(
+        91cqw,
+        100%,
+        calc(100cqh - 282px),
+        560px
+      );
+  }
+}
+
 </style>
 </head>
 
@@ -3270,10 +3476,11 @@ const AI = 2;
 
 const BOARD_SIZE = 10;
 
-/* 2.5D 等角棋盤參數，單位為棋盤容器百分比 */
-const ISO_TILE_WIDTH = 9.1;
-const ISO_TILE_HEIGHT = 4.8;
-const ISO_ORIGIN_Y = 25.5;
+/* 2.5D 正向透視棋盤參數，單位為棋盤容器百分比 */
+const BOARD_TOP_Y = 17;
+const BOARD_BOTTOM_Y = 79;
+const BOARD_TOP_WIDTH = 68;
+const BOARD_BOTTOM_WIDTH = 92;
 const WIN_SCORE = 2;
 const MAX_HP = 100;
 
@@ -3548,19 +3755,43 @@ function showRoundIntro() {
 
 
 function getIsoPosition(row, col) {
+  const rowProgress =
+    (row + 0.5) / BOARD_SIZE;
+
+  const boardWidth =
+    BOARD_TOP_WIDTH +
+    (
+      BOARD_BOTTOM_WIDTH -
+      BOARD_TOP_WIDTH
+    ) *
+    rowProgress;
+
+  const boardHeight =
+    BOARD_BOTTOM_Y -
+    BOARD_TOP_Y;
+
   return {
     x:
       50 +
-      (col - row) *
-      (ISO_TILE_WIDTH / 2),
+      (
+        (col + 0.5) / BOARD_SIZE -
+        0.5
+      ) *
+      boardWidth,
 
     y:
-      ISO_ORIGIN_Y +
-      (row + col) *
-      (ISO_TILE_HEIGHT / 2),
+      BOARD_TOP_Y +
+      rowProgress *
+      boardHeight,
+
+    tileWidth:
+      boardWidth / BOARD_SIZE,
+
+    tileHeight:
+      boardHeight / BOARD_SIZE,
 
     depth:
-      row + col
+      row
   };
 }
 
@@ -3589,13 +3820,13 @@ function createGridLines() {
         `${position.y}%`;
 
       depthTile.style.width =
-        `${ISO_TILE_WIDTH}%`;
+        `${position.tileWidth + 0.16}%`;
 
       depthTile.style.height =
-        `${ISO_TILE_HEIGHT}%`;
+        `${position.tileHeight + 0.12}%`;
 
       depthTile.style.zIndex =
-        String(10 + position.depth);
+        String(10 + row);
 
       gridLines.appendChild(depthTile);
     }
@@ -3637,13 +3868,13 @@ function createBoard() {
         `${position.y}%`;
 
       button.style.width =
-        `${ISO_TILE_WIDTH}%`;
+        `${position.tileWidth + 0.16}%`;
 
       button.style.height =
-        `${ISO_TILE_HEIGHT}%`;
+        `${position.tileHeight + 0.12}%`;
 
       button.style.zIndex =
-        String(100 + position.depth);
+        String(100 + row);
 
       button.addEventListener(
         "click",
