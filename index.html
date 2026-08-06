@@ -2276,6 +2276,655 @@ button:focus-visible{
     display:none;
   }
 }
+
+/* ==================================================
+   10×10 2.5D 等角戰棋棋盤
+================================================== */
+
+.board-frame{
+  width:
+    min(
+      95cqw,
+      100%,
+      calc(100cqh - 330px),
+      650px
+    );
+  aspect-ratio:1.16 / 1;
+  padding:0;
+  overflow:visible;
+  border:1px solid rgba(161,150,255,.24);
+  border-radius:24px;
+  background:
+    radial-gradient(
+      ellipse at 50% 72%,
+      rgba(106,80,186,.2),
+      transparent 44%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(20,24,49,.76),
+      rgba(6,8,19,.88)
+    );
+  box-shadow:
+    0 28px 48px rgba(0,0,0,.46),
+    0 0 0 1px rgba(241,200,106,.08),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  perspective:900px;
+}
+
+.board-frame::before{
+  inset:7px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:17px;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.025),
+      transparent 32%
+    );
+}
+
+.board-frame::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:8%;
+  width:72%;
+  height:12%;
+  transform:translateX(-50%);
+  border-radius:50%;
+  pointer-events:none;
+  background:rgba(0,0,0,.48);
+  filter:blur(13px);
+}
+
+.board-grid{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  isolation:isolate;
+}
+
+.board-grid::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:49%;
+  z-index:-2;
+  width:92%;
+  height:47%;
+  transform:translate(-50%,-50%);
+  clip-path:
+    polygon(
+      50% 0,
+      100% 50%,
+      50% 100%,
+      0 50%
+    );
+  background:
+    linear-gradient(
+      145deg,
+      rgba(90,73,151,.28),
+      rgba(18,20,43,.9)
+    );
+  box-shadow:
+    0 22px 34px rgba(0,0,0,.38);
+}
+
+.board-grid::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  z-index:-1;
+  width:86%;
+  height:40%;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(142,126,255,.18);
+  clip-path:
+    polygon(
+      50% 0,
+      100% 50%,
+      50% 100%,
+      0 50%
+    );
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(134,107,255,.08),
+      transparent 66%
+    );
+  box-shadow:
+    inset 0 0 30px rgba(132,106,255,.08);
+}
+
+.grid-lines,
+.board-points,
+.star-points,
+.unit-layer{
+  position:absolute;
+  inset:0;
+}
+
+.grid-lines{
+  z-index:0;
+  overflow:visible;
+  pointer-events:none;
+}
+
+.board-points{
+  z-index:1;
+  overflow:visible;
+}
+
+.star-points{
+  display:none;
+}
+
+.unit-layer{
+  z-index:4;
+  overflow:visible;
+  pointer-events:none;
+}
+
+.iso-depth{
+  position:absolute;
+  transform:translate(-50%,-30%);
+  clip-path:
+    polygon(
+      50% 0,
+      100% 50%,
+      50% 100%,
+      0 50%
+    );
+  pointer-events:none;
+}
+
+.iso-depth.tile-a{
+  background:
+    linear-gradient(
+      180deg,
+      #302755,
+      #171629
+    );
+}
+
+.iso-depth.tile-b{
+  background:
+    linear-gradient(
+      180deg,
+      #292247,
+      #121421
+    );
+}
+
+.intersection{
+  position:absolute;
+  display:block;
+  margin:0;
+  padding:0;
+  transform:translate(-50%,-50%);
+  clip-path:
+    polygon(
+      50% 0,
+      100% 50%,
+      50% 100%,
+      0 50%
+    );
+  border:0;
+  border-radius:0;
+  cursor:pointer;
+  transition:
+    filter .16s ease,
+    transform .16s ease;
+}
+
+.intersection.tile-a{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(118,101,188,.96),
+      rgba(51,43,92,.98)
+    );
+}
+
+.intersection.tile-b{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(92,83,154,.96),
+      rgba(36,35,73,.98)
+    );
+}
+
+.intersection::before,
+.intersection::after{
+  content:none !important;
+}
+
+.board-frame.player-turn
+.intersection:not(.occupied):hover{
+  transform:
+    translate(-50%,-58%);
+  filter:
+    brightness(1.32)
+    saturate(1.12)
+    drop-shadow(
+      0 5px 7px
+      rgba(140,117,255,.42)
+    );
+}
+
+.intersection:focus-visible{
+  outline:none;
+  filter:
+    brightness(1.35)
+    drop-shadow(
+      0 0 7px
+      rgba(241,200,106,.78)
+    );
+}
+
+.intersection.occupied{
+  filter:brightness(.92);
+}
+
+.intersection.skill-target{
+  cursor:crosshair;
+  filter:
+    brightness(1.34)
+    drop-shadow(
+      0 0 8px
+      rgba(255,211,116,.82)
+    );
+  animation:
+    isoTargetPulse
+    .72s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.intersection.fire-preview{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,120,82,.98),
+      rgba(105,35,55,.98)
+    );
+}
+
+.intersection.ice-preview{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(129,224,255,.98),
+      rgba(48,91,159,.98)
+    );
+}
+
+.intersection.frozen-cell{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(216,250,255,.98),
+      rgba(67,149,218,.94)
+    );
+  filter:
+    brightness(1.12)
+    drop-shadow(
+      0 0 8px
+      rgba(93,210,255,.78)
+    );
+}
+
+.intersection.winner{
+  filter:
+    brightness(1.34)
+    drop-shadow(
+      0 0 9px
+      rgba(104,255,177,.86)
+    );
+}
+
+@keyframes isoTargetPulse{
+  from{
+    transform:translate(-50%,-50%) scale(.94);
+  }
+  to{
+    transform:translate(-50%,-56%) scale(1.03);
+  }
+}
+
+/* 戰棋單位底座 */
+.unit-base{
+  position:absolute;
+  width:clamp(26px,6.4%,43px);
+  height:clamp(8px,1.9%,13px);
+  transform:translate(-50%,-34%);
+  border-radius:50%;
+  background:rgba(0,0,0,.52);
+  box-shadow:
+    0 5px 8px rgba(0,0,0,.3);
+}
+
+.unit-base::before{
+  content:"";
+  position:absolute;
+  inset:13%;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.17);
+}
+
+.unit-base.player.element{
+  box-shadow:
+    0 0 10px rgba(104,209,255,.45),
+    0 5px 8px rgba(0,0,0,.34);
+}
+
+.unit-base.player.sword{
+  box-shadow:
+    0 0 10px rgba(241,200,106,.44),
+    0 5px 8px rgba(0,0,0,.34);
+}
+
+.unit-base.ai{
+  box-shadow:
+    0 0 10px rgba(255,83,99,.43),
+    0 5px 8px rgba(0,0,0,.34);
+}
+
+/* 暫代 Character：
+   保持直立，不隨等角地板旋轉。
+   後續可直接替換為透明背景角色圖片。 */
+.stone{
+  position:absolute;
+  width:clamp(22px,5.6%,38px);
+  aspect-ratio:.76;
+  transform:
+    translate(-50%,-98%)
+    scale(0);
+  transform-origin:50% 100%;
+  overflow:visible;
+  border-radius:
+    48% 48%
+    35% 35%;
+  border:1px solid rgba(255,255,255,.24);
+  pointer-events:none;
+  animation:
+    unitDeploy
+    .24s
+    cubic-bezier(.18,1.3,.42,1)
+    forwards;
+  filter:
+    drop-shadow(
+      0 7px 6px
+      rgba(0,0,0,.42)
+    );
+}
+
+.stone::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-28%;
+  width:68%;
+  aspect-ratio:1;
+  transform:translateX(-50%);
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.34);
+  background:
+    radial-gradient(
+      circle at 38% 32%,
+      #ffffff 0 8%,
+      #d7e6f6 9% 28%,
+      #59657c 54%,
+      #1b2130 100%
+    );
+  box-shadow:
+    0 0 8px rgba(255,255,255,.18);
+}
+
+.stone::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:12%;
+  width:55%;
+  height:34%;
+  transform:translateX(-50%);
+  border-radius:
+    50% 50%
+    30% 30%;
+  background:rgba(255,255,255,.3);
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.28);
+}
+
+.stone.element-player{
+  outline:none;
+  background:
+    linear-gradient(
+      165deg,
+      #9eeaff,
+      #7968df 45%,
+      #292452 100%
+    );
+  box-shadow:
+    0 0 11px rgba(98,204,255,.52),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+.stone.element-player::before{
+  background:
+    radial-gradient(
+      circle at 38% 32%,
+      #ffffff 0 8%,
+      #bdefff 9% 26%,
+      #786fe1 50%,
+      #282650 100%
+    );
+}
+
+.stone.sword-player{
+  outline:none;
+  background:
+    linear-gradient(
+      165deg,
+      #fff0b8,
+      #aeb8cb 42%,
+      #41495c 100%
+    );
+  box-shadow:
+    0 0 11px rgba(241,200,106,.46),
+    inset 0 1px 0 rgba(255,255,255,.32);
+}
+
+.stone.sword-player::before{
+  background:
+    radial-gradient(
+      circle at 38% 32%,
+      #fffbe2 0 8%,
+      #f4d98b 9% 26%,
+      #8b7c70 52%,
+      #302b38 100%
+    );
+}
+
+.stone.element-ai{
+  outline:none;
+  background:
+    linear-gradient(
+      165deg,
+      #ffb098,
+      #ca435d 44%,
+      #47152e 100%
+    );
+  box-shadow:
+    0 0 11px rgba(255,77,94,.48),
+    inset 0 1px 0 rgba(255,255,255,.26);
+}
+
+.stone.element-ai::before{
+  background:
+    radial-gradient(
+      circle at 38% 32%,
+      #fff1df 0 8%,
+      #ff9b87 9% 26%,
+      #a82c4f 50%,
+      #3b1228 100%
+    );
+}
+
+.stone.sword-ai{
+  outline:none;
+  background:
+    linear-gradient(
+      165deg,
+      #ffd1bd,
+      #ad5268 44%,
+      #3b1829 100%
+    );
+  box-shadow:
+    0 0 11px rgba(255,91,107,.44),
+    inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.stone.sword-ai::before{
+  background:
+    radial-gradient(
+      circle at 38% 32%,
+      #fff0df 0 8%,
+      #df9ba2 9% 26%,
+      #80334d 52%,
+      #2b111f 100%
+    );
+}
+
+.stone.just-placed{
+  animation:
+    unitDeploy
+    .24s
+    cubic-bezier(.18,1.3,.42,1)
+    forwards,
+    unitFlash
+    .56s
+    ease-out;
+}
+
+.stone.winner-unit{
+  animation:
+    unitDeploy
+    .24s
+    cubic-bezier(.18,1.3,.42,1)
+    forwards,
+    tacticalWinner
+    .72s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.last-marker{
+  position:absolute;
+  width:clamp(31px,7.2%,48px);
+  height:clamp(10px,2.2%,15px);
+  transform:translate(-50%,-32%);
+  border:2px solid #ffdd7d;
+  border-radius:50%;
+  pointer-events:none;
+  box-shadow:
+    0 0 9px rgba(255,214,113,.75);
+  animation:
+    markerPulse
+    .65s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes unitDeploy{
+  0%{
+    opacity:0;
+    transform:
+      translate(-50%,-72%)
+      scale(.35);
+  }
+  100%{
+    opacity:1;
+    transform:
+      translate(-50%,-98%)
+      scale(1);
+  }
+}
+
+@keyframes unitFlash{
+  0%{
+    filter:
+      brightness(1.8)
+      drop-shadow(
+        0 0 13px
+        rgba(255,255,255,.75)
+      );
+  }
+  100%{
+    filter:
+      brightness(1)
+      drop-shadow(
+        0 7px 6px
+        rgba(0,0,0,.42)
+      );
+  }
+}
+
+@keyframes tacticalWinner{
+  to{
+    filter:
+      brightness(1.45)
+      drop-shadow(
+        0 0 12px
+        rgba(104,255,177,.92)
+      );
+  }
+}
+
+@keyframes markerPulse{
+  to{
+    opacity:.45;
+    transform:
+      translate(-50%,-32%)
+      scale(1.12);
+  }
+}
+
+@media(max-height:760px){
+  .board-frame{
+    width:
+      min(
+        91cqw,
+        100%,
+        calc(100cqh - 286px),
+        570px
+      );
+  }
+
+  .stone{
+    width:clamp(19px,5.4%,32px);
+  }
+
+  .unit-base{
+    width:clamp(23px,6.1%,37px);
+  }
+}
+
+@media(max-width:390px){
+  .board-frame{
+    width:min(94cqw,100%,520px);
+  }
+}
+
 </style>
 </head>
 
@@ -2456,6 +3105,7 @@ button:focus-visible{
           <div id="gridLines" class="grid-lines"></div>
           <div id="starPoints" class="star-points"></div>
           <div id="boardPoints" class="board-points"></div>
+          <div id="unitLayer" class="unit-layer" aria-hidden="true"></div>
         </div>
       </div>
     </section>
@@ -2619,6 +3269,11 @@ const PLAYER = 1;
 const AI = 2;
 
 const BOARD_SIZE = 10;
+
+/* 2.5D 等角棋盤參數，單位為棋盤容器百分比 */
+const ISO_TILE_WIDTH = 9.1;
+const ISO_TILE_HEIGHT = 4.8;
+const ISO_ORIGIN_Y = 25.5;
 const WIN_SCORE = 2;
 const MAX_HP = 100;
 
@@ -2642,6 +3297,7 @@ const boardFrame = $("boardFrame");
 const gridLines = $("gridLines");
 const boardPoints = $("boardPoints");
 const starPoints = $("starPoints");
+const unitLayer = $("unitLayer");
 
 const roundTransition = $("roundTransition");
 const resultOverlay = $("resultOverlay");
@@ -2891,37 +3547,58 @@ function showRoundIntro() {
 }
 
 
+function getIsoPosition(row, col) {
+  return {
+    x:
+      50 +
+      (col - row) *
+      (ISO_TILE_WIDTH / 2),
+
+    y:
+      ISO_ORIGIN_Y +
+      (row + col) *
+      (ISO_TILE_HEIGHT / 2),
+
+    depth:
+      row + col
+  };
+}
+
 function createGridLines() {
   gridLines.innerHTML = "";
 
-  for (
-    let index = 0;
-    index <= BOARD_SIZE;
-    index += 1
-  ) {
-    const position =
-      (index / BOARD_SIZE) * 100;
+  for (let row = 0; row < BOARD_SIZE; row += 1) {
+    for (let col = 0; col < BOARD_SIZE; col += 1) {
+      const position =
+        getIsoPosition(row, col);
 
-    const horizontal =
-      document.createElement("span");
+      const depthTile =
+        document.createElement("span");
 
-    horizontal.className =
-      "grid-line horizontal";
+      depthTile.className =
+        `iso-depth ${
+          (row + col) % 2 === 0
+            ? "tile-a"
+            : "tile-b"
+        }`;
 
-    horizontal.style.top =
-      `${position}%`;
+      depthTile.style.left =
+        `${position.x}%`;
 
-    const vertical =
-      document.createElement("span");
+      depthTile.style.top =
+        `${position.y}%`;
 
-    vertical.className =
-      "grid-line vertical";
+      depthTile.style.width =
+        `${ISO_TILE_WIDTH}%`;
 
-    vertical.style.left =
-      `${position}%`;
+      depthTile.style.height =
+        `${ISO_TILE_HEIGHT}%`;
 
-    gridLines.appendChild(horizontal);
-    gridLines.appendChild(vertical);
+      depthTile.style.zIndex =
+        String(10 + position.depth);
+
+      gridLines.appendChild(depthTile);
+    }
   }
 }
 
@@ -2930,20 +3607,43 @@ function createBoard() {
 
   for (let row = 0; row < BOARD_SIZE; row += 1) {
     for (let col = 0; col < BOARD_SIZE; col += 1) {
+      const position =
+        getIsoPosition(row, col);
+
       const button =
         document.createElement("button");
 
       button.type = "button";
-      button.className = "intersection";
+
+      button.className =
+        `intersection ${
+          (row + col) % 2 === 0
+            ? "tile-a"
+            : "tile-b"
+        }`;
 
       button.dataset.row = String(row);
       button.dataset.col = String(col);
 
+      button.setAttribute(
+        "aria-label",
+        `第 ${row + 1} 列，第 ${col + 1} 格`
+      );
+
       button.style.left =
-        `${((col + 0.5) / BOARD_SIZE) * 100}%`;
+        `${position.x}%`;
 
       button.style.top =
-        `${((row + 0.5) / BOARD_SIZE) * 100}%`;
+        `${position.y}%`;
+
+      button.style.width =
+        `${ISO_TILE_WIDTH}%`;
+
+      button.style.height =
+        `${ISO_TILE_HEIGHT}%`;
+
+      button.style.zIndex =
+        String(100 + position.depth);
 
       button.addEventListener(
         "click",
@@ -4130,6 +4830,8 @@ function updateTurn() {
 }
 
 function renderBoard() {
+  unitLayer.innerHTML = "";
+
   boardPoints
     .querySelectorAll(".intersection")
     .forEach((element) => {
@@ -4142,7 +4844,8 @@ function renderBoard() {
       const cell =
         board[row][col];
 
-      element.innerHTML = "";
+      const position =
+        getIsoPosition(row, col);
 
       element.classList.remove(
         "occupied",
@@ -4160,22 +4863,24 @@ function renderBoard() {
         element.classList.add("frozen-cell");
       }
 
-      if (selectedElement === "fire") {
-        if (cell === PLAYER) {
-          element.classList.add(
-            "skill-target",
-            "fire-preview"
-          );
-        }
+      if (
+        selectedElement === "fire" &&
+        cell === PLAYER
+      ) {
+        element.classList.add(
+          "skill-target",
+          "fire-preview"
+        );
       }
 
-      if (selectedElement === "ice") {
-        if (cell === AI) {
-          element.classList.add(
-            "skill-target",
-            "ice-preview"
-          );
-        }
+      if (
+        selectedElement === "ice" &&
+        cell === AI
+      ) {
+        element.classList.add(
+          "skill-target",
+          "ice-preview"
+        );
       }
 
       if (cell === EMPTY) {
@@ -4184,11 +4889,38 @@ function renderBoard() {
 
       element.classList.add("occupied");
 
-      const stone =
-        document.createElement("span");
-
       const stoneRole =
         roleBoard[row][col] || "element";
+
+      const teamClass =
+        cell === PLAYER
+          ? "player"
+          : "ai";
+
+      const roleClass =
+        stoneRole === "sword"
+          ? "sword"
+          : "element";
+
+      const base =
+        document.createElement("span");
+
+      base.className =
+        `unit-base ${teamClass} ${roleClass}`;
+
+      base.style.left =
+        `${position.x}%`;
+
+      base.style.top =
+        `${position.y}%`;
+
+      base.style.zIndex =
+        String(200 + position.depth * 3);
+
+      unitLayer.appendChild(base);
+
+      const stone =
+        document.createElement("span");
 
       if (cell === PLAYER) {
         stone.className =
@@ -4202,40 +4934,53 @@ function renderBoard() {
             : "stone element-ai";
       }
 
+      stone.style.left =
+        `${position.x}%`;
+
+      stone.style.top =
+        `${position.y}%`;
+
+      stone.style.zIndex =
+        String(201 + position.depth * 3);
+
       if (
         lastMove &&
         lastMove.row === row &&
         lastMove.col === col
       ) {
         stone.classList.add("just-placed");
-      }
 
-      element.appendChild(stone);
-
-      if (
-        lastMove &&
-        lastMove.row === row &&
-        lastMove.col === col
-      ) {
         const marker =
           document.createElement("span");
 
         marker.className =
           "last-marker";
 
-        element.appendChild(marker);
+        marker.style.left =
+          `${position.x}%`;
+
+        marker.style.top =
+          `${position.y}%`;
+
+        marker.style.zIndex =
+          String(202 + position.depth * 3);
+
+        unitLayer.appendChild(marker);
       }
 
       const isWinner =
         winningPositions.some(
-          (position) =>
-            position.row === row &&
-            position.col === col
+          (winningPosition) =>
+            winningPosition.row === row &&
+            winningPosition.col === col
         );
 
       if (isWinner) {
         element.classList.add("winner");
+        stone.classList.add("winner-unit");
       }
+
+      unitLayer.appendChild(stone);
     });
 
   $("moveText").textContent =
