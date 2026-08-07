@@ -5,12 +5,17 @@
 
   <meta
     name="viewport"
-    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  >
+
+  <meta
+    name="theme-color"
+    content="#111832"
   >
 
   <meta
     name="description"
-    content="魔法の五目並べ｜Three.js 8×8 魔法戰棋五子棋"
+    content="魔法の五目並べ｜9:16 日系魔法戰棋五子棋 Demo"
   >
 
   <title>魔法の五目並べ</title>
@@ -25,24 +30,44 @@
 
   <style>
     :root {
-      --bg-0: #060813;
-      --bg-1: #0d1327;
-      --bg-2: #192245;
+      --night-950: #060812;
+      --night-900: #0b1020;
+      --night-850: #10172d;
+      --night-800: #182143;
 
-      --panel: rgba(12, 17, 35, 0.88);
+      --indigo: #5968c8;
+      --indigo-bright: #8195ff;
+      --cyan: #7ee7ee;
+      --jade: #73d7b0;
+
+      --sakura: #f2a8bc;
+      --sakura-light: #ffd8e2;
+
+      --vermilion: #e45f52;
+      --vermilion-light: #ffad89;
+
+      --gold: #e9bd65;
+      --gold-light: #ffe7a5;
+
+      --paper: #f8f0df;
+      --ink: #24243b;
+
+      --text: #fffaf4;
+      --muted: #aaaec3;
+
+      --panel: rgba(9, 14, 30, 0.86);
       --panel-soft: rgba(255, 255, 255, 0.055);
+
       --line: rgba(255, 255, 255, 0.12);
+      --line-gold: rgba(233, 189, 101, 0.34);
 
-      --text: #f7f5ff;
-      --muted: #a7a8bb;
+      --shadow:
+        0 22px 54px
+        rgba(0, 0, 0, 0.4);
 
-      --gold: #f2c96e;
-      --gold-light: #ffe8aa;
-
-      --violet: #9c7cff;
-      --cyan: #72ddff;
-      --red: #ff7986;
-      --green: #7fe3a6;
+      --radius-lg: 22px;
+      --radius-md: 15px;
+      --radius-sm: 10px;
     }
 
     * {
@@ -55,6 +80,7 @@
     body {
       width: 100%;
       height: 100%;
+      overscroll-behavior: none;
     }
 
     body {
@@ -67,45 +93,65 @@
 
       font-family:
         "Noto Sans TC",
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
         "Microsoft JhengHei",
-        Arial,
         sans-serif;
 
       background:
         radial-gradient(
-          circle at 50% 0,
-          rgba(126, 101, 255, 0.22),
-          transparent 36%
+          circle at 50% -10%,
+          rgba(129, 149, 255, 0.25),
+          transparent 38%
         ),
         linear-gradient(
-          160deg,
-          #11162a,
-          #04060c
+          155deg,
+          #151a31 0%,
+          #05070d 74%
         );
     }
 
     button {
-      font: inherit;
       color: inherit;
+      font: inherit;
 
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color:
+        transparent;
     }
 
     button:focus-visible {
-      outline: 2px solid var(--gold-light);
+      outline:
+        2px solid
+        var(--gold-light);
+
       outline-offset: 3px;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     .app {
       position: relative;
 
-      width: min(
-        100vw,
-        56.25vh,
-        720px
-      );
+      width:
+        min(
+          100vw,
+          calc(100svh * 9 / 16),
+          720px
+        );
 
-      max-height: 100vh;
+      height:
+        min(
+          100svh,
+          calc(100vw * 16 / 9),
+          1280px
+        );
+
       aspect-ratio: 9 / 16;
 
       overflow: hidden;
@@ -113,25 +159,25 @@
 
       background:
         radial-gradient(
-          circle at 50% 8%,
-          rgba(154, 124, 255, 0.18),
-          transparent 32%
+          circle at 78% 9%,
+          rgba(242, 168, 188, 0.12),
+          transparent 24%
         ),
         radial-gradient(
-          circle at 50% 90%,
-          rgba(105, 214, 255, 0.08),
-          transparent 34%
+          circle at 16% 27%,
+          rgba(126, 231, 238, 0.08),
+          transparent 27%
         ),
         linear-gradient(
           180deg,
-          var(--bg-2),
-          var(--bg-1) 44%,
-          var(--bg-0)
+          #1b2547 0%,
+          #10172f 43%,
+          #070a15 100%
         );
 
       box-shadow:
-        0 0 90px
-        rgba(0, 0, 0, 0.68);
+        0 0 100px
+        rgba(0, 0, 0, 0.72);
     }
 
     .app::before {
@@ -139,22 +185,30 @@
 
       position: absolute;
       inset: 0;
-      z-index: -2;
+      z-index: -3;
 
-      opacity: 0.045;
+      opacity: 0.1;
 
       background-image:
-        linear-gradient(
-          rgba(255, 255, 255, 0.8) 1px,
-          transparent 1px
+        radial-gradient(
+          circle at 25% 25%,
+          transparent 20%,
+          rgba(255, 255, 255, 0.4) 21%,
+          transparent 23%
         ),
-        linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.8) 1px,
-          transparent 1px
+        radial-gradient(
+          circle at 75% 75%,
+          transparent 20%,
+          rgba(255, 255, 255, 0.32) 21%,
+          transparent 23%
         );
 
-      background-size: 52px 52px;
+      background-size:
+        46px 46px;
+
+      transform:
+        rotate(45deg)
+        scale(1.4);
     }
 
     .app::after {
@@ -162,7 +216,7 @@
 
       position: absolute;
       inset: 0;
-      z-index: -1;
+      z-index: -2;
 
       pointer-events: none;
 
@@ -170,16 +224,120 @@
         linear-gradient(
           90deg,
           rgba(255, 255, 255, 0.025),
-          transparent 16%,
-          transparent 84%,
+          transparent 17%,
+          transparent 83%,
           rgba(255, 255, 255, 0.025)
         ),
         radial-gradient(
           circle at center,
           transparent 58%,
-          rgba(0, 0, 0, 0.32)
+          rgba(0, 0, 0, 0.34)
         );
     }
+
+    /* =========================================
+       櫻花背景
+    ========================================= */
+
+    .sakura-layer {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+
+      overflow: hidden;
+
+      pointer-events: none;
+    }
+
+    .petal {
+      position: absolute;
+
+      width: 9px;
+      height: 6px;
+
+      opacity: 0.3;
+
+      border-radius:
+        70% 30% 70% 30%;
+
+      background:
+        var(--sakura-light);
+
+      filter:
+        blur(0.2px);
+
+      animation:
+        petalFall
+        linear
+        infinite;
+    }
+
+    .petal:nth-child(1) {
+      left: 8%;
+
+      animation-duration: 12s;
+      animation-delay: -4s;
+    }
+
+    .petal:nth-child(2) {
+      left: 26%;
+
+      transform: scale(0.7);
+
+      animation-duration: 15s;
+      animation-delay: -11s;
+    }
+
+    .petal:nth-child(3) {
+      left: 49%;
+
+      transform: scale(0.9);
+
+      animation-duration: 14s;
+      animation-delay: -7s;
+    }
+
+    .petal:nth-child(4) {
+      left: 72%;
+
+      transform: scale(0.65);
+
+      animation-duration: 17s;
+      animation-delay: -13s;
+    }
+
+    .petal:nth-child(5) {
+      left: 91%;
+
+      transform: scale(0.8);
+
+      animation-duration: 13s;
+      animation-delay: -8s;
+    }
+
+    @keyframes petalFall {
+      from {
+        top: -5%;
+
+        translate: 0 0;
+        rotate: 0deg;
+      }
+
+      50% {
+        translate: 22px 0;
+      }
+
+      to {
+        top: 105%;
+
+        translate: -14px 0;
+        rotate: 420deg;
+      }
+    }
+
+    /* =========================================
+       畫面切換
+    ========================================= */
 
     .screen {
       position: absolute;
@@ -189,12 +347,13 @@
       visibility: hidden;
       pointer-events: none;
 
-      transform: scale(1.012);
+      transform:
+        translateY(8px);
 
       transition:
-        opacity 0.35s ease,
-        visibility 0.35s ease,
-        transform 0.35s ease;
+        opacity 0.32s ease,
+        visibility 0.32s ease,
+        transform 0.32s ease;
     }
 
     .screen.active {
@@ -202,13 +361,18 @@
       visibility: visible;
       pointer-events: auto;
 
-      transform: scale(1);
+      transform:
+        translateY(0);
     }
 
-    .btn {
+    /* =========================================
+       共用按鈕
+    ========================================= */
+
+    .button {
       border:
         1px solid
-        rgba(255, 255, 255, 0.16);
+        rgba(255, 255, 255, 0.15);
 
       border-radius: 13px;
 
@@ -217,19 +381,25 @@
       transition:
         transform 0.18s ease,
         filter 0.18s ease,
-        background 0.18s ease;
+        background 0.18s ease,
+        border-color 0.18s ease;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.07);
+    .button:hover {
+      transform:
+        translateY(-2px);
+
+      filter:
+        brightness(1.07);
     }
 
-    .btn-primary {
-      min-width: 220px;
-      padding: 15px 28px;
+    .button-primary {
+      min-width: 224px;
 
-      color: #291d09;
+      padding:
+        15px 28px;
+
+      color: #2b200c;
 
       background:
         linear-gradient(
@@ -238,34 +408,40 @@
           var(--gold)
         );
 
+      border-color:
+        rgba(255, 255, 255, 0.54);
+
       font-weight: 950;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
 
       box-shadow:
-        0 14px 34px
-        rgba(242, 201, 110, 0.22);
+        0 15px 34px
+        rgba(233, 189, 101, 0.22);
     }
 
-    .btn-secondary,
-    .btn-small {
+    .button-secondary,
+    .button-small {
       background:
-        rgba(255, 255, 255, 0.06);
+        rgba(255, 255, 255, 0.055);
     }
 
-    .btn-secondary {
-      padding: 13px 22px;
+    .button-secondary {
+      padding:
+        12px 20px;
     }
 
-    .btn-small {
-      padding: 9px 12px;
-      font-size: 0.72rem;
+    .button-small {
+      padding:
+        9px 12px;
+
+      font-size: 0.7rem;
     }
 
-    /* ================================
+    /* =========================================
        首頁
-    ================================ */
+    ========================================= */
 
-    .home {
+    .home-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -276,7 +452,7 @@
       text-align: center;
     }
 
-    .logo-orb {
+    .home-mon {
       position: relative;
 
       width: 39%;
@@ -288,59 +464,92 @@
         1px solid
         rgba(255, 255, 255, 0.13);
 
-      border-radius: 28px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255, 255, 255, 0.07),
-          rgba(255, 255, 255, 0.02)
-        );
-
-      box-shadow:
-        0 0 58px
-        rgba(155, 124, 255, 0.18);
-    }
-
-    .logo-orb::before {
-      content: "";
-
-      position: absolute;
-      inset: 19%;
-
-      border:
-        1px solid
-        rgba(242, 201, 110, 0.44);
-
-      border-radius: 16px;
-
-      transform: rotate(45deg);
-    }
-
-    .logo-orb::after {
-      content: "";
-
-      position: absolute;
-      inset: 30%;
-
       border-radius: 50%;
 
       background:
         radial-gradient(
-          circle at 34% 28%,
-          #ffffff,
-          #c8b9ff 24%,
-          #5a3eb8 61%,
-          #21184b
+          circle,
+          rgba(242, 168, 188, 0.13),
+          transparent 64%
+        ),
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.075),
+          rgba(255, 255, 255, 0.018)
         );
 
       box-shadow:
-        0 0 30px
-        rgba(155, 124, 255, 0.6);
+        0 0 58px
+        rgba(129, 149, 255, 0.18),
+        inset 0 0 34px
+        rgba(255, 255, 255, 0.025);
     }
 
-    .home h1 {
-      color: var(--gold-light);
+    .home-mon::before,
+    .home-mon::after {
+      content: "";
+
+      position: absolute;
+      inset: 18%;
+
+      border:
+        1px solid
+        var(--line-gold);
+
+      border-radius:
+        50% 10% 50% 10%;
+
+      transform:
+        rotate(45deg);
+    }
+
+    .home-mon::after {
+      inset: 31%;
+
+      border: 0;
+      border-radius: 50%;
+
+      transform: none;
+
+      background:
+        radial-gradient(
+          circle at 35% 28%,
+          #ffffff,
+          #d7dcff 22%,
+          #6875d5 58%,
+          #24254e 100%
+        );
+
+      box-shadow:
+        0 0 28px
+        rgba(129, 149, 255, 0.65),
+        0 0 58px
+        rgba(242, 168, 188, 0.17);
+    }
+
+    .home-jp {
+      color:
+        var(--sakura-light);
+
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        serif;
+
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+    }
+
+    .home-title {
+      margin-top: 9px;
+
+      color:
+        var(--gold-light);
+
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        serif;
 
       font-size:
         clamp(
@@ -349,36 +558,71 @@
           4rem
         );
 
-      font-weight: 950;
-      letter-spacing: 0.1em;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+
+      text-shadow:
+        0 0 22px
+        rgba(233, 189, 101, 0.2);
     }
 
     .home-subtitle {
-      margin-top: 10px;
+      margin-top: 9px;
 
-      color: #c8b9ff;
+      color: #c8d0ff;
 
-      font-size: 0.74rem;
+      font-size: 0.68rem;
       font-weight: 900;
       letter-spacing: 0.22em;
     }
 
     .home-description {
-      width: min(82%, 480px);
+      width:
+        min(
+          82%,
+          470px
+        );
 
-      margin: 7% 0;
+      margin:
+        7% 0;
 
-      color: var(--muted);
+      color:
+        var(--muted);
 
-      font-size: 0.84rem;
-      line-height: 1.8;
+      font-size: 0.82rem;
+      line-height: 1.85;
     }
 
-    /* ================================
-       模式選擇
-    ================================ */
+    .home-rule {
+      display: flex;
+      gap: 8px;
 
-    .mode {
+      margin-bottom: 20px;
+    }
+
+    .home-rule span {
+      padding:
+        6px 10px;
+
+      color: #d7dcff;
+
+      background:
+        rgba(255, 255, 255, 0.045);
+
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+      border-radius: 999px;
+
+      font-size: 0.58rem;
+    }
+
+    /* =========================================
+       模式選擇
+    ========================================= */
+
+    .mode-screen {
       display: grid;
 
       grid-template-rows:
@@ -391,24 +635,30 @@
       padding: 5.5%;
     }
 
-    .mode-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
+    .section-kicker {
+      color:
+        var(--gold);
 
-      gap: 14px;
-    }
-
-    .kicker {
-      color: var(--gold);
-
-      font-size: 0.66rem;
+      font-size: 0.64rem;
       font-weight: 900;
       letter-spacing: 0.2em;
     }
 
-    .mode h2 {
+    .mode-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+
+      gap: 14px;
+    }
+
+    .mode-title {
       margin-top: 6px;
+
+      font-family:
+        "Yu Mincho",
+        "Hiragino Mincho ProN",
+        serif;
 
       font-size:
         clamp(
@@ -418,31 +668,55 @@
         );
     }
 
-    .pill {
-      padding: 8px 11px;
+    .mode-seal {
+      display: grid;
+      place-items: center;
 
-      color: #c8b9ff;
+      width: 42px;
+      height: 42px;
+
+      color:
+        var(--paper);
 
       background:
-        rgba(155, 124, 255, 0.1);
+        linear-gradient(
+          145deg,
+          #d94e4a,
+          #8f2430
+        );
 
       border:
         1px solid
-        rgba(155, 124, 255, 0.25);
+        rgba(255, 255, 255, 0.3);
 
-      border-radius: 999px;
+      border-radius: 8px;
 
-      font-size: 0.62rem;
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size: 0.64rem;
+      writing-mode: vertical-rl;
+
+      box-shadow:
+        0 9px 22px
+        rgba(142, 36, 48, 0.25);
     }
 
     .mode-grid {
       display: grid;
 
       grid-template-columns:
-        repeat(2, 1fr);
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
 
       grid-template-rows:
-        repeat(2, 1fr);
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
 
       gap: 13px;
 
@@ -455,19 +729,26 @@
       display: flex;
       flex-direction: column;
 
-      padding: 17px 17px 46px;
+      padding:
+        17px 17px 47px;
 
       overflow: hidden;
 
-      text-align: left;
+      color:
+        var(--text);
 
-      color: var(--text);
+      text-align: left;
 
       background:
         linear-gradient(
           155deg,
-          rgba(255, 255, 255, 0.075),
-          rgba(255, 255, 255, 0.025)
+          rgba(255, 255, 255, 0.08),
+          rgba(255, 255, 255, 0.022)
+        ),
+        radial-gradient(
+          circle at 90% 0%,
+          rgba(242, 168, 188, 0.12),
+          transparent 34%
         );
 
       border:
@@ -484,56 +765,61 @@
 
       transition:
         transform 0.2s ease,
-        border-color 0.2s ease;
+        border-color 0.2s ease,
+        background 0.2s ease;
     }
 
     .mode-card:hover {
-      transform: translateY(-3px);
+      transform:
+        translateY(-3px);
 
       border-color:
-        rgba(242, 201, 110, 0.38);
+        rgba(233, 189, 101, 0.42);
     }
 
     .mode-card.locked {
-      opacity: 0.5;
+      opacity: 0.48;
       cursor: not-allowed;
     }
 
     .mode-number {
-      color: var(--gold);
+      color:
+        var(--gold);
 
-      font-size: 0.63rem;
+      font-size: 0.62rem;
       font-weight: 900;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.11em;
     }
 
-    .mode-tag {
+    .mode-jp {
       position: absolute;
       top: 13px;
       right: 13px;
 
-      padding: 6px 8px;
+      color:
+        var(--sakura-light);
 
-      background:
-        rgba(155, 124, 255, 0.12);
+      font-family:
+        "Yu Mincho",
+        serif;
 
-      border-radius: 8px;
-
-      font-size: 0.56rem;
-      font-weight: 900;
+      font-size: 0.57rem;
+      letter-spacing: 0.08em;
     }
 
     .mode-card h3 {
-      margin-top: 22px;
+      margin-top: 23px;
+
       font-size: 1.12rem;
     }
 
     .mode-card p {
       margin-top: 8px;
 
-      color: var(--muted);
+      color:
+        var(--muted);
 
-      font-size: 0.7rem;
+      font-size: 0.69rem;
       line-height: 1.55;
     }
 
@@ -542,10 +828,13 @@
       right: 13px;
       bottom: 13px;
 
-      padding: 6px 9px;
+      padding:
+        6px 9px;
 
-      color: #241908;
-      background: var(--gold);
+      color: #291e09;
+
+      background:
+        var(--gold);
 
       border-radius: 999px;
 
@@ -554,7 +843,9 @@
     }
 
     .mode-card.locked .mode-state {
-      color: var(--muted);
+      color:
+        var(--muted);
+
       background:
         rgba(255, 255, 255, 0.08);
     }
@@ -566,15 +857,17 @@
 
       gap: 12px;
 
-      color: var(--muted);
-      font-size: 0.68rem;
+      color:
+        var(--muted);
+
+      font-size: 0.66rem;
     }
 
-    /* ================================
+    /* =========================================
        對戰 UI
-    ================================ */
+    ========================================= */
 
-    .battle {
+    .battle-screen {
       display: grid;
 
       grid-template-rows:
@@ -586,10 +879,23 @@
 
       gap: 8px;
 
-      padding: 12px;
+      padding:
+        max(
+          10px,
+          env(safe-area-inset-top)
+        )
+        12px
+        max(
+          10px,
+          env(safe-area-inset-bottom)
+        );
+
+      overflow: hidden;
     }
 
     .hud {
+      position: relative;
+
       display: grid;
 
       grid-template-columns:
@@ -601,16 +907,53 @@
 
       gap: 9px;
 
-      padding: 10px 11px;
+      padding:
+        10px 11px;
 
       background:
-        rgba(7, 11, 24, 0.75);
+        linear-gradient(
+          180deg,
+          rgba(8, 13, 29, 0.86),
+          rgba(8, 12, 25, 0.68)
+        );
 
       border:
         1px solid
         var(--line);
 
       border-radius: 17px;
+
+      box-shadow:
+        0 12px 24px
+        rgba(0, 0, 0, 0.18);
+    }
+
+    .hud::before,
+    .hud::after {
+      content: "";
+
+      position: absolute;
+      top: 9px;
+      bottom: 9px;
+
+      width: 2px;
+
+      opacity: 0.55;
+
+      background:
+        linear-gradient(
+          transparent,
+          var(--gold),
+          transparent
+        );
+    }
+
+    .hud::before {
+      left: 6px;
+    }
+
+    .hud::after {
+      right: 6px;
     }
 
     .fighter {
@@ -621,21 +964,35 @@
       text-align: right;
     }
 
-    .fighter-top {
+    .fighter-name-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
 
       gap: 6px;
 
-      font-size: 0.66rem;
+      font-size: 0.65rem;
       font-weight: 900;
     }
 
-    .fighter.ai .fighter-top {
+    .fighter.ai .fighter-name-row {
       flex-direction: row-reverse;
     }
 
+    .fighter-jp {
+      color:
+        var(--muted);
+
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size: 0.52rem;
+    }
+
     .hp-track {
+      position: relative;
+
       height: 8px;
 
       margin-top: 6px;
@@ -643,40 +1000,47 @@
       overflow: hidden;
 
       background:
-        rgba(255, 255, 255, 0.08);
+        rgba(255, 255, 255, 0.075);
 
       border-radius: 999px;
     }
 
-    .hp {
+    .hp-bar {
       width: 100%;
       height: 100%;
 
       border-radius: inherit;
 
       transition:
-        width 0.48s ease;
-    }
-
-    .hp.player {
-      background:
-        linear-gradient(
-          90deg,
-          #6978ff,
-          #7ee6ff
+        width
+        0.48s
+        cubic-bezier(
+          0.2,
+          0.8,
+          0.2,
+          1
         );
     }
 
-    .hp.ai {
+    .hp-bar.player {
       background:
         linear-gradient(
           90deg,
-          #ff7785,
-          #ffb36d
+          var(--indigo-bright),
+          var(--cyan)
         );
     }
 
-    .score {
+    .hp-bar.ai {
+      background:
+        linear-gradient(
+          90deg,
+          var(--sakura),
+          var(--vermilion-light)
+        );
+    }
+
+    .score-panel {
       text-align: center;
     }
 
@@ -687,32 +1051,49 @@
 
       gap: 7px;
 
-      font-size: 1.35rem;
+      font-size: 1.32rem;
       font-weight: 950;
     }
 
-    .score small {
+    .round-label {
       display: block;
 
-      margin-top: 2px;
+      margin-top: 1px;
 
-      color: var(--muted);
+      color:
+        var(--gold-light);
 
-      font-size: 0.55rem;
-      letter-spacing: 0.1em;
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size: 0.53rem;
+      letter-spacing: 0.12em;
     }
 
     .turn-bar {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
       align-items: center;
 
       gap: 10px;
 
-      padding: 9px 11px;
+      min-height: 44px;
+
+      padding:
+        8px 11px;
 
       background:
-        rgba(255, 255, 255, 0.045);
+        linear-gradient(
+          90deg,
+          rgba(89, 104, 200, 0.12),
+          rgba(255, 255, 255, 0.04),
+          rgba(228, 95, 82, 0.08)
+        );
 
       border:
         1px solid
@@ -730,59 +1111,88 @@
       min-width: 0;
     }
 
-    .turn-orb {
-      width: 13px;
-      height: 13px;
+    .turn-mon {
+      position: relative;
+
+      width: 22px;
+      height: 22px;
 
       flex: 0 0 auto;
 
-      background: var(--cyan);
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.22);
 
       border-radius: 50%;
 
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #ffffff,
+          var(--cyan) 26%,
+          #4b5cc1 68%
+        );
+
       box-shadow:
         0 0 12px
-        rgba(114, 221, 255, 0.7);
+        rgba(126, 231, 238, 0.5);
+
+      transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease;
     }
 
     .turn-text {
       overflow: hidden;
 
-      font-size: 0.73rem;
+      font-size: 0.72rem;
       font-weight: 900;
 
       white-space: nowrap;
       text-overflow: ellipsis;
     }
 
-    .move-text {
-      flex: 0 0 auto;
+    .turn-subtext {
+      display: block;
 
-      color: var(--muted);
+      margin-top: 1px;
 
-      font-size: 0.62rem;
+      color:
+        var(--muted);
+
+      font-size: 0.51rem;
+      font-weight: 500;
     }
 
-    /* ================================
+    .move-text {
+      color:
+        var(--muted);
+
+      font-size: 0.61rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* =========================================
        Three.js 棋盤
-    ================================ */
+    ========================================= */
 
     .stage {
       position: relative;
 
       min-height: 0;
+
       overflow: hidden;
 
       background:
         radial-gradient(
           circle at 50% 58%,
-          rgba(118, 91, 210, 0.17),
-          transparent 50%
+          rgba(112, 95, 191, 0.2),
+          transparent 48%
         ),
         linear-gradient(
           180deg,
-          rgba(19, 25, 50, 0.98),
-          rgba(6, 9, 20, 0.98)
+          rgba(18, 25, 49, 0.98),
+          rgba(6, 9, 19, 0.98)
         );
 
       border:
@@ -792,71 +1202,139 @@
       border-radius: 19px;
 
       box-shadow:
-        0 20px 38px
-        rgba(0, 0, 0, 0.35),
+        var(--shadow),
         inset 0 1px 0
         rgba(255, 255, 255, 0.05);
+
+      contain:
+        layout
+        paint
+        size;
+    }
+
+    .stage::before {
+      content: "";
+
+      position: absolute;
+      inset: 8px;
+      z-index: 2;
+
+      border:
+        1px solid
+        rgba(233, 189, 101, 0.13);
+
+      border-radius: 14px;
+
+      pointer-events: none;
+    }
+
+    .stage::after {
+      content: "対局";
+
+      position: absolute;
+      right: 13px;
+      bottom: 10px;
+      z-index: 2;
+
+      color:
+        rgba(255, 232, 165, 0.22);
+
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+
+      pointer-events: none;
     }
 
     .stage.locked {
       pointer-events: none;
-      filter: saturate(0.82);
     }
 
     #gameCanvas {
-      display: block;
-
       width: 100%;
       height: 100%;
 
       touch-action: none;
+
+      outline: none;
     }
 
-    .stage-badge {
+    .stage-topline {
       position: absolute;
-      top: 10px;
+      top: 9px;
       left: 50%;
+      z-index: 3;
 
-      padding: 6px 10px;
+      display: flex;
+      align-items: center;
 
-      color: var(--muted);
+      gap: 7px;
+
+      padding:
+        5px 9px;
+
+      color:
+        var(--muted);
+
       background:
-        rgba(6, 9, 20, 0.68);
+        rgba(6, 9, 20, 0.66);
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.1);
+        rgba(255, 255, 255, 0.09);
 
       border-radius: 999px;
 
       transform:
         translateX(-50%);
 
-      font-size: 0.56rem;
+      font-size: 0.53rem;
       letter-spacing: 0.08em;
 
       pointer-events: none;
     }
 
+    .stage-topline::before,
+    .stage-topline::after {
+      content: "";
+
+      width: 12px;
+      height: 1px;
+
+      background:
+        var(--gold);
+
+      opacity: 0.55;
+    }
+
     .thinking {
       position: absolute;
-      top: 10px;
+      top: 9px;
       right: 10px;
+      z-index: 4;
 
       display: none;
       align-items: center;
 
-      gap: 5px;
+      gap: 4px;
 
-      padding: 6px 9px;
+      padding:
+        5px 8px;
 
-      color: #ffc3c8;
+      color:
+        var(--sakura-light);
+
       background:
-        rgba(6, 9, 20, 0.7);
+        rgba(6, 9, 20, 0.74);
 
       border-radius: 999px;
 
-      font-size: 0.55rem;
+      font-size: 0.5rem;
+
+      pointer-events: none;
     }
 
     .thinking.show {
@@ -867,51 +1345,148 @@
       width: 4px;
       height: 4px;
 
-      background: currentColor;
+      background:
+        currentColor;
 
       border-radius: 50%;
 
       animation:
         thinkingDot
-        0.8s
+        0.75s
         infinite
         alternate;
     }
 
     .thinking-dot:nth-child(2) {
-      animation-delay: 0.15s;
+      animation-delay: 0.12s;
     }
 
     .thinking-dot:nth-child(3) {
-      animation-delay: 0.3s;
+      animation-delay: 0.24s;
     }
 
     @keyframes thinkingDot {
       to {
         opacity: 0.25;
-        transform: translateY(-2px);
+
+        transform:
+          translateY(-2px);
       }
     }
 
-    /* ================================
-       角色控制區
-    ================================ */
+    /* =========================================
+       局部回合提示
+    ========================================= */
+
+    .round-banner {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      z-index: 12;
+
+      width:
+        min(
+          76%,
+          430px
+        );
+
+      padding:
+        14px 18px;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+
+      text-align: center;
+
+      transform:
+        translate(-50%, -42%)
+        scale(0.94);
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(8, 13, 29, 0.94) 15%,
+          rgba(16, 23, 45, 0.98) 50%,
+          rgba(8, 13, 29, 0.94) 85%,
+          transparent
+        );
+
+      border-top:
+        1px solid
+        rgba(233, 189, 101, 0.38);
+
+      border-bottom:
+        1px solid
+        rgba(233, 189, 101, 0.38);
+
+      transition:
+        opacity 0.22s ease,
+        visibility 0.22s ease,
+        transform 0.22s ease;
+    }
+
+    .round-banner.show {
+      opacity: 1;
+      visibility: visible;
+
+      transform:
+        translate(-50%, -50%)
+        scale(1);
+    }
+
+    .round-banner small {
+      color:
+        var(--gold);
+
+      font-size: 0.53rem;
+      letter-spacing: 0.2em;
+    }
+
+    .round-banner strong {
+      display: block;
+
+      margin-top: 4px;
+
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size: 1.35rem;
+    }
+
+    .round-banner span {
+      display: block;
+
+      margin-top: 3px;
+
+      color:
+        var(--muted);
+
+      font-size: 0.56rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* =========================================
+       角色與技能區
+    ========================================= */
 
     .controls {
       display: grid;
 
       grid-template-columns:
-        0.9fr
-        1.25fr
-        0.9fr;
+        0.92fr
+        1.35fr
+        0.92fr;
 
       gap: 8px;
     }
 
     .character-card,
-    .skills {
+    .skills-panel {
       min-width: 0;
-      min-height: 104px;
+      min-height: 108px;
 
       padding: 9px;
 
@@ -919,7 +1494,12 @@
         linear-gradient(
           160deg,
           rgba(255, 255, 255, 0.07),
-          rgba(255, 255, 255, 0.025)
+          rgba(255, 255, 255, 0.022)
+        ),
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(129, 149, 255, 0.08),
+          transparent 52%
         );
 
       border:
@@ -930,6 +1510,8 @@
     }
 
     .character-card {
+      position: relative;
+
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -940,13 +1522,32 @@
       text-align: center;
     }
 
+    .character-card::before {
+      content: "";
+
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 7px;
+
+      height: 1px;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(233, 189, 101, 0.42),
+          transparent
+        );
+    }
+
     .icon-canvas {
-      display: block;
+      width: 48px;
+      height: 48px;
 
-      width: 44px;
-      height: 44px;
+      margin-bottom: 4px;
 
-      margin-bottom: 5px;
+      pointer-events: none;
     }
 
     .character-card strong {
@@ -967,15 +1568,34 @@
 
       overflow: hidden;
 
-      color: var(--muted);
+      color:
+        var(--muted);
 
-      font-size: 0.56rem;
+      font-size: 0.54rem;
 
       white-space: nowrap;
       text-overflow: ellipsis;
     }
 
-    .skills {
+    .character-side-label {
+      position: absolute;
+      top: 7px;
+      left: 8px;
+
+      color:
+        rgba(255, 255, 255, 0.28) !important;
+
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size:
+        0.46rem !important;
+
+      letter-spacing: 0.1em;
+    }
+
+    .skills-panel {
       display: flex;
       flex-direction: column;
 
@@ -987,85 +1607,131 @@
       justify-content: space-between;
       align-items: center;
 
-      gap: 7px;
+      gap: 6px;
 
-      font-size: 0.67rem;
+      min-height: 18px;
+
+      font-size: 0.66rem;
     }
 
-    .skills-header span {
-      color: var(--muted);
-      font-size: 0.54rem;
+    .skill-state {
+      color:
+        var(--gold-light);
+
+      font-size: 0.52rem;
+      letter-spacing: 0.08em;
     }
 
     .skill-grid {
       display: grid;
 
       grid-template-columns:
-        1fr
-        1fr;
+        1fr 1fr;
 
       gap: 6px;
     }
 
     .skill-button {
-      min-height: 42px;
+      display: grid;
+
+      grid-template-columns:
+        28px
+        minmax(0, 1fr);
+
+      align-items: center;
+
+      gap: 4px;
+
+      min-height: 44px;
+
+      padding:
+        4px 6px;
+
+      text-align: left;
 
       background:
-        rgba(255, 255, 255, 0.05);
+        rgba(255, 255, 255, 0.045);
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.12);
+        rgba(255, 255, 255, 0.11);
 
       border-radius: 10px;
 
       cursor: pointer;
 
-      font-size: 0.62rem;
-      font-weight: 900;
+      transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
     }
 
-    .skill-button.fire {
-      box-shadow:
-        inset 0 0 18px
-        rgba(255, 83, 69, 0.08);
-    }
-
-    .skill-button.ice {
-      box-shadow:
-        inset 0 0 18px
-        rgba(84, 194, 255, 0.08);
+    .skill-button:hover:not(:disabled) {
+      transform:
+        translateY(-1px);
     }
 
     .skill-button:disabled {
-      opacity: 0.32;
+      opacity: 0.34;
       cursor: not-allowed;
     }
 
     .skill-button.active {
-      outline:
-        2px solid
+      border-color:
         var(--gold);
+
+      background:
+        rgba(233, 189, 101, 0.1);
+    }
+
+    .skill-icon-canvas {
+      width: 28px;
+      height: 28px;
+
+      pointer-events: none;
+    }
+
+    .skill-button b {
+      display: block;
+
+      font-size: 0.59rem;
+      line-height: 1.05;
+    }
+
+    .skill-button small {
+      display: block;
+
+      margin-top: 2px;
+
+      color:
+        var(--muted);
+
+      font-size: 0.44rem;
     }
 
     .skill-message {
       min-height: 24px;
 
-      color: var(--muted);
+      color:
+        var(--muted);
 
-      font-size: 0.55rem;
+      font-size: 0.53rem;
       line-height: 1.35;
 
       text-align: center;
     }
 
-    .cancel-button {
+    .cancel-skill {
       align-self: center;
 
-      padding: 5px 9px;
+      padding:
+        4px 8px;
+
+      color:
+        var(--muted);
 
       background:
-        rgba(255, 255, 255, 0.06);
+        rgba(255, 255, 255, 0.05);
 
       border:
         1px solid
@@ -1075,29 +1741,39 @@
 
       cursor: pointer;
 
-      font-size: 0.53rem;
+      font-size: 0.49rem;
     }
 
     .battle-footer {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+
+      grid-template-columns:
+        1fr
+        auto
+        1fr;
+
       align-items: center;
 
       gap: 8px;
     }
 
-    .best-of {
-      color: var(--muted);
+    .battle-footer .button:last-child {
+      justify-self: end;
+    }
 
-      font-size: 0.6rem;
+    .best-of {
+      color:
+        var(--muted);
+
+      font-size: 0.58rem;
       letter-spacing: 0.12em;
     }
 
-    /* ================================
-       Overlay
-    ================================ */
+    /* =========================================
+       結果與提示
+    ========================================= */
 
-    .overlay {
+    .result-overlay {
       position: absolute;
       inset: 0;
       z-index: 30;
@@ -1112,23 +1788,23 @@
       pointer-events: none;
 
       background:
-        rgba(3, 5, 12, 0.76);
+        rgba(3, 5, 12, 0.74);
 
       backdrop-filter:
         blur(8px);
 
       transition:
-        opacity 0.24s ease,
-        visibility 0.24s ease;
+        opacity 0.25s ease,
+        visibility 0.25s ease;
     }
 
-    .overlay.show {
+    .result-overlay.show {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
     }
 
-    .modal {
+    .result-card {
       width: 100%;
 
       padding: 27px;
@@ -1138,8 +1814,13 @@
       background:
         linear-gradient(
           160deg,
-          rgba(27, 34, 62, 0.98),
+          rgba(29, 36, 66, 0.98),
           rgba(10, 13, 26, 0.98)
+        ),
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(242, 168, 188, 0.1),
+          transparent 40%
         );
 
       border:
@@ -1153,17 +1834,23 @@
         rgba(0, 0, 0, 0.55);
     }
 
-    .modal h2 {
+    .result-card h2 {
       margin-top: 8px;
-      font-size: 1.65rem;
+
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size: 1.6rem;
     }
 
-    .modal-description {
+    .result-description {
       margin-top: 9px;
 
-      color: var(--muted);
+      color:
+        var(--muted);
 
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       line-height: 1.6;
     }
 
@@ -1174,11 +1861,12 @@
 
       gap: 24px;
 
-      margin: 22px 0;
+      margin:
+        22px 0;
     }
 
     .result-score strong {
-      font-size: 2.3rem;
+      font-size: 2.25rem;
     }
 
     .result-actions {
@@ -1195,11 +1883,14 @@
       bottom: 7%;
       z-index: 40;
 
-      padding: 9px 14px;
+      padding:
+        9px 14px;
 
       opacity: 0;
 
-      color: var(--text);
+      color:
+        var(--text);
+
       background:
         rgba(7, 10, 21, 0.94);
 
@@ -1212,7 +1903,7 @@
       transform:
         translate(-50%, 18px);
 
-      font-size: 0.67rem;
+      font-size: 0.65rem;
 
       transition:
         opacity 0.2s ease,
@@ -1226,16 +1917,16 @@
         translate(-50%, 0);
     }
 
-    .damage {
+    .damage-text {
       position: absolute;
-      top: 9%;
+      top: 8.5%;
       z-index: 35;
 
       opacity: 0;
 
       color: #fff1b8;
 
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       font-weight: 950;
 
       text-shadow:
@@ -1245,7 +1936,7 @@
       pointer-events: none;
     }
 
-    .damage.show {
+    .damage-text.show {
       animation:
         damageFloat
         0.8s
@@ -1275,32 +1966,86 @@
     }
 
     @media (max-height: 760px) {
-      .battle {
+      .battle-screen {
         gap: 6px;
-        padding: 9px;
+
+        padding:
+          8px 9px;
       }
 
       .hud {
-        padding: 8px 9px;
+        padding:
+          8px 9px;
       }
 
       .turn-bar {
-        padding: 7px 9px;
+        min-height: 40px;
+
+        padding:
+          6px 9px;
       }
 
       .character-card,
-      .skills {
-        min-height: 92px;
+      .skills-panel {
+        min-height: 94px;
+
         padding: 7px;
       }
 
       .icon-canvas {
-        width: 36px;
-        height: 36px;
+        width: 39px;
+        height: 39px;
       }
 
       .skill-button {
-        min-height: 36px;
+        min-height: 38px;
+
+        grid-template-columns:
+          23px
+          minmax(0, 1fr);
+      }
+
+      .skill-icon-canvas {
+        width: 23px;
+        height: 23px;
+      }
+
+      .skill-message {
+        min-height: 19px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .battle-screen {
+        padding-inline: 8px;
+      }
+
+      .controls {
+        gap: 6px;
+      }
+
+      .character-card,
+      .skills-panel {
+        padding: 6px;
+      }
+
+      .skill-button {
+        padding-inline: 4px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:
+          0.01ms !important;
+
+        animation-iteration-count:
+          1 !important;
+
+        transition-duration:
+          0.01ms !important;
       }
     }
   </style>
@@ -1308,56 +2053,81 @@
 
 <body>
   <main id="app" class="app">
+    <div
+      class="sakura-layer"
+      aria-hidden="true"
+    >
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+      <i class="petal"></i>
+    </div>
+
     <!-- 首頁 -->
     <section
       id="homeScreen"
-      class="screen home active"
+      class="screen home-screen active"
     >
       <div
-        class="logo-orb"
+        class="home-mon"
         aria-hidden="true"
       ></div>
 
-      <h1>
+      <p class="home-jp">
+        魔導盤上決戦
+      </p>
+
+      <h1 class="home-title">
         魔法の五目並べ
       </h1>
 
       <p class="home-subtitle">
-        ARCANE BOARD DUEL
+        ARCANE GOMOKU DUEL
       </p>
 
       <p class="home-description">
-        在正向 8×8 魔法戰棋盤上進行五子連線。
-        每回合抽取杖或劍，率先取得兩勝的一方贏得整場對決。
+        在正向 8×8 魔法戰棋盤上完成五子連線。
+        每個玩家回合會抽取「杖」或「劍」，
+        利用角色與元素技能取得三戰兩勝。
       </p>
+
+      <div
+        class="home-rule"
+        aria-label="遊戲規則"
+      >
+        <span>八乘八棋盤</span>
+        <span>五子連線</span>
+        <span>三戰兩勝</span>
+      </div>
 
       <button
         id="startButton"
-        class="btn btn-primary"
+        class="button button-primary"
         type="button"
       >
-        開始遊玩
+        開始對局
       </button>
     </section>
 
     <!-- 模式選擇 -->
     <section
       id="modeScreen"
-      class="screen mode"
+      class="screen mode-screen"
     >
       <header class="mode-header">
         <div>
-          <p class="kicker">
+          <p class="section-kicker">
             SELECT MODE
           </p>
 
-          <h2>
+          <h2 class="mode-title">
             選擇遊戲模式
           </h2>
         </div>
 
-        <span class="pill">
-          THREE.JS 3D
+        <span class="mode-seal">
+          魔導
         </span>
       </header>
 
@@ -1371,8 +2141,8 @@
             MODE 01
           </span>
 
-          <span class="mode-tag">
-            AI
+          <span class="mode-jp">
+            一人対局
           </span>
 
           <h3>
@@ -1380,7 +2150,8 @@
           </h3>
 
           <p>
-            與赤焰術師進行三戰兩勝，使用 FIRE 與 ICE 改變棋局。
+            與赤焰術師進行三戰兩勝，
+            使用 FIRE 與 ICE 改變棋局。
           </p>
 
           <span class="mode-state">
@@ -1396,8 +2167,8 @@
             MODE 02
           </span>
 
-          <span class="mode-tag">
-            PVP
+          <span class="mode-jp">
+            通信対局
           </span>
 
           <h3>
@@ -1421,8 +2192,8 @@
             MODE 03
           </span>
 
-          <span class="mode-tag">
-            RANK
+          <span class="mode-jp">
+            段位戦
           </span>
 
           <h3>
@@ -1446,8 +2217,8 @@
             MODE 04
           </span>
 
-          <span class="mode-tag">
-            EVENT
+          <span class="mode-jp">
+            期間限定
           </span>
 
           <h3>
@@ -1467,26 +2238,26 @@
       <footer class="mode-footer">
         <button
           id="modeBackButton"
-          class="btn btn-secondary"
+          class="button button-secondary"
           type="button"
         >
           返回
         </button>
 
         <span>
-          選擇單機模式開始 Demo
+          選擇單機模式開始目前 Demo
         </span>
       </footer>
     </section>
 
-    <!-- 對戰 -->
+    <!-- 對戰畫面 -->
     <section
       id="battleScreen"
-      class="screen battle"
+      class="screen battle-screen"
     >
       <header class="hud">
         <section class="fighter">
-          <div class="fighter-top">
+          <div class="fighter-name-row">
             <span>
               PLAYER
             </span>
@@ -1496,15 +2267,19 @@
             </span>
           </div>
 
+          <span class="fighter-jp">
+            蒼月陣営
+          </span>
+
           <div class="hp-track">
             <div
               id="playerHpBar"
-              class="hp player"
+              class="hp-bar player"
             ></div>
           </div>
         </section>
 
-        <section class="score">
+        <section class="score-panel">
           <div class="score-main">
             <span id="playerScore">
               0
@@ -1519,13 +2294,16 @@
             </span>
           </div>
 
-          <small id="roundText">
-            ROUND 1
-          </small>
+          <span
+            id="roundText"
+            class="round-label"
+          >
+            第一局
+          </span>
         </section>
 
         <section class="fighter ai">
-          <div class="fighter-top">
+          <div class="fighter-name-row">
             <span>
               AI
             </span>
@@ -1535,10 +2313,14 @@
             </span>
           </div>
 
+          <span class="fighter-jp">
+            赤焰陣営
+          </span>
+
           <div class="hp-track">
             <div
               id="aiHpBar"
-              class="hp ai"
+              class="hp-bar ai"
             ></div>
           </div>
         </section>
@@ -1547,16 +2329,25 @@
       <div class="turn-bar">
         <div class="turn-left">
           <span
-            id="turnOrb"
-            class="turn-orb"
+            id="turnMon"
+            class="turn-mon"
           ></span>
 
-          <span
-            id="turnText"
-            class="turn-text"
-          >
-            準備開始
-          </span>
+          <div>
+            <span
+              id="turnText"
+              class="turn-text"
+            >
+              準備開始
+            </span>
+
+            <span
+              id="turnSubtext"
+              class="turn-subtext"
+            >
+              對局初始化中
+            </span>
+          </div>
         </div>
 
         <span
@@ -1576,45 +2367,69 @@
           aria-label="8×8 Three.js 魔法戰棋盤"
         ></canvas>
 
-        <span class="stage-badge">
-          8 × 8｜五子連線
-        </span>
+        <div class="stage-topline">
+          八乘八・五子連線
+        </div>
 
         <div
           id="thinking"
           class="thinking"
         >
-          AI THINKING
+          思考中
 
           <i class="thinking-dot"></i>
           <i class="thinking-dot"></i>
           <i class="thinking-dot"></i>
         </div>
+
+        <div
+          id="roundBanner"
+          class="round-banner"
+        >
+          <small>
+            ROUND START
+          </small>
+
+          <strong id="roundBannerTitle">
+            玩家先攻
+          </strong>
+
+          <span id="roundBannerDescription">
+            PLAYER ATTACKS FIRST
+          </span>
+        </div>
       </div>
 
       <section class="controls">
         <article class="character-card">
+          <span class="character-side-label">
+            PLAYER
+          </span>
+
           <canvas
             id="playerIcon"
             class="icon-canvas"
           ></canvas>
 
           <strong id="roleName">
-            等待 Spin
+            等待抽取
           </strong>
 
           <span id="roleDescription">
-            50% 杖 / 50% 劍
+            杖 / 劍
           </span>
         </article>
 
-        <section class="skills">
+        <section class="skills-panel">
           <header class="skills-header">
             <strong>
               角色行動
             </strong>
 
-            <span id="skillState">
+            <span
+              id="skillState"
+              class="skill-state"
+            >
               SPIN
             </span>
           </header>
@@ -1622,20 +2437,46 @@
           <div class="skill-grid">
             <button
               id="fireButton"
-              class="skill-button fire"
+              class="skill-button"
               type="button"
               disabled
             >
-              FIRE
+              <canvas
+                id="fireIcon"
+                class="skill-icon-canvas"
+              ></canvas>
+
+              <span>
+                <b>
+                  FIRE
+                </b>
+
+                <small>
+                  烈焰穿透
+                </small>
+              </span>
             </button>
 
             <button
               id="iceButton"
-              class="skill-button ice"
+              class="skill-button"
               type="button"
               disabled
             >
-              ICE
+              <canvas
+                id="iceIcon"
+                class="skill-icon-canvas"
+              ></canvas>
+
+              <span>
+                <b>
+                  ICE
+                </b>
+
+                <small>
+                  霜封領域
+                </small>
+              </span>
             </button>
           </div>
 
@@ -1643,12 +2484,12 @@
             id="skillMessage"
             class="skill-message"
           >
-            每次玩家落子前會進行角色抽取
+            每個玩家回合會抽取角色
           </p>
 
           <button
-            id="cancelButton"
-            class="cancel-button"
+            id="cancelSkillButton"
+            class="cancel-skill"
             type="button"
             hidden
           >
@@ -1657,6 +2498,10 @@
         </section>
 
         <article class="character-card">
+          <span class="character-side-label">
+            RIVAL
+          </span>
+
           <canvas
             id="aiIcon"
             class="icon-canvas"
@@ -1667,7 +2512,7 @@
           </strong>
 
           <span>
-            固定對手
+            火行・固定對手
           </span>
         </article>
       </section>
@@ -1675,7 +2520,7 @@
       <footer class="battle-footer">
         <button
           id="battleBackButton"
-          class="btn btn-small"
+          class="button button-small"
           type="button"
         >
           模式選擇
@@ -1687,7 +2532,7 @@
 
         <button
           id="restartButton"
-          class="btn btn-small"
+          class="button button-small"
           type="button"
         >
           重新對戰
@@ -1695,46 +2540,23 @@
       </footer>
     </section>
 
-    <!-- 回合提示 -->
-    <div
-      id="roundOverlay"
-      class="overlay"
-    >
-      <section class="modal">
-        <p class="kicker">
-          ROUND START
-        </p>
-
-        <h2 id="roundTitle">
-          玩家先攻
-        </h2>
-
-        <p
-          id="roundDescription"
-          class="modal-description"
-        >
-          PLAYER ATTACKS FIRST
-        </p>
-      </section>
-    </div>
-
-    <!-- 結果 -->
+    <!-- 最終結果 -->
     <div
       id="resultOverlay"
-      class="overlay"
+      class="result-overlay"
     >
-      <section class="modal">
-        <p class="kicker">
+      <section class="result-card">
+        <p class="section-kicker">
           MATCH RESULT
         </p>
 
         <h2 id="resultTitle">
-          玩家取得勝利
+          玩家取得最終勝利
         </h2>
 
         <p
           id="resultDescription"
-          class="modal-description"
+          class="result-description"
         >
           三戰兩勝對決結束。
         </p>
@@ -1756,7 +2578,7 @@
         <div class="result-actions">
           <button
             id="playAgainButton"
-            class="btn btn-primary"
+            class="button button-primary"
             type="button"
           >
             重新對戰
@@ -1764,7 +2586,7 @@
 
           <button
             id="resultModeButton"
-            class="btn btn-secondary"
+            class="button button-secondary"
             type="button"
           >
             模式選擇
@@ -1782,7 +2604,7 @@
 
     <div
       id="damageText"
-      class="damage"
+      class="damage-text"
     >
       -50
     </div>
@@ -1791,12 +2613,18 @@
   <script type="module">
     import * as THREE from "three";
 
+    "use strict";
+
+    /* =========================================
+       常數與遊戲狀態
+    ========================================= */
+
     const $ = (id) =>
       document.getElementById(id);
 
+    const EMPTY = 0;
     const PLAYER = 1;
     const AI = 2;
-    const EMPTY = 0;
 
     const BOARD_SIZE = 8;
     const WIN_SCORE = 2;
@@ -1807,6 +2635,13 @@
       [0, 1],
       [1, 1],
       [1, -1]
+    ];
+
+    const ROUND_NAMES = [
+      "第一局",
+      "第二局",
+      "第三局",
+      "延長局"
     ];
 
     let board = [];
@@ -1838,10 +2673,298 @@
     let freezePending = false;
 
     let timers = [];
+    let previewInterval = null;
 
-    /* ================================
+    let audioContext = null;
+    let soundEnabled = true;
+
+    /* =========================================
+       音效與震動
+    ========================================= */
+
+    function ensureAudio() {
+      if (!soundEnabled) {
+        return;
+      }
+
+      if (!audioContext) {
+        const Context =
+          window.AudioContext ||
+          window.webkitAudioContext;
+
+        if (Context) {
+          audioContext =
+            new Context();
+        }
+      }
+
+      if (
+        audioContext?.state ===
+        "suspended"
+      ) {
+        audioContext
+          .resume()
+          .catch(() => {});
+      }
+    }
+
+    function playTone(
+      frequency,
+      duration = 0.08,
+      type = "sine",
+      gainValue = 0.035,
+      delay = 0
+    ) {
+      if (!soundEnabled) {
+        return;
+      }
+
+      ensureAudio();
+
+      if (!audioContext) {
+        return;
+      }
+
+      const start =
+        audioContext.currentTime +
+        delay;
+
+      const oscillator =
+        audioContext.createOscillator();
+
+      const gain =
+        audioContext.createGain();
+
+      oscillator.type =
+        type;
+
+      oscillator.frequency
+        .setValueAtTime(
+          frequency,
+          start
+        );
+
+      gain.gain
+        .setValueAtTime(
+          0.0001,
+          start
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          gainValue,
+          start + 0.012
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          0.0001,
+          start + duration
+        );
+
+      oscillator
+        .connect(gain)
+        .connect(
+          audioContext.destination
+        );
+
+      oscillator.start(start);
+
+      oscillator.stop(
+        start +
+        duration +
+        0.02
+      );
+    }
+
+    function playPlaceSound(player) {
+      playTone(
+        player === PLAYER
+          ? 520
+          : 330,
+        0.07,
+        "triangle",
+        0.028
+      );
+
+      playTone(
+        player === PLAYER
+          ? 760
+          : 470,
+        0.08,
+        "sine",
+        0.018,
+        0.035
+      );
+
+      navigator.vibrate?.(18);
+    }
+
+    function playSkillSound(skill) {
+      if (skill === "fire") {
+        playTone(
+          250,
+          0.18,
+          "sawtooth",
+          0.025
+        );
+
+        playTone(
+          420,
+          0.16,
+          "triangle",
+          0.02,
+          0.05
+        );
+      } else {
+        playTone(
+          880,
+          0.18,
+          "sine",
+          0.025
+        );
+
+        playTone(
+          1180,
+          0.2,
+          "triangle",
+          0.018,
+          0.04
+        );
+      }
+
+      navigator.vibrate?.([
+        22,
+        25,
+        22
+      ]);
+    }
+
+    function playWinSound() {
+      [
+        523,
+        659,
+        784
+      ].forEach(
+        (
+          frequency,
+          index
+        ) => {
+          playTone(
+            frequency,
+            0.2,
+            "sine",
+            0.03,
+            index * 0.09
+          );
+        }
+      );
+    }
+
+    /* =========================================
+       Timer 與畫面切換
+    ========================================= */
+
+    function setGameTimer(
+      callback,
+      delay
+    ) {
+      const timerId =
+        window.setTimeout(
+          callback,
+          delay
+        );
+
+      timers.push(
+        timerId
+      );
+
+      return timerId;
+    }
+
+    function clearGameTimers() {
+      timers.forEach(
+        (timerId) => {
+          window.clearTimeout(
+            timerId
+          );
+        }
+      );
+
+      timers = [];
+
+      if (previewInterval) {
+        window.clearInterval(
+          previewInterval
+        );
+
+        previewInterval = null;
+      }
+    }
+
+    function showScreen(screenId) {
+      document
+        .querySelectorAll(
+          ".screen"
+        )
+        .forEach(
+          (screen) => {
+            screen.classList.remove(
+              "active"
+            );
+          }
+        );
+
+      $(screenId)
+        .classList
+        .add("active");
+
+      if (
+        screenId ===
+        "battleScreen"
+      ) {
+        requestAnimationFrame(
+          () => {
+            requestAnimationFrame(
+              () => {
+                resizeMainRenderer();
+
+                miniRenderers.forEach(
+                  (icon) => {
+                    icon.resize();
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    }
+
+    function showToast(message) {
+      const toast =
+        $("toast");
+
+      toast.textContent =
+        message;
+
+      toast.classList.add(
+        "show"
+      );
+
+      setGameTimer(
+        () => {
+          toast.classList.remove(
+            "show"
+          );
+        },
+        1200
+      );
+    }
+
+    /* =========================================
        Three.js 主棋盤
-    ================================ */
+    ========================================= */
 
     const gameCanvas =
       $("gameCanvas");
@@ -1851,7 +2974,8 @@
         canvas: gameCanvas,
         antialias: true,
         alpha: true,
-        powerPreference: "high-performance"
+        powerPreference:
+          "high-performance"
       });
 
     renderer.setPixelRatio(
@@ -1861,13 +2985,20 @@
       )
     );
 
-    renderer.shadowMap.enabled = true;
-
-    renderer.shadowMap.type =
-      THREE.PCFSoftShadowMap;
+    renderer.setClearColor(
+      0x000000,
+      0
+    );
 
     renderer.outputColorSpace =
       THREE.SRGBColorSpace;
+
+    /*
+      不啟用 ShadowMap。
+      Character 不產生地面陰影。
+    */
+    renderer.shadowMap.enabled =
+      false;
 
     const scene =
       new THREE.Scene();
@@ -1884,31 +3015,28 @@
 
     camera.position.set(
       0,
-      9.5,
-      2.4
+      10.8,
+      4.8
     );
 
     camera.lookAt(
       0,
       0,
-      0
+      0.15
     );
 
-    const hemisphereLight =
-      new THREE.HemisphereLight(
-        0xbfd1ff,
-        0x11121f,
-        1.65
-      );
-
     scene.add(
-      hemisphereLight
+      new THREE.HemisphereLight(
+        0xe8ecff,
+        0x17152a,
+        2.35
+      )
     );
 
     const keyLight =
       new THREE.DirectionalLight(
-        0xffe5b0,
-        2.1
+        0xffedc4,
+        2.15
       );
 
     keyLight.position.set(
@@ -1917,39 +3045,50 @@
       5
     );
 
-    keyLight.castShadow = true;
-
-    keyLight.shadow.mapSize.set(
-      1024,
-      1024
-    );
-
     scene.add(
       keyLight
     );
 
-    const fillLight =
+    const sakuraLight =
       new THREE.PointLight(
-        0x7f63ff,
-        9,
-        16,
+        0xff9eb9,
+        4.3,
+        18,
         2
       );
 
-    fillLight.position.set(
-      0,
+    sakuraLight.position.set(
       4,
-      -1
+      4,
+      1
     );
 
     scene.add(
-      fillLight
+      sakuraLight
+    );
+
+    const cyanLight =
+      new THREE.PointLight(
+        0x7ee7ee,
+        3.8,
+        18,
+        2
+      );
+
+    cyanLight.position.set(
+      -4,
+      3,
+      1
+    );
+
+    scene.add(
+      cyanLight
     );
 
     const boardGroup =
       new THREE.Group();
 
-    const pieceGroup =
+    const characterGroup =
       new THREE.Group();
 
     const effectGroup =
@@ -1957,11 +3096,14 @@
 
     scene.add(
       boardGroup,
-      pieceGroup,
+      characterGroup,
       effectGroup
     );
 
     const tileMeshes = [];
+
+    const characterMap =
+      new Map();
 
     const raycaster =
       new THREE.Raycaster();
@@ -1971,79 +3113,114 @@
 
     let hoveredTile = null;
 
-    const tileGeometry =
-      new THREE.BoxGeometry(
-        0.92,
-        0.18,
-        0.92
+    const palette = {
+      tileA: 0x5b6598,
+      tileB: 0x444d7c,
+      tileSide: 0x252b50,
+
+      frozen: 0x67cde4,
+      target: 0xe6b65a,
+      winning: 0x6bd9a7,
+      last: 0xf3d07a
+    };
+
+    const lastMoveRing =
+      new THREE.Mesh(
+        new THREE.TorusGeometry(
+          0.31,
+          0.027,
+          10,
+          36
+        ),
+        new THREE.MeshBasicMaterial({
+          color:
+            palette.last,
+
+          transparent: true,
+          opacity: 0.95
+        })
       );
 
-    const tileMaterialA =
-      new THREE.MeshStandardMaterial({
-        color: 0x6857a4,
-        roughness: 0.62,
-        metalness: 0.16
+    lastMoveRing.rotation.x =
+      Math.PI / 2;
+
+    lastMoveRing.visible =
+      false;
+
+    effectGroup.add(
+      lastMoveRing
+    );
+
+    function toonMaterial(
+      color,
+      emissive = 0x000000,
+      emissiveIntensity = 0
+    ) {
+      return new THREE.MeshToonMaterial({
+        color,
+        emissive,
+        emissiveIntensity
       });
+    }
 
-    const tileMaterialB =
-      new THREE.MeshStandardMaterial({
-        color: 0x51447f,
-        roughness: 0.66,
-        metalness: 0.13
-      });
-
-    const frozenMaterial =
-      new THREE.MeshStandardMaterial({
-        color: 0x64d7ff,
-        emissive: 0x1c79a7,
-        emissiveIntensity: 0.65,
-        roughness: 0.35,
-        metalness: 0.2
-      });
-
-    const targetMaterial =
-      new THREE.MeshStandardMaterial({
-        color: 0xf0c865,
-        emissive: 0x7b4c06,
-        emissiveIntensity: 0.8,
-        roughness: 0.35
-      });
-
-    const winningMaterial =
-      new THREE.MeshStandardMaterial({
-        color: 0x65e39f,
-        emissive: 0x176d42,
-        emissiveIntensity: 0.85,
-        roughness: 0.35
-      });
-
-    function buildBoard3D() {
-      boardGroup.clear();
-      tileMeshes.length = 0;
-
-      const boardFrame =
+    /*
+      棋盤只建立一次。
+      每個回合不清空、不重建 Tile，
+      避免 WebGL Canvas 閃爍。
+    */
+    function buildPersistentBoard() {
+      const platform =
         new THREE.Mesh(
           new THREE.BoxGeometry(
-            8.55,
-            0.28,
-            8.55
+            8.65,
+            0.24,
+            8.65
           ),
-          new THREE.MeshStandardMaterial({
-            color: 0x20284c,
-            roughness: 0.7,
-            metalness: 0.15
+          new THREE.MeshToonMaterial({
+            color:
+              palette.tileSide
           })
         );
 
-      boardFrame.position.y =
-        -0.18;
-
-      boardFrame.receiveShadow =
-        true;
+      platform.position.y =
+        -0.2;
 
       boardGroup.add(
-        boardFrame
+        platform
       );
+
+      const borderMaterial =
+        new THREE.MeshBasicMaterial({
+          color: 0xd6ad5e,
+          transparent: true,
+          opacity: 0.42
+        });
+
+      const border =
+        new THREE.LineSegments(
+          new THREE.EdgesGeometry(
+            new THREE.BoxGeometry(
+              8.72,
+              0.26,
+              8.72
+            )
+          ),
+          borderMaterial
+        );
+
+      border.position.y =
+        -0.19;
+
+      boardGroup.add(
+        border
+      );
+
+      const tileGeometry =
+        new THREE.BoxGeometry(
+          0.92,
+          0.17,
+          0.92
+        );
 
       for (
         let row = 0;
@@ -2055,12 +3232,22 @@
           col < BOARD_SIZE;
           col += 1
         ) {
+          const baseColor =
+            (row + col) % 2 === 0
+              ? palette.tileA
+              : palette.tileB;
+
           const material =
-            (
-              (row + col) % 2 === 0
-                ? tileMaterialA
-                : tileMaterialB
-            ).clone();
+            new THREE.MeshToonMaterial({
+              color:
+                baseColor,
+
+              emissive:
+                0x000000,
+
+              emissiveIntensity:
+                0
+            });
 
           const tile =
             new THREE.Mesh(
@@ -2074,11 +3261,10 @@
             row - 3.5
           );
 
-          tile.receiveShadow = true;
-
           tile.userData = {
             row,
-            col
+            col,
+            baseColor
           };
 
           boardGroup.add(
@@ -2103,206 +3289,678 @@
       );
     }
 
-    function createUnit(
-      player,
-      role
+    /* =========================================
+       Q 版 Character 建立
+    ========================================= */
+
+    function createFace(
+      group,
+      skinColor,
+      y = 0.82
     ) {
-      const group =
-        new THREE.Group();
-
-      const isPlayer =
-        player === PLAYER;
-
-      const mainColor =
-        isPlayer
-          ? (
-              role === "sword"
-                ? 0xe7c87c
-                : 0x7c78e8
-            )
-          : 0xd3495e;
-
-      const glowColor =
-        isPlayer
-          ? (
-              role === "sword"
-                ? 0xffd96d
-                : 0x76dfff
-            )
-          : 0xff6b72;
-
-      const base =
-        new THREE.Mesh(
-          new THREE.CylinderGeometry(
-            0.29,
-            0.34,
-            0.1,
-            24
-          ),
-          new THREE.MeshStandardMaterial({
-            color: 0x171b31,
-            metalness: 0.45,
-            roughness: 0.35
-          })
-        );
-
-      base.position.y = 0.06;
-      base.castShadow = true;
-
-      group.add(base);
-
-      const body =
-        new THREE.Mesh(
-          new THREE.CapsuleGeometry(
-            0.18,
-            0.36,
-            6,
-            14
-          ),
-          new THREE.MeshStandardMaterial({
-            color: mainColor,
-            emissive: glowColor,
-            emissiveIntensity: 0.16,
-            roughness: 0.38,
-            metalness: 0.22
-          })
-        );
-
-      body.position.y = 0.39;
-      body.castShadow = true;
-
-      group.add(body);
-
       const head =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.18,
-            20,
-            16
+            0.19,
+            18,
+            14
           ),
-          new THREE.MeshStandardMaterial({
-            color:
-              isPlayer
-                ? 0xdfeaff
-                : 0xffc0ae,
-
-            emissive: glowColor,
-            emissiveIntensity: 0.2,
-            roughness: 0.3
-          })
+          toonMaterial(
+            skinColor
+          )
         );
 
-      head.position.y = 0.76;
-      head.castShadow = true;
+      head.position.y =
+        y;
 
-      group.add(head);
-
-      const ring =
-        new THREE.Mesh(
-          new THREE.TorusGeometry(
-            0.26,
-            0.025,
-            10,
-            28
-          ),
-          new THREE.MeshBasicMaterial({
-            color: glowColor,
-            transparent: true,
-            opacity: 0.85
-          })
-        );
-
-      ring.rotation.x =
-        Math.PI / 2;
-
-      ring.position.y = 0.13;
-
-      group.add(ring);
-
-      if (role === "staff") {
-        const staff =
-          new THREE.Mesh(
-            new THREE.CylinderGeometry(
-              0.025,
-              0.025,
-              0.62,
-              10
-            ),
-            new THREE.MeshStandardMaterial({
-              color: 0xd6c2ff,
-              metalness: 0.5,
-              roughness: 0.3
-            })
-          );
-
-        staff.position.set(
-          0.27,
-          0.46,
-          0
-        );
-
-        staff.rotation.z = -0.12;
-
-        group.add(staff);
-
-        const orb =
-          new THREE.Mesh(
-            new THREE.SphereGeometry(
-              0.075,
-              14,
-              10
-            ),
-            new THREE.MeshBasicMaterial({
-              color: glowColor
-            })
-          );
-
-        orb.position.set(
-          0.31,
-          0.78,
-          0
-        );
-
-        group.add(orb);
-      } else {
-        const blade =
-          new THREE.Mesh(
-            new THREE.BoxGeometry(
-              0.055,
-              0.48,
-              0.035
-            ),
-            new THREE.MeshStandardMaterial({
-              color: 0xf2f5ff,
-              metalness: 0.85,
-              roughness: 0.18
-            })
-          );
-
-        blade.position.set(
-          0.26,
-          0.5,
-          0
-        );
-
-        blade.rotation.z =
-          -0.35;
-
-        group.add(blade);
-      }
-
-      group.scale.setScalar(
-        0.01
+      group.add(
+        head
       );
 
-      group.userData.targetScale =
-        1;
+      const eyeMaterial =
+        new THREE.MeshBasicMaterial({
+          color: 0x25223a
+        });
+
+      [
+        -0.065,
+        0.065
+      ].forEach(
+        (x) => {
+          const eye =
+            new THREE.Mesh(
+              new THREE.SphereGeometry(
+                0.018,
+                8,
+                6
+              ),
+              eyeMaterial
+            );
+
+          eye.position.set(
+            x,
+            y + 0.015,
+            0.176
+          );
+
+          group.add(
+            eye
+          );
+        }
+      );
+
+      return head;
+    }
+
+    function createPlayerStaffCharacter() {
+      const group =
+        new THREE.Group();
+
+      const robe =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.25,
+            0.54,
+            18
+          ),
+          toonMaterial(
+            0x6676d8,
+            0x26346d,
+            0.18
+          )
+        );
+
+      robe.position.y =
+        0.38;
+
+      group.add(
+        robe
+      );
+
+      const sash =
+        new THREE.Mesh(
+          new THREE.TorusGeometry(
+            0.155,
+            0.025,
+            8,
+            24
+          ),
+          toonMaterial(
+            0x83e0df
+          )
+        );
+
+      sash.rotation.x =
+        Math.PI / 2;
+
+      sash.position.y =
+        0.46;
+
+      group.add(
+        sash
+      );
+
+      createFace(
+        group,
+        0xf3cfb6,
+        0.77
+      );
+
+      const hair =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.205,
+            18,
+            12,
+            0,
+            Math.PI * 2,
+            0,
+            Math.PI / 2
+          ),
+          toonMaterial(
+            0x27345e
+          )
+        );
+
+      hair.position.y =
+        0.79;
+
+      group.add(
+        hair
+      );
+
+      const hat =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.25,
+            0.38,
+            18
+          ),
+          toonMaterial(
+            0x3d4b9f,
+            0x1b2459,
+            0.12
+          )
+        );
+
+      hat.position.set(
+        0,
+        1.04,
+        -0.015
+      );
+
+      hat.rotation.z =
+        -0.08;
+
+      group.add(
+        hat
+      );
+
+      const hatBand =
+        new THREE.Mesh(
+          new THREE.TorusGeometry(
+            0.19,
+            0.026,
+            8,
+            24
+          ),
+          toonMaterial(
+            0xf1c86a
+          )
+        );
+
+      hatBand.rotation.x =
+        Math.PI / 2;
+
+      hatBand.position.y =
+        0.91;
+
+      group.add(
+        hatBand
+      );
+
+      const staff =
+        new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            0.018,
+            0.022,
+            0.78,
+            10
+          ),
+          toonMaterial(
+            0xe7d5a2
+          )
+        );
+
+      staff.position.set(
+        0.31,
+        0.54,
+        0
+      );
+
+      staff.rotation.z =
+        -0.1;
+
+      group.add(
+        staff
+      );
+
+      const orb =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.07,
+            14,
+            10
+          ),
+          toonMaterial(
+            0x8af2f1,
+            0x2dbabd,
+            0.7
+          )
+        );
+
+      orb.position.set(
+        0.35,
+        0.94,
+        0
+      );
+
+      group.add(
+        orb
+      );
+
+      const sleeveGeometry =
+        new THREE.CapsuleGeometry(
+          0.055,
+          0.18,
+          4,
+          8
+        );
+
+      [
+        -1,
+        1
+      ].forEach(
+        (side) => {
+          const sleeve =
+            new THREE.Mesh(
+              sleeveGeometry,
+              toonMaterial(
+                0x8192ef
+              )
+            );
+
+          sleeve.position.set(
+            side * 0.2,
+            0.56,
+            0
+          );
+
+          sleeve.rotation.z =
+            side * -0.55;
+
+          group.add(
+            sleeve
+          );
+        }
+      );
+
+      group.userData.roleType =
+        "staff";
 
       return group;
     }
 
-    function renderPieces() {
-      pieceGroup.clear();
+    function createPlayerSwordCharacter() {
+      const group =
+        new THREE.Group();
+
+      const hakama =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.26,
+            0.52,
+            18
+          ),
+          toonMaterial(
+            0xe8dfc7,
+            0x7c6547,
+            0.08
+          )
+        );
+
+      hakama.position.y =
+        0.37;
+
+      group.add(
+        hakama
+      );
+
+      const jacket =
+        new THREE.Mesh(
+          new THREE.CapsuleGeometry(
+            0.14,
+            0.2,
+            5,
+            10
+          ),
+          toonMaterial(
+            0x5064a5
+          )
+        );
+
+      jacket.position.y =
+        0.56;
+
+      group.add(
+        jacket
+      );
+
+      const belt =
+        new THREE.Mesh(
+          new THREE.BoxGeometry(
+            0.31,
+            0.055,
+            0.22
+          ),
+          toonMaterial(
+            0xc64e55
+          )
+        );
+
+      belt.position.y =
+        0.46;
+
+      group.add(
+        belt
+      );
+
+      createFace(
+        group,
+        0xf0c9ac,
+        0.79
+      );
+
+      const hair =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.205,
+            18,
+            12,
+            0,
+            Math.PI * 2,
+            0,
+            Math.PI / 2
+          ),
+          toonMaterial(
+            0x252b45
+          )
+        );
+
+      hair.position.y =
+        0.81;
+
+      group.add(
+        hair
+      );
+
+      const topKnot =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.075,
+            12,
+            9
+          ),
+          toonMaterial(
+            0x252b45
+          )
+        );
+
+      topKnot.position.set(
+        0,
+        1.01,
+        -0.03
+      );
+
+      group.add(
+        topKnot
+      );
+
+      const blade =
+        new THREE.Mesh(
+          new THREE.BoxGeometry(
+            0.035,
+            0.68,
+            0.025
+          ),
+          toonMaterial(
+            0xf5f6ff
+          )
+        );
+
+      blade.position.set(
+        0.28,
+        0.61,
+        0.01
+      );
+
+      blade.rotation.z =
+        -0.42;
+
+      group.add(
+        blade
+      );
+
+      const guard =
+        new THREE.Mesh(
+          new THREE.BoxGeometry(
+            0.18,
+            0.035,
+            0.07
+          ),
+          toonMaterial(
+            0xe0b354
+          )
+        );
+
+      guard.position.set(
+        0.14,
+        0.39,
+        0.01
+      );
+
+      guard.rotation.z =
+        -0.42;
+
+      group.add(
+        guard
+      );
+
+      group.userData.roleType =
+        "sword";
+
+      return group;
+    }
+
+    function createAiFireCharacter() {
+      const group =
+        new THREE.Group();
+
+      const robe =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.27,
+            0.56,
+            18
+          ),
+          toonMaterial(
+            0xb83d50,
+            0x681725,
+            0.2
+          )
+        );
+
+      robe.position.y =
+        0.38;
+
+      group.add(
+        robe
+      );
+
+      const inner =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.17,
+            0.42,
+            18
+          ),
+          toonMaterial(
+            0x2a2239
+          )
+        );
+
+      inner.position.set(
+        0,
+        0.42,
+        0.16
+      );
+
+      group.add(
+        inner
+      );
+
+      createFace(
+        group,
+        0xf2c2aa,
+        0.78
+      );
+
+      const hair =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.208,
+            18,
+            12,
+            0,
+            Math.PI * 2,
+            0,
+            Math.PI / 2
+          ),
+          toonMaterial(
+            0x421b2b
+          )
+        );
+
+      hair.position.y =
+        0.81;
+
+      group.add(
+        hair
+      );
+
+      const hat =
+        new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            0.11,
+            0.2,
+            0.27,
+            10
+          ),
+          toonMaterial(
+            0x35182a
+          )
+        );
+
+      hat.position.y =
+        1.01;
+
+      group.add(
+        hat
+      );
+
+      const ribbon =
+        new THREE.Mesh(
+          new THREE.BoxGeometry(
+            0.42,
+            0.045,
+            0.08
+          ),
+          toonMaterial(
+            0xe7b55f
+          )
+        );
+
+      ribbon.position.set(
+        0,
+        0.91,
+        0
+      );
+
+      group.add(
+        ribbon
+      );
+
+      const flame =
+        new THREE.Group();
+
+      const flameOuter =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.085,
+            0.24,
+            12
+          ),
+          toonMaterial(
+            0xff6b4d,
+            0xa32319,
+            0.75
+          )
+        );
+
+      flameOuter.position.y =
+        0.1;
+
+      flame.add(
+        flameOuter
+      );
+
+      const flameInner =
+        new THREE.Mesh(
+          new THREE.ConeGeometry(
+            0.042,
+            0.13,
+            10
+          ),
+          toonMaterial(
+            0xffd37b,
+            0xff7a26,
+            0.9
+          )
+        );
+
+      flameInner.position.set(
+        0,
+        0.05,
+        0.045
+      );
+
+      flame.add(
+        flameInner
+      );
+
+      flame.position.set(
+        0.31,
+        0.63,
+        0.02
+      );
+
+      group.add(
+        flame
+      );
+
+      group.userData.flame =
+        flame;
+
+      group.userData.roleType =
+        "fire";
+
+      return group;
+    }
+
+    function createCharacter(
+      player,
+      role
+    ) {
+      const character =
+        player === AI
+          ? createAiFireCharacter()
+          : role === "sword"
+            ? createPlayerSwordCharacter()
+            : createPlayerStaffCharacter();
+
+      character.scale.setScalar(
+        0.01
+      );
+
+      character.userData.targetScale =
+        0.75;
+
+      character.userData.spawnTime =
+        performance.now();
+
+      character.userData.player =
+        player;
+
+      return character;
+    }
+
+    /*
+      不清空整個 Character Group 後重畫。
+      只新增或移除有變動的角色。
+    */
+    function syncCharacters() {
+      const desiredKeys =
+        new Set();
 
       for (
         let row = 0;
@@ -2314,54 +3972,129 @@
           col < BOARD_SIZE;
           col += 1
         ) {
-          const value =
+          const owner =
             board[row][col];
 
-          if (value === EMPTY) {
+          if (owner === EMPTY) {
             continue;
           }
 
-          const unit =
-            createUnit(
-              value,
-              roleBoard[row][col] ||
-              "staff"
+          const key =
+            `${row}-${col}`;
+
+          desiredKeys.add(
+            key
+          );
+
+          const role =
+            roleBoard[row][col] ||
+            (
+              owner === AI
+                ? "fire"
+                : "staff"
             );
 
-          unit.position.copy(
+          const existing =
+            characterMap.get(key);
+
+          if (
+            existing &&
+            existing.userData.roleType === role &&
+            existing.userData.player === owner
+          ) {
+            continue;
+          }
+
+          if (existing) {
+            characterGroup.remove(
+              existing
+            );
+
+            characterMap.delete(
+              key
+            );
+          }
+
+          const character =
+            createCharacter(
+              owner,
+              role
+            );
+
+          character.position.copy(
             boardToWorld(
               row,
               col
             )
           );
 
-          unit.userData.row =
+          character.userData.row =
             row;
 
-          unit.userData.col =
+          character.userData.col =
             col;
 
-          pieceGroup.add(
-            unit
+          characterGroup.add(
+            character
+          );
+
+          characterMap.set(
+            key,
+            character
+          );
+        }
+      }
+
+      for (
+        const [
+          key,
+          character
+        ] of characterMap
+      ) {
+        if (
+          !desiredKeys.has(key)
+        ) {
+          characterGroup.remove(
+            character
+          );
+
+          characterMap.delete(
+            key
           );
         }
       }
     }
 
-    function refreshTiles() {
+    function clearCharactersOnly() {
+      for (
+        const character
+        of characterMap.values()
+      ) {
+        characterGroup.remove(
+          character
+        );
+      }
+
+      characterMap.clear();
+    }
+
+    function updateTileVisuals() {
       tileMeshes.forEach(
         (tile) => {
           const {
             row,
-            col
+            col,
+            baseColor
           } = tile.userData;
 
-          tile.material =
-            (
-              (row + col) % 2 === 0
-                ? tileMaterialA
-                : tileMaterialB
-            ).clone();
+          let color =
+            baseColor;
+
+          let emissive =
+            0x000000;
+
+          let emissiveIntensity =
+            0;
 
           if (
             isFrozenFor(
@@ -2371,24 +4104,34 @@
             ) &&
             board[row][col] === EMPTY
           ) {
-            tile.material =
-              frozenMaterial.clone();
+            color =
+              palette.frozen;
+
+            emissive =
+              0x166c85;
+
+            emissiveIntensity =
+              0.65;
           }
 
           if (
-            selectedSkill === "fire" &&
-            board[row][col] === PLAYER
+            (
+              selectedSkill === "fire" &&
+              board[row][col] === PLAYER
+            ) ||
+            (
+              selectedSkill === "ice" &&
+              board[row][col] === AI
+            )
           ) {
-            tile.material =
-              targetMaterial.clone();
-          }
+            color =
+              palette.target;
 
-          if (
-            selectedSkill === "ice" &&
-            board[row][col] === AI
-          ) {
-            tile.material =
-              targetMaterial.clone();
+            emissive =
+              0x6e4108;
+
+            emissiveIntensity =
+              0.72;
           }
 
           if (
@@ -2398,28 +4141,62 @@
                 cell.col === col
             )
           ) {
-            tile.material =
-              winningMaterial.clone();
+            color =
+              palette.winning;
+
+            emissive =
+              0x155e3c;
+
+            emissiveIntensity =
+              0.8;
           }
 
+          tile.material.color
+            .setHex(color);
+
+          tile.material.emissive
+            .setHex(emissive);
+
+          tile.material.emissiveIntensity =
+            emissiveIntensity;
+
           tile.position.y =
-            (
-              lastMove &&
-              lastMove.row === row &&
-              lastMove.col === col
-            )
-              ? 0.08
-              : 0;
+            0;
         }
       );
+
+      if (lastMove) {
+        const position =
+          boardToWorld(
+            lastMove.row,
+            lastMove.col
+          );
+
+        lastMoveRing.position.set(
+          position.x,
+          0.115,
+          position.z
+        );
+
+        lastMoveRing.visible =
+          true;
+      } else {
+        lastMoveRing.visible =
+          false;
+      }
     }
+
+    /* =========================================
+       Three.js 特效
+    ========================================= */
 
     function createBurst(
       row,
       col,
-      color
+      color,
+      amount = 14
     ) {
-      const position =
+      const origin =
         boardToWorld(
           row,
           col
@@ -2427,13 +4204,13 @@
 
       for (
         let index = 0;
-        index < 18;
+        index < amount;
         index += 1
       ) {
         const particle =
           new THREE.Mesh(
             new THREE.SphereGeometry(
-              0.025,
+              0.022,
               6,
               4
             ),
@@ -2445,23 +4222,27 @@
           );
 
         particle.position.copy(
-          position
+          origin
         );
 
         particle.position.y =
-          0.45;
+          0.48;
 
         particle.userData.velocity =
           new THREE.Vector3(
-            (Math.random() - 0.5) *
-              0.07,
+            (
+              Math.random() -
+              0.5
+            ) * 0.075,
 
             Math.random() *
-              0.08 +
-              0.03,
+            0.075 +
+            0.025,
 
-            (Math.random() - 0.5) *
-              0.07
+            (
+              Math.random() -
+              0.5
+            ) * 0.075
           );
 
         particle.userData.life =
@@ -2473,68 +4254,144 @@
       }
     }
 
-    function resizeRenderer() {
+    function createIceGlyph(
+      row,
+      col
+    ) {
+      const position =
+        boardToWorld(
+          row,
+          col
+        );
+
+      const glyph =
+        new THREE.Mesh(
+          new THREE.RingGeometry(
+            0.18,
+            0.33,
+            6
+          ),
+          new THREE.MeshBasicMaterial({
+            color: 0xb7f6ff,
+            transparent: true,
+            opacity: 0.95,
+            side:
+              THREE.DoubleSide
+          })
+        );
+
+      glyph.rotation.x =
+        -Math.PI / 2;
+
+      glyph.position.set(
+        position.x,
+        0.14,
+        position.z
+      );
+
+      glyph.userData.life =
+        1;
+
+      glyph.userData.glyph =
+        true;
+
+      effectGroup.add(
+        glyph
+      );
+    }
+
+    /* =========================================
+       Renderer 尺寸
+    ========================================= */
+
+    /*
+      battleScreen 隱藏時，
+      getBoundingClientRect 可能是 0。
+
+      此時不把 Renderer 改成 1×1，
+      避免下一次顯示時 Canvas 閃一下。
+    */
+    function resizeMainRenderer() {
       const rect =
-        gameCanvas.getBoundingClientRect();
+        gameCanvas
+          .getBoundingClientRect();
+
+      if (
+        rect.width < 20 ||
+        rect.height < 20
+      ) {
+        return;
+      }
 
       const width =
-        Math.max(
-          1,
-          Math.floor(
-            rect.width
-          )
+        Math.floor(
+          rect.width
         );
 
       const height =
-        Math.max(
-          1,
-          Math.floor(
-            rect.height
-          )
+        Math.floor(
+          rect.height
         );
 
-      renderer.setSize(
-        width,
-        height,
-        false
-      );
+      const currentSize =
+        renderer.getSize(
+          new THREE.Vector2()
+        );
+
+      if (
+        currentSize.x !== width ||
+        currentSize.y !== height
+      ) {
+        renderer.setSize(
+          width,
+          height,
+          false
+        );
+      }
 
       const aspect =
         width / height;
 
-      const viewSize =
-        9.2;
+      /*
+        固定水平可視寬度，
+        確保 8×8 棋盤不被裁切。
+      */
+      const viewWidth =
+        9.55;
+
+      const viewHeight =
+        viewWidth / aspect;
 
       camera.left =
-        -viewSize *
-        aspect /
-        2;
+        -viewWidth / 2;
 
       camera.right =
-        viewSize *
-        aspect /
-        2;
+        viewWidth / 2;
 
       camera.top =
-        viewSize / 2;
+        viewHeight / 2;
 
       camera.bottom =
-        -viewSize / 2;
+        -viewHeight / 2;
 
       camera.updateProjectionMatrix();
     }
 
-    new ResizeObserver(
-      resizeRenderer
-    ).observe(
-      gameCanvas
+    const mainResizeObserver =
+      new ResizeObserver(
+        () => {
+          resizeMainRenderer();
+        }
+      );
+
+    mainResizeObserver.observe(
+      $("stage")
     );
 
-    function updatePointer(
-      event
-    ) {
+    function updatePointer(event) {
       const rect =
-        gameCanvas.getBoundingClientRect();
+        gameCanvas
+          .getBoundingClientRect();
 
       pointer.x =
         (
@@ -2574,7 +4431,8 @@
             .intersectObjects(
               tileMeshes,
               false
-            )[0]?.object ||
+            )[0]
+            ?.object ||
           null;
 
         if (
@@ -2588,7 +4446,8 @@
             );
           }
 
-          hoveredTile = hit;
+          hoveredTile =
+            hit;
 
           if (
             hoveredTile &&
@@ -2597,9 +4456,9 @@
               .contains("locked")
           ) {
             hoveredTile.scale.set(
-              1.04,
-              1.04,
-              1.04
+              1.035,
+              1.08,
+              1.035
             );
           }
         }
@@ -2644,7 +4503,8 @@
             .intersectObjects(
               tileMeshes,
               false
-            )[0]?.object;
+            )[0]
+            ?.object;
 
         if (!tile) {
           return;
@@ -2657,36 +4517,51 @@
       }
     );
 
-    /* ================================
-       Three.js 小型角色 Icon
-    ================================ */
+    /* =========================================
+       Three.js UI Icon
+    ========================================= */
 
-    class MiniIcon {
+    class MiniScene {
       constructor(
         canvas,
-        color,
-        role = "staff"
+        kind
       ) {
+        this.canvas =
+          canvas;
+
+        this.kind =
+          kind;
+
         this.renderer =
           new THREE.WebGLRenderer({
             canvas,
             antialias: true,
-            alpha: true
+            alpha: true,
+            powerPreference:
+              "low-power"
           });
 
         this.renderer.setPixelRatio(
           Math.min(
             window.devicePixelRatio,
-            2
+            1.75
           )
         );
+
+        this.renderer.setClearColor(
+          0x000000,
+          0
+        );
+
+        this.renderer.outputColorSpace =
+          THREE.SRGBColorSpace;
 
         this.scene =
           new THREE.Scene();
 
         this.camera =
           new THREE.PerspectiveCamera(
-            30,
+            32,
             1,
             0.1,
             20
@@ -2694,33 +4569,39 @@
 
         this.camera.position.set(
           0,
-          0,
-          4
+          0.15,
+          4.1
         );
 
         this.scene.add(
           new THREE.HemisphereLight(
             0xffffff,
-            0x111122,
-            2
+            0x1a1730,
+            2.5
           )
         );
 
-        this.light =
+        const light =
           new THREE.PointLight(
-            color,
-            12,
+            kind === "ai"
+              ? 0xff796e
+              : kind === "fire"
+                ? 0xff6b42
+                : kind === "ice"
+                  ? 0x8ceaff
+                  : 0x8297ff,
+            7,
             8
           );
 
-        this.light.position.set(
+        light.position.set(
           2,
           2,
           3
         );
 
         this.scene.add(
-          this.light
+          light
         );
 
         this.group =
@@ -2730,137 +4611,215 @@
           this.group
         );
 
-        this.set(
-          color,
-          role
-        );
-
-        this.resize();
+        this.setKind(kind);
       }
 
-      set(
-        color,
-        role
-      ) {
-        this.group.clear();
-
-        this.light.color.setHex(
-          color
-        );
-
-        const orb =
-          new THREE.Mesh(
-            new THREE.SphereGeometry(
-              0.72,
-              30,
-              22
-            ),
-            new THREE.MeshStandardMaterial({
-              color,
-              emissive: color,
-              emissiveIntensity: 0.35,
-              roughness: 0.25,
-              metalness: 0.18
-            })
+      clear() {
+        while (
+          this.group.children.length
+        ) {
+          this.group.remove(
+            this.group.children[0]
           );
+        }
+      }
 
-        this.group.add(
-          orb
-        );
+      setKind(kind) {
+        this.kind =
+          kind;
 
-        const ring =
-          new THREE.Mesh(
-            new THREE.TorusGeometry(
-              0.9,
-              0.035,
-              10,
-              42
-            ),
-            new THREE.MeshBasicMaterial({
-              color: 0xffffff,
-              transparent: true,
-              opacity: 0.55
-            })
+        this.clear();
+
+        if (
+          kind === "player-staff" ||
+          kind === "player-sword" ||
+          kind === "ai"
+        ) {
+          const character =
+            kind === "ai"
+              ? createAiFireCharacter()
+              : kind === "player-sword"
+                ? createPlayerSwordCharacter()
+                : createPlayerStaffCharacter();
+
+          character.position.y =
+            -0.55;
+
+          character.scale.setScalar(
+            1.45
           );
-
-        ring.rotation.x = 1.1;
-        ring.rotation.z = 0.4;
-
-        this.group.add(
-          ring
-        );
-
-        if (role === "sword") {
-          const blade =
-            new THREE.Mesh(
-              new THREE.BoxGeometry(
-                0.08,
-                1.15,
-                0.05
-              ),
-              new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                metalness: 0.9,
-                roughness: 0.1
-              })
-            );
-
-          blade.rotation.z = -0.55;
 
           this.group.add(
-            blade
+            character
           );
-        } else {
-          const staff =
+
+          return;
+        }
+
+        if (kind === "fire") {
+          const outer =
             new THREE.Mesh(
-              new THREE.CylinderGeometry(
-                0.035,
-                0.035,
-                1.25,
-                10
+              new THREE.ConeGeometry(
+                0.55,
+                1.35,
+                18
               ),
-              new THREE.MeshStandardMaterial({
-                color: 0xe5d8ff,
-                metalness: 0.5
-              })
+              toonMaterial(
+                0xf15f48,
+                0xa9281d,
+                0.8
+              )
             );
 
-          staff.rotation.z = -0.55;
+          outer.position.y =
+            -0.08;
 
           this.group.add(
-            staff
+            outer
           );
+
+          const inner =
+            new THREE.Mesh(
+              new THREE.ConeGeometry(
+                0.26,
+                0.72,
+                16
+              ),
+              toonMaterial(
+                0xffd472,
+                0xff7a22,
+                0.9
+              )
+            );
+
+          inner.position.set(
+            0,
+            -0.18,
+            0.18
+          );
+
+          this.group.add(
+            inner
+          );
+
+          return;
+        }
+
+        if (kind === "ice") {
+          const crystalMaterial =
+            toonMaterial(
+              0x9ae8ff,
+              0x2784ad,
+              0.55
+            );
+
+          for (
+            let index = 0;
+            index < 3;
+            index += 1
+          ) {
+            const crystal =
+              new THREE.Mesh(
+                new THREE.OctahedronGeometry(
+                  index === 0
+                    ? 0.56
+                    : 0.36,
+                  0
+                ),
+                crystalMaterial
+              );
+
+            crystal.position.set(
+              (index - 1) * 0.42,
+              index === 0
+                ? 0.08
+                : -0.25,
+              0
+            );
+
+            crystal.scale.y =
+              index === 0
+                ? 1.25
+                : 0.9;
+
+            this.group.add(
+              crystal
+            );
+          }
         }
       }
 
       resize() {
         const rect =
-          this.renderer
-            .domElement
+          this.canvas
             .getBoundingClientRect();
 
-        this.renderer.setSize(
-          Math.max(
-            1,
+        if (
+          rect.width < 8 ||
+          rect.height < 8
+        ) {
+          return;
+        }
+
+        const width =
+          Math.floor(
             rect.width
-          ),
-          Math.max(
-            1,
+          );
+
+        const height =
+          Math.floor(
             rect.height
-          ),
-          false
-        );
+          );
+
+        const current =
+          this.renderer.getSize(
+            new THREE.Vector2()
+          );
+
+        if (
+          current.x !== width ||
+          current.y !== height
+        ) {
+          this.renderer.setSize(
+            width,
+            height,
+            false
+          );
+        }
+
+        this.camera.aspect =
+          width / height;
+
+        this.camera
+          .updateProjectionMatrix();
       }
 
       render(time) {
         this.group.rotation.y =
-          time * 0.001;
-
-        this.group.rotation.x =
           Math.sin(
-            time * 0.0012
+            time * 0.001
           ) *
-          0.08;
+          0.18;
+
+        if (
+          this.kind === "fire"
+        ) {
+          this.group.scale
+            .setScalar(
+              1 +
+              Math.sin(
+                time * 0.006
+              ) *
+              0.045
+            );
+        }
+
+        if (
+          this.kind === "ice"
+        ) {
+          this.group.rotation.y =
+            time * 0.0007;
+        }
 
         this.renderer.render(
           this.scene,
@@ -2869,120 +4828,69 @@
       }
     }
 
-    const playerIcon =
-      new MiniIcon(
+    const playerMini =
+      new MiniScene(
         $("playerIcon"),
-        0x756ee8,
-        "staff"
+        "player-staff"
       );
 
-    const aiIcon =
-      new MiniIcon(
+    const aiMini =
+      new MiniScene(
         $("aiIcon"),
-        0xd5485c,
-        "staff"
+        "ai"
       );
 
-    new ResizeObserver(
-      () => {
-        playerIcon.resize();
-        aiIcon.resize();
+    const fireMini =
+      new MiniScene(
+        $("fireIcon"),
+        "fire"
+      );
+
+    const iceMini =
+      new MiniScene(
+        $("iceIcon"),
+        "ice"
+      );
+
+    const miniRenderers = [
+      playerMini,
+      aiMini,
+      fireMini,
+      iceMini
+    ];
+
+    miniRenderers.forEach(
+      (mini) => {
+        new ResizeObserver(
+          () => {
+            mini.resize();
+          }
+        ).observe(
+          mini.canvas
+        );
       }
-    ).observe(
-      $("playerIcon")
     );
 
-    /* ================================
-       Timer 與畫面
-    ================================ */
+    /* =========================================
+       棋局初始化
+    ========================================= */
 
-    function setGameTimer(
-      callback,
-      delay
-    ) {
-      const timerId =
-        window.setTimeout(
-          callback,
-          delay
-        );
-
-      timers.push(
-        timerId
-      );
-
-      return timerId;
-    }
-
-    function clearGameTimers() {
-      timers.forEach(
-        (timerId) =>
-          window.clearTimeout(
-            timerId
-          )
-      );
-
-      timers = [];
-    }
-
-    function showScreen(
-      screenId
-    ) {
-      document
-        .querySelectorAll(
-          ".screen"
-        )
-        .forEach(
-          (screen) => {
-            screen.classList.remove(
-              "active"
-            );
-          }
-        );
-
-      $(screenId)
-        .classList
-        .add("active");
-    }
-
-    function showToast(
-      message
-    ) {
-      const toast =
-        $("toast");
-
-      toast.textContent =
-        message;
-
-      toast.classList.add(
-        "show"
-      );
-
-      setGameTimer(
-        () => {
-          toast.classList.remove(
-            "show"
-          );
+    function createEmptyBoard() {
+      return Array.from(
+        {
+          length:
+            BOARD_SIZE
         },
-        1100
+        () =>
+          Array(
+            BOARD_SIZE
+          ).fill(EMPTY)
       );
     }
 
-    /* ================================
-       對戰初始化
-    ================================ */
-
-    function resetRound() {
+    function resetRoundState() {
       board =
-        Array.from(
-          {
-            length:
-              BOARD_SIZE
-          },
-          () =>
-            Array(
-              BOARD_SIZE
-            ).fill(EMPTY)
-        );
+        createEmptyBoard();
 
       roleBoard =
         Array.from(
@@ -3010,13 +4918,21 @@
       frozenCells = [];
       freezePending = false;
 
-      renderPieces();
-      refreshTiles();
+      /*
+        只移除角色，不重建棋盤。
+      */
+      clearCharactersOnly();
+
+      lastMoveRing.visible =
+        false;
+
+      updateTileVisuals();
       updateInterface();
     }
 
     function startMatch() {
       clearGameTimers();
+      ensureAudio();
 
       roundNumber = 1;
 
@@ -3040,31 +4956,61 @@
     }
 
     function startRound() {
-      resetRound();
-
-      $("roundText").textContent =
-        `ROUND ${roundNumber}`;
+      resetRoundState();
 
       const playerStarts =
         roundNumber % 2 === 1;
 
-      $("roundTitle").textContent =
+      $("roundText").textContent =
+        ROUND_NAMES[
+          roundNumber - 1
+        ] ||
+        `第${roundNumber}局`;
+
+      $("roundBannerTitle").textContent =
         playerStarts
           ? "玩家先攻"
           : "赤焰術師先攻";
 
-      $("roundDescription").textContent =
+      $("roundBannerDescription").textContent =
         playerStarts
           ? "PLAYER ATTACKS FIRST"
           : "AI ATTACKS FIRST";
 
-      $("roundOverlay")
+      $("roundBanner")
         .classList
         .add("show");
 
+      $("stage")
+        .classList
+        .add("locked");
+
+      $("turnText").textContent =
+        "新局準備";
+
+      $("turnSubtext").textContent =
+        playerStarts
+          ? "蒼月陣營取得先手"
+          : "赤焰陣營取得先手";
+
+      playTone(
+        440,
+        0.08,
+        "sine",
+        0.018
+      );
+
+      playTone(
+        660,
+        0.12,
+        "sine",
+        0.018,
+        0.07
+      );
+
       setGameTimer(
         () => {
-          $("roundOverlay")
+          $("roundBanner")
             .classList
             .remove("show");
 
@@ -3078,9 +5024,21 @@
       );
     }
 
-    /* ================================
-       回合
-    ================================ */
+    /* =========================================
+       回合與角色抽取
+    ========================================= */
+
+    function setTurnTheme(isPlayer) {
+      $("turnMon").style.background =
+        isPlayer
+          ? "radial-gradient(circle at 35% 30%, #fff, #7ee7ee 26%, #4b5cc1 68%)"
+          : "radial-gradient(circle at 35% 30%, #fff5e9, #ff9c83 26%, #9d2f43 68%)";
+
+      $("turnMon").style.boxShadow =
+        isPlayer
+          ? "0 0 12px rgba(126,231,238,.5)"
+          : "0 0 12px rgba(255,121,134,.5)";
+    }
 
     function beginPlayerTurn() {
       if (
@@ -3090,9 +5048,14 @@
         return;
       }
 
-      currentPlayer = PLAYER;
-      aiThinking = false;
-      selectedSkill = null;
+      currentPlayer =
+        PLAYER;
+
+      aiThinking =
+        false;
+
+      selectedSkill =
+        null;
 
       $("thinking")
         .classList
@@ -3103,16 +5066,18 @@
         .add("locked");
 
       $("turnText").textContent =
-        "玩家角色抽取中";
+        "角色抽取中";
 
-      setTurnColor(true);
+      $("turnSubtext").textContent =
+        "杖與劍各有一半機率";
 
+      setTurnTheme(true);
       spinPlayerRole();
     }
 
     function spinPlayerRole() {
       $("roleName").textContent =
-        "抽取中…";
+        "抽取中";
 
       $("roleDescription").textContent =
         "杖 / 劍";
@@ -3122,44 +5087,50 @@
 
       let previewIndex = 0;
 
-      const previewNames = [
-        "杖｜戰場控制型",
-        "劍｜單體破壞型"
-      ];
-
-      const previewTimer =
+      previewInterval =
         window.setInterval(
           () => {
-            $("roleName").textContent =
-              previewNames[
-                previewIndex %
-                previewNames.length
-              ];
+            const staffPreview =
+              previewIndex % 2 === 0;
 
-            if (
-              previewIndex % 2 === 0
-            ) {
-              playerIcon.set(
-                0x756ee8,
-                "staff"
-              );
-            } else {
-              playerIcon.set(
-                0xe3c477,
-                "sword"
-              );
-            }
+            $("roleName").textContent =
+              staffPreview
+                ? "杖"
+                : "劍";
+
+            $("roleDescription").textContent =
+              staffPreview
+                ? "戰場控制型"
+                : "單體破壞型";
+
+            playerMini.setKind(
+              staffPreview
+                ? "player-staff"
+                : "player-sword"
+            );
+
+            playTone(
+              staffPreview
+                ? 640
+                : 520,
+              0.035,
+              "sine",
+              0.008
+            );
 
             previewIndex += 1;
           },
-          85
+          90
         );
 
       setGameTimer(
         () => {
           window.clearInterval(
-            previewTimer
+            previewInterval
           );
+
+          previewInterval =
+            null;
 
           playerRole =
             Math.random() < 0.5
@@ -3176,11 +5147,17 @@
               "戰場控制型";
 
             $("skillMessage").textContent =
-              "可使用 FIRE 或 ICE";
+              "可使用 FIRE 或 ICE，或直接落子";
 
-            playerIcon.set(
-              0x756ee8,
-              "staff"
+            playerMini.setKind(
+              "player-staff"
+            );
+
+            playTone(
+              780,
+              0.12,
+              "sine",
+              0.026
             );
           } else {
             $("roleName").textContent =
@@ -3190,26 +5167,37 @@
               "單體破壞型";
 
             $("skillMessage").textContent =
-              "本回合只能正常落子";
+              "本回合進行一般落子";
 
-            playerIcon.set(
-              0xe3c477,
-              "sword"
+            playerMini.setKind(
+              "player-sword"
+            );
+
+            playTone(
+              560,
+              0.12,
+              "triangle",
+              0.026
             );
           }
-
-          $("stage")
-            .classList
-            .remove("locked");
 
           $("turnText").textContent =
             playerRole === "staff"
               ? "玩家回合｜杖"
               : "玩家回合｜劍";
 
+          $("turnSubtext").textContent =
+            playerRole === "staff"
+              ? "選擇技能或在空格部署角色"
+              : "在空格部署劍士角色";
+
+          $("stage")
+            .classList
+            .remove("locked");
+
           updateInterface();
         },
-        620
+        630
       );
     }
 
@@ -3221,9 +5209,14 @@
         return;
       }
 
-      currentPlayer = AI;
-      aiThinking = true;
-      selectedSkill = null;
+      currentPlayer =
+        AI;
+
+      aiThinking =
+        true;
+
+      selectedSkill =
+        null;
 
       $("stage")
         .classList
@@ -3234,15 +5227,31 @@
         .add("show");
 
       $("turnText").textContent =
-        "赤焰術師思考中";
+        "赤焰術師回合";
 
-      setTurnColor(false);
+      $("turnSubtext").textContent =
+        "正在判斷攻擊與防守位置";
+
+      setTurnTheme(false);
       updateInterface();
 
       setGameTimer(
         () => {
-          const move =
+          let move =
             chooseAiMove();
+
+          if (
+            !move &&
+            freezePending
+          ) {
+            frozenCells = [];
+            freezePending = false;
+
+            updateTileVisuals();
+
+            move =
+              chooseAiMove();
+          }
 
           if (move) {
             placeStone(
@@ -3252,27 +5261,13 @@
             );
           }
         },
-        480
+        520
       );
     }
 
-    function setTurnColor(
-      isPlayer
-    ) {
-      $("turnOrb").style.background =
-        isPlayer
-          ? "var(--cyan)"
-          : "var(--red)";
-
-      $("turnOrb").style.boxShadow =
-        isPlayer
-          ? "0 0 12px rgba(114,221,255,.7)"
-          : "0 0 12px rgba(255,121,134,.7)";
-    }
-
-    /* ================================
+    /* =========================================
        落子
-    ================================ */
+    ========================================= */
 
     function handleBoardClick(
       row,
@@ -3299,6 +5294,10 @@
       if (
         board[row][col] !== EMPTY
       ) {
+        showToast(
+          "此格已有角色"
+        );
+
         return;
       }
 
@@ -3331,7 +5330,7 @@
       roleBoard[row][col] =
         player === PLAYER
           ? playerRole
-          : "staff";
+          : "fire";
 
       moveNumber += 1;
 
@@ -3340,41 +5339,39 @@
         col
       };
 
-      renderPieces();
-      refreshTiles();
+      syncCharacters();
+      updateTileVisuals();
 
       createBurst(
         row,
         col,
         player === PLAYER
-          ? 0x77ddff
-          : 0xff6877
+          ? 0x82e7ee
+          : 0xff7566,
+        12
       );
 
+      playPlaceSound(player);
       updateInterface();
 
-      const winResult =
+      const result =
         checkWin(
           row,
           col,
           player
         );
 
-      if (winResult.hasWon) {
+      if (result.hasWon) {
         winningCells =
-          winResult.cells;
+          result.cells;
 
-        refreshTiles();
+        updateTileVisuals();
         finishRound(player);
 
         return;
       }
 
-      if (
-        moveNumber >=
-        BOARD_SIZE *
-        BOARD_SIZE
-      ) {
+      if (isBoardFull()) {
         finishRound(EMPTY);
         return;
       }
@@ -3386,7 +5383,7 @@
         frozenCells = [];
         freezePending = false;
 
-        refreshTiles();
+        updateTileVisuals();
       }
 
       if (player === PLAYER) {
@@ -3396,9 +5393,19 @@
       }
     }
 
-    /* ================================
+    function isBoardFull() {
+      return board.every(
+        (row) =>
+          row.every(
+            (cell) =>
+              cell !== EMPTY
+          )
+      );
+    }
+
+    /* =========================================
        五連判定
-    ================================ */
+    ========================================= */
 
     function checkWin(
       row,
@@ -3496,11 +5503,25 @@
       );
     }
 
-    /* ================================
+    /* =========================================
        AI
-    ================================ */
+    ========================================= */
 
     function chooseAiMove() {
+      if (
+        moveNumber === 0 &&
+        !isFrozenFor(
+          AI,
+          3,
+          3
+        )
+      ) {
+        return {
+          row: 3,
+          col: 3
+        };
+      }
+
       return (
         findImmediateMove(AI) ||
         findImmediateMove(PLAYER) ||
@@ -3508,9 +5529,7 @@
       );
     }
 
-    function findImmediateMove(
-      player
-    ) {
+    function findImmediateMove(player) {
       for (
         let row = 0;
         row < BOARD_SIZE;
@@ -3614,7 +5633,7 @@
       }
 
       if (
-        bestMoves.length === 0
+        !bestMoves.length
       ) {
         return null;
       }
@@ -3631,7 +5650,8 @@
       row,
       col
     ) {
-      board[row][col] = AI;
+      board[row][col] =
+        AI;
 
       let score =
         evaluatePattern(
@@ -3669,45 +5689,49 @@
         );
 
       for (
-        let nearbyRow =
+        let nearRow =
           Math.max(
             0,
             row - 2
           );
 
-        nearbyRow <=
+        nearRow <=
         Math.min(
           BOARD_SIZE - 1,
           row + 2
         );
 
-        nearbyRow += 1
+        nearRow += 1
       ) {
         for (
-          let nearbyCol =
+          let nearCol =
             Math.max(
               0,
               col - 2
             );
 
-          nearbyCol <=
+          nearCol <=
           Math.min(
             BOARD_SIZE - 1,
             col + 2
           );
 
-          nearbyCol += 1
+          nearCol += 1
         ) {
           if (
-            board[nearbyRow][nearbyCol] !==
+            board[nearRow][nearCol] !==
             EMPTY
           ) {
-            score += 1.2;
+            score += 1.25;
           }
         }
       }
 
-      return score;
+      return (
+        score +
+        Math.random() *
+        0.25
+      );
     }
 
     function evaluatePattern(
@@ -3741,7 +5765,6 @@
             player
         ) {
           count += 1;
-
           targetRow += rowStep;
           targetCol += colStep;
         }
@@ -3772,7 +5795,6 @@
             player
         ) {
           count += 1;
-
           targetRow -= rowStep;
           targetCol -= colStep;
         }
@@ -3821,13 +5843,11 @@
       return total;
     }
 
-    /* ================================
-       技能
-    ================================ */
+    /* =========================================
+       FIRE / ICE 技能
+    ========================================= */
 
-    function selectSkill(
-      skillType
-    ) {
+    function selectSkill(skillType) {
       const canUse =
         currentPlayer === PLAYER &&
         playerRole === "staff" &&
@@ -3842,15 +5862,15 @@
       selectedSkill =
         skillType;
 
-      $("cancelButton").hidden =
+      $("cancelSkillButton").hidden =
         false;
 
       $("skillMessage").textContent =
         skillType === "fire"
-          ? "選擇自己的單位：移除其正上與正下敵軍"
-          : "選擇敵方單位：冰封其上下左右空格";
+          ? "選擇己方角色：移除其正上與正下敵軍"
+          : "選擇敵方角色：冰封其上下左右空格";
 
-      refreshTiles();
+      updateTileVisuals();
       updateInterface();
     }
 
@@ -3865,7 +5885,9 @@
           row,
           col
         );
-      } else if (
+      }
+
+      if (
         selectedSkill === "ice"
       ) {
         castIce(
@@ -3883,19 +5905,17 @@
         board[row][col] !== PLAYER
       ) {
         $("skillMessage").textContent =
-          "FIRE 必須選擇自己的單位";
+          "FIRE 必須選擇己方角色";
 
         return;
       }
 
       let removedCount = 0;
 
-      const targets = [
+      [
         [row - 1, col],
         [row + 1, col]
-      ];
-
-      targets.forEach(
+      ].forEach(
         ([
           targetRow,
           targetCol
@@ -3919,16 +5939,21 @@
             createBurst(
               targetRow,
               targetCol,
-              0xff693f
+              0xff683f,
+              22
             );
           }
         }
       );
 
+      playSkillSound(
+        "fire"
+      );
+
       completeSkill(
-        removedCount > 0
-          ? `FIRE 移除 ${removedCount} 個敵方單位`
-          : "FIRE 啟動，但沒有命中敵軍"
+        removedCount
+          ? `FIRE 擊退 ${removedCount} 名敵方角色`
+          : "FIRE 發動，但沒有命中敵軍"
       );
     }
 
@@ -3940,7 +5965,7 @@
         board[row][col] !== AI
       ) {
         $("skillMessage").textContent =
-          "ICE 必須選擇敵方單位";
+          "ICE 必須選擇敵方角色";
 
         return;
       }
@@ -3955,13 +5980,16 @@
           ([
             targetRow,
             targetCol
-          ]) =>
-            isInsideBoard(
-              targetRow,
-              targetCol
-            ) &&
-            board[targetRow][targetCol] ===
-              EMPTY
+          ]) => {
+            return (
+              isInsideBoard(
+                targetRow,
+                targetCol
+              ) &&
+              board[targetRow][targetCol] ===
+                EMPTY
+            );
+          }
         )
         .map(
           ([
@@ -3977,45 +6005,60 @@
       freezePending =
         frozenCells.length > 0;
 
+      frozenCells.forEach(
+        (cell) => {
+          createIceGlyph(
+            cell.row,
+            cell.col
+          );
+        }
+      );
+
+      playSkillSound(
+        "ice"
+      );
+
       completeSkill(
-        frozenCells.length > 0
-          ? `ICE 冰封 ${frozenCells.length} 個格子`
-          : "ICE 啟動，但沒有可冰封格"
+        frozenCells.length
+          ? `ICE 冰封 ${frozenCells.length} 個部署格`
+          : "ICE 發動，但周圍沒有空格"
       );
     }
 
-    function completeSkill(
-      message
-    ) {
-      playerSkillUsed = true;
-      selectedSkill = null;
+    function completeSkill(message) {
+      playerSkillUsed =
+        true;
 
-      $("cancelButton").hidden =
+      selectedSkill =
+        null;
+
+      $("cancelSkillButton").hidden =
         true;
 
       $("skillMessage").textContent =
         message;
 
-      renderPieces();
-      refreshTiles();
+      syncCharacters();
+      updateTileVisuals();
       updateInterface();
 
       setGameTimer(
         beginAiTurn,
-        620
+        650
       );
     }
 
     function cancelSkill() {
-      selectedSkill = null;
+      selectedSkill =
+        null;
 
-      $("cancelButton").hidden =
+      $("cancelSkillButton").hidden =
         true;
 
       $("skillMessage").textContent =
-        "已取消技能";
+        "已取消技能選擇";
 
-      refreshTiles();
+      updateTileVisuals();
       updateInterface();
     }
 
@@ -4025,22 +6068,41 @@
       col
     ) {
       return frozenCells.some(
-        (cell) =>
-          cell.blockedPlayer ===
-            player &&
-          cell.row === row &&
-          cell.col === col
+        (cell) => {
+          return (
+            cell.blockedPlayer ===
+              player &&
+            cell.row === row &&
+            cell.col === col
+          );
+        }
       );
     }
 
-    /* ================================
-       結算
-    ================================ */
+    /* =========================================
+       回合與對戰結算
+    ========================================= */
 
-    function finishRound(
-      winner
-    ) {
+    function calculateDamage() {
+      return Math.max(
+        50,
+        Math.min(
+          64,
+          50 +
+          Math.floor(
+            (
+              55 -
+              moveNumber
+            ) /
+            5
+          )
+        )
+      );
+    }
+
+    function finishRound(winner) {
       roundEnded = true;
+      aiThinking = false;
 
       $("stage")
         .classList
@@ -4050,11 +6112,12 @@
         .classList
         .remove("show");
 
-      if (
-        winner === EMPTY
-      ) {
+      if (winner === EMPTY) {
         $("turnText").textContent =
           "本局和棋";
+
+        $("turnSubtext").textContent =
+          "棋盤已無可部署位置";
 
         setGameTimer(
           () => {
@@ -4068,24 +6131,9 @@
       }
 
       const damage =
-        Math.max(
-          50,
-          Math.min(
-            64,
-            50 +
-            Math.floor(
-              (
-                55 -
-                moveNumber
-              ) /
-              5
-            )
-          )
-        );
+        calculateDamage();
 
-      if (
-        winner === PLAYER
-      ) {
+      if (winner === PLAYER) {
         playerScore += 1;
 
         aiHp =
@@ -4114,11 +6162,15 @@
       }
 
       updateInterface();
+      playWinSound();
 
       $("turnText").textContent =
         winner === PLAYER
-          ? `玩家勝利｜造成 ${damage} 傷害`
-          : `AI 勝利｜造成 ${damage} 傷害`;
+          ? "玩家取得本局勝利"
+          : "赤焰術師取得本局勝利";
+
+      $("turnSubtext").textContent =
+        `造成 ${damage} 點傷害`;
 
       matchEnded =
         playerScore >= WIN_SCORE ||
@@ -4133,7 +6185,7 @@
             startRound();
           }
         },
-        1500
+        1550
       );
     }
 
@@ -4149,7 +6201,7 @@
 
       damageText.style.left =
         toPlayer
-          ? "20%"
+          ? "19%"
           : "72%";
 
       damageText.classList.remove(
@@ -4183,9 +6235,9 @@
         .add("show");
     }
 
-    /* ================================
-       UI
-    ================================ */
+    /* =========================================
+       UI 更新
+    ========================================= */
 
     function updateInterface() {
       $("playerScore").textContent =
@@ -4236,7 +6288,10 @@
           selectedSkill === "ice"
         );
 
-      if (playerSkillUsed) {
+      if (roundEnded) {
+        $("skillState").textContent =
+          "END";
+      } else if (playerSkillUsed) {
         $("skillState").textContent =
           "USED";
       } else if (
@@ -4252,14 +6307,23 @@
       }
     }
 
-    /* ================================
+    /* =========================================
        事件
-    ================================ */
+    ========================================= */
 
     $("startButton")
       .addEventListener(
         "click",
         () => {
+          ensureAudio();
+
+          playTone(
+            620,
+            0.1,
+            "sine",
+            0.025
+          );
+
           showScreen(
             "modeScreen"
           );
@@ -4305,6 +6369,10 @@
         "click",
         () => {
           clearGameTimers();
+
+          $("thinking")
+            .classList
+            .remove("show");
 
           showScreen(
             "modeScreen"
@@ -4358,64 +6426,114 @@
         }
       );
 
-    $("cancelButton")
+    $("cancelSkillButton")
       .addEventListener(
         "click",
         cancelSkill
       );
 
-    /* ================================
+    /* =========================================
        Animation Loop
-    ================================ */
+    ========================================= */
 
     const clock =
       new THREE.Clock();
 
-    function animate(
-      time
-    ) {
-      window.requestAnimationFrame(
+    function animate(time) {
+      requestAnimationFrame(
         animate
       );
 
-      const deltaTime =
+      const delta =
         Math.min(
           clock.getDelta(),
           0.033
         );
 
-      pieceGroup.children.forEach(
-        (unit) => {
-          const targetScale =
-            unit.userData.targetScale ||
-            1;
+      for (
+        const character
+        of characterMap.values()
+      ) {
+        const targetScale =
+          character.userData.targetScale ||
+          0.75;
 
-          const nextScale =
-            THREE.MathUtils.damp(
-              unit.scale.x,
-              targetScale,
-              10,
-              deltaTime
-            );
-
-          unit.scale.setScalar(
-            nextScale
+        const nextScale =
+          THREE.MathUtils.damp(
+            character.scale.x,
+            targetScale,
+            13,
+            delta
           );
 
-          unit.rotation.y =
-            Math.sin(
-              time * 0.001 +
-              unit.position.x * 0.4 +
-              unit.position.z * 0.3
-            ) *
-            0.035;
-        }
-      );
+        character.scale.setScalar(
+          nextScale
+        );
 
-      [
-        ...effectGroup.children
-      ].forEach(
-        (particle) => {
+        const phase =
+          time * 0.002 +
+          character.userData.row *
+          0.45 +
+          character.userData.col *
+          0.31;
+
+        character.position.y =
+          0.1 +
+          Math.sin(phase) *
+          0.018;
+
+        character.rotation.y =
+          Math.sin(
+            phase * 0.55
+          ) *
+          0.045;
+
+        if (
+          character.userData.flame
+        ) {
+          character.userData.flame
+            .scale
+            .setScalar(
+              1 +
+              Math.sin(
+                time * 0.008 +
+                phase
+              ) *
+              0.08
+            );
+        }
+      }
+
+      for (
+        const particle
+        of [
+          ...effectGroup.children
+        ]
+      ) {
+        if (
+          particle ===
+          lastMoveRing
+        ) {
+          continue;
+        }
+
+        if (
+          particle.userData.glyph
+        ) {
+          particle.userData.life -=
+            0.018;
+
+          particle.scale
+            .multiplyScalar(
+              1.018
+            );
+
+          particle.material.opacity =
+            Math.max(
+              0,
+              particle.userData.life
+            );
+        } else {
           particle.position.add(
             particle.userData.velocity
           );
@@ -4424,73 +6542,88 @@
             0.003;
 
           particle.userData.life -=
-            0.025;
+            0.026;
 
           particle.material.opacity =
             Math.max(
               0,
               particle.userData.life
             );
-
-          if (
-            particle.userData.life <= 0
-          ) {
-            effectGroup.remove(
-              particle
-            );
-
-            particle.geometry.dispose();
-            particle.material.dispose();
-          }
         }
-      );
-
-      if (lastMove) {
-        const lastTile =
-          tileMeshes.find(
-            (tile) =>
-              tile.userData.row ===
-                lastMove.row &&
-              tile.userData.col ===
-                lastMove.col
-          );
 
         if (
-          lastTile &&
-          winningCells.length === 0
+          particle.userData.life <= 0
         ) {
-          lastTile.position.y =
-            0.06 +
-            Math.sin(
-              time * 0.008
-            ) *
-            0.025;
+          effectGroup.remove(
+            particle
+          );
+
+          particle.geometry.dispose();
+          particle.material.dispose();
         }
       }
 
-      fillLight.intensity =
-        8.5 +
+      if (
+        lastMoveRing.visible
+      ) {
+        lastMoveRing.material.opacity =
+          0.58 +
+          Math.sin(
+            time * 0.007
+          ) *
+          0.28;
+
+        const scale =
+          1 +
+          Math.sin(
+            time * 0.006
+          ) *
+          0.05;
+
+        lastMoveRing.scale
+          .setScalar(scale);
+      }
+
+      sakuraLight.intensity =
+        4.1 +
         Math.sin(
-          time * 0.0014
+          time * 0.0013
         ) *
-        1.2;
+        0.45;
+
+      cyanLight.intensity =
+        3.6 +
+        Math.sin(
+          time * 0.0011 +
+          1.4
+        ) *
+        0.4;
 
       renderer.render(
         scene,
         camera
       );
 
-      playerIcon.render(
-        time
-      );
-
-      aiIcon.render(
-        time
+      miniRenderers.forEach(
+        (mini) => {
+          mini.render(time);
+        }
       );
     }
 
-    buildBoard3D();
-    resizeRenderer();
+    /* =========================================
+       啟動
+    ========================================= */
+
+    buildPersistentBoard();
+    resizeMainRenderer();
+
+    miniRenderers.forEach(
+      (mini) => {
+        mini.resize();
+      }
+    );
+
     animate(0);
   </script>
 </body>
