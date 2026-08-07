@@ -5,48 +5,44 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
   >
 
   <meta
     name="description"
-    content="魔法の五目並べ｜9:16 魔法戰棋五子棋 Demo"
+    content="魔法の五目並べ｜Three.js 8×8 魔法戰棋五子棋"
   >
 
   <title>魔法の五目並べ</title>
 
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js"
+    }
+  }
+  </script>
+
   <style>
     :root {
-      --bg-deep: #070a14;
-      --bg-middle: #10162b;
-      --bg-top: #1b2342;
+      --bg-0: #060813;
+      --bg-1: #0d1327;
+      --bg-2: #192245;
 
-      --panel: rgba(16, 22, 42, 0.92);
-      --panel-soft: rgba(255, 255, 255, 0.05);
-      --line: rgba(255, 255, 255, 0.11);
+      --panel: rgba(12, 17, 35, 0.88);
+      --panel-soft: rgba(255, 255, 255, 0.055);
+      --line: rgba(255, 255, 255, 0.12);
 
-      --text: #f7f4ff;
-      --muted: #aaa8bb;
+      --text: #f7f5ff;
+      --muted: #a7a8bb;
 
-      --gold: #f3ca70;
+      --gold: #f2c96e;
       --gold-light: #ffe8aa;
 
-      --violet: #9b7cff;
-      --violet-light: #c8b9ff;
-
-      --cyan: #6fdcff;
-      --red: #ff7e88;
-      --green: #7be3a4;
-
-      --tile-a: #5f518f;
-      --tile-a-dark: #31294f;
-
-      --tile-b: #4c4278;
-      --tile-b-dark: #292344;
-
-      --radius-large: 22px;
-      --radius-medium: 16px;
-      --radius-small: 10px;
+      --violet: #9c7cff;
+      --cyan: #72ddff;
+      --red: #ff7986;
+      --green: #7fe3a6;
     }
 
     * {
@@ -64,6 +60,7 @@
     body {
       display: grid;
       place-items: center;
+
       overflow: hidden;
 
       color: var(--text);
@@ -76,24 +73,21 @@
 
       background:
         radial-gradient(
-          circle at 50% 0%,
-          rgba(118, 95, 255, 0.2),
-          transparent 34%
+          circle at 50% 0,
+          rgba(126, 101, 255, 0.22),
+          transparent 36%
         ),
         linear-gradient(
           160deg,
           #11162a,
-          #04060d
+          #04060c
         );
     }
 
     button {
       font: inherit;
       color: inherit;
-    }
 
-    button,
-    .cell {
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -120,24 +114,24 @@
       background:
         radial-gradient(
           circle at 50% 8%,
-          rgba(155, 124, 255, 0.18),
-          transparent 31%
+          rgba(154, 124, 255, 0.18),
+          transparent 32%
         ),
         radial-gradient(
-          circle at 50% 88%,
-          rgba(111, 220, 255, 0.08),
+          circle at 50% 90%,
+          rgba(105, 214, 255, 0.08),
           transparent 34%
         ),
         linear-gradient(
           180deg,
-          var(--bg-top) 0%,
-          var(--bg-middle) 45%,
-          var(--bg-deep) 100%
+          var(--bg-2),
+          var(--bg-1) 44%,
+          var(--bg-0)
         );
 
       box-shadow:
         0 0 90px
-        rgba(0, 0, 0, 0.7);
+        rgba(0, 0, 0, 0.68);
     }
 
     .app::before {
@@ -182,7 +176,7 @@
         ),
         radial-gradient(
           circle at center,
-          transparent 56%,
+          transparent 58%,
           rgba(0, 0, 0, 0.32)
         );
     }
@@ -195,12 +189,12 @@
       visibility: hidden;
       pointer-events: none;
 
-      transform: scale(1.015);
+      transform: scale(1.012);
 
       transition:
-        opacity 0.4s ease,
-        visibility 0.4s ease,
-        transform 0.4s ease;
+        opacity 0.35s ease,
+        visibility 0.35s ease,
+        transform 0.35s ease;
     }
 
     .screen.active {
@@ -211,26 +205,31 @@
       transform: scale(1);
     }
 
-    .primary-button,
-    .secondary-button,
-    .small-button {
+    .btn {
       border:
         1px solid
         rgba(255, 255, 255, 0.16);
 
+      border-radius: 13px;
+
       cursor: pointer;
 
       transition:
-        transform 0.2s ease,
-        filter 0.2s ease,
-        background 0.2s ease;
+        transform 0.18s ease,
+        filter 0.18s ease,
+        background 0.18s ease;
     }
 
-    .primary-button {
-      min-width: 230px;
-      padding: 16px 28px;
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.07);
+    }
 
-      color: #271c0a;
+    .btn-primary {
+      min-width: 220px;
+      padding: 15px 28px;
+
+      color: #291d09;
 
       background:
         linear-gradient(
@@ -239,54 +238,34 @@
           var(--gold)
         );
 
-      border-radius: 14px;
-
       font-weight: 950;
       letter-spacing: 0.08em;
 
       box-shadow:
         0 14px 34px
-        rgba(243, 202, 112, 0.22);
+        rgba(242, 201, 110, 0.22);
     }
 
-    .primary-button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.06);
-    }
-
-    .secondary-button,
-    .small-button {
-      color: var(--text);
+    .btn-secondary,
+    .btn-small {
       background:
         rgba(255, 255, 255, 0.06);
-
-      border-radius: 12px;
     }
 
-    .secondary-button {
+    .btn-secondary {
       padding: 13px 22px;
     }
 
-    .small-button {
+    .btn-small {
       padding: 9px 12px;
-      font-size: 0.76rem;
+      font-size: 0.72rem;
     }
 
-    .secondary-button:hover,
-    .small-button:hover {
-      background:
-        rgba(255, 255, 255, 0.1);
-    }
-
-    .muted-text {
-      color: var(--muted);
-    }
-
-    /* =========================================
+    /* ================================
        首頁
-    ========================================= */
+    ================================ */
 
-    .home-screen {
+    .home {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -297,26 +276,21 @@
       text-align: center;
     }
 
-    .home-logo {
+    .logo-orb {
       position: relative;
 
-      width: 38%;
+      width: 39%;
       aspect-ratio: 1;
 
       margin-bottom: 7%;
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.12);
+        rgba(255, 255, 255, 0.13);
 
       border-radius: 28px;
 
       background:
-        radial-gradient(
-          circle,
-          rgba(155, 124, 255, 0.16),
-          transparent 58%
-        ),
         linear-gradient(
           145deg,
           rgba(255, 255, 255, 0.07),
@@ -324,11 +298,11 @@
         );
 
       box-shadow:
-        0 0 55px
+        0 0 58px
         rgba(155, 124, 255, 0.18);
     }
 
-    .home-logo::before {
+    .logo-orb::before {
       content: "";
 
       position: absolute;
@@ -336,14 +310,14 @@
 
       border:
         1px solid
-        rgba(243, 202, 112, 0.45);
+        rgba(242, 201, 110, 0.44);
 
       border-radius: 16px;
 
       transform: rotate(45deg);
     }
 
-    .home-logo::after {
+    .logo-orb::after {
       content: "";
 
       position: absolute;
@@ -353,7 +327,7 @@
 
       background:
         radial-gradient(
-          circle at 35% 30%,
+          circle at 34% 28%,
           #ffffff,
           #c8b9ff 24%,
           #5a3eb8 61%,
@@ -365,7 +339,7 @@
         rgba(155, 124, 255, 0.6);
     }
 
-    .home-title {
+    .home h1 {
       color: var(--gold-light);
 
       font-size:
@@ -377,18 +351,14 @@
 
       font-weight: 950;
       letter-spacing: 0.1em;
-
-      text-shadow:
-        0 0 22px
-        rgba(243, 202, 112, 0.2);
     }
 
     .home-subtitle {
       margin-top: 10px;
 
-      color: var(--violet-light);
+      color: #c8b9ff;
 
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 900;
       letter-spacing: 0.22em;
     }
@@ -400,15 +370,15 @@
 
       color: var(--muted);
 
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       line-height: 1.8;
     }
 
-    /* =========================================
+    /* ================================
        模式選擇
-    ========================================= */
+    ================================ */
 
-    .mode-screen {
+    .mode {
       display: grid;
 
       grid-template-rows:
@@ -416,7 +386,7 @@
         minmax(0, 1fr)
         auto;
 
-      gap: 20px;
+      gap: 18px;
 
       padding: 5.5%;
     }
@@ -426,43 +396,43 @@
       justify-content: space-between;
       align-items: end;
 
-      gap: 16px;
+      gap: 14px;
     }
 
-    .section-kicker {
+    .kicker {
       color: var(--gold);
 
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       font-weight: 900;
       letter-spacing: 0.2em;
     }
 
-    .mode-title {
+    .mode h2 {
       margin-top: 6px;
 
       font-size:
         clamp(
-          1.65rem,
+          1.6rem,
           5vw,
-          2.6rem
+          2.5rem
         );
     }
 
-    .mode-badge {
-      padding: 8px 12px;
+    .pill {
+      padding: 8px 11px;
 
-      color: var(--violet-light);
+      color: #c8b9ff;
 
       background:
         rgba(155, 124, 255, 0.1);
 
       border:
         1px solid
-        rgba(155, 124, 255, 0.26);
+        rgba(155, 124, 255, 0.25);
 
       border-radius: 999px;
 
-      font-size: 0.64rem;
+      font-size: 0.62rem;
     }
 
     .mode-grid {
@@ -474,7 +444,7 @@
       grid-template-rows:
         repeat(2, 1fr);
 
-      gap: 14px;
+      gap: 13px;
 
       min-height: 0;
     }
@@ -485,8 +455,7 @@
       display: flex;
       flex-direction: column;
 
-      padding: 18px;
-      padding-bottom: 48px;
+      padding: 17px 17px 46px;
 
       overflow: hidden;
 
@@ -503,76 +472,75 @@
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.11);
+        var(--line);
 
       border-radius: 18px;
+
+      cursor: pointer;
 
       box-shadow:
         0 12px 28px
         rgba(0, 0, 0, 0.18);
 
-      cursor: pointer;
-
       transition:
-        transform 0.22s ease,
-        border-color 0.22s ease;
+        transform 0.2s ease,
+        border-color 0.2s ease;
     }
 
     .mode-card:hover {
       transform: translateY(-3px);
 
       border-color:
-        rgba(243, 202, 112, 0.35);
+        rgba(242, 201, 110, 0.38);
     }
 
     .mode-card.locked {
-      opacity: 0.52;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
     .mode-number {
       color: var(--gold);
 
-      font-size: 0.65rem;
+      font-size: 0.63rem;
       font-weight: 900;
       letter-spacing: 0.1em;
     }
 
     .mode-tag {
       position: absolute;
-      top: 14px;
-      right: 14px;
+      top: 13px;
+      right: 13px;
 
-      padding: 7px 9px;
+      padding: 6px 8px;
 
       background:
         rgba(155, 124, 255, 0.12);
 
-      border-radius: 9px;
+      border-radius: 8px;
 
-      font-size: 0.58rem;
+      font-size: 0.56rem;
       font-weight: 900;
     }
 
     .mode-card h3 {
       margin-top: 22px;
-
-      font-size: 1.18rem;
+      font-size: 1.12rem;
     }
 
     .mode-card p {
-      margin-top: 9px;
+      margin-top: 8px;
 
       color: var(--muted);
 
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       line-height: 1.55;
     }
 
     .mode-state {
       position: absolute;
-      right: 14px;
-      bottom: 14px;
+      right: 13px;
+      bottom: 13px;
 
       padding: 6px 9px;
 
@@ -581,7 +549,7 @@
 
       border-radius: 999px;
 
-      font-size: 0.58rem;
+      font-size: 0.56rem;
       font-weight: 950;
     }
 
@@ -596,20 +564,17 @@
       justify-content: space-between;
       align-items: center;
 
-      gap: 14px;
-    }
+      gap: 12px;
 
-    .mode-footer-note {
       color: var(--muted);
-
-      font-size: 0.7rem;
+      font-size: 0.68rem;
     }
 
-    /* =========================================
-       對戰主畫面
-    ========================================= */
+    /* ================================
+       對戰 UI
+    ================================ */
 
-    .battle-screen {
+    .battle {
       display: grid;
 
       grid-template-rows:
@@ -619,15 +584,12 @@
         auto
         auto;
 
-      gap: 10px;
+      gap: 8px;
 
-      padding:
-        14px
-        14px
-        12px;
+      padding: 12px;
     }
 
-    .battle-hud {
+    .hud {
       display: grid;
 
       grid-template-columns:
@@ -637,51 +599,46 @@
 
       align-items: center;
 
-      gap: 10px;
+      gap: 9px;
 
-      padding: 11px;
+      padding: 10px 11px;
 
       background:
-        rgba(8, 12, 25, 0.72);
+        rgba(7, 11, 24, 0.75);
 
       border:
         1px solid
         var(--line);
 
       border-radius: 17px;
-
-      box-shadow:
-        0 12px 24px
-        rgba(0, 0, 0, 0.18);
     }
 
-    .fighter-status {
+    .fighter {
       min-width: 0;
     }
 
-    .fighter-status.ai {
+    .fighter.ai {
       text-align: right;
     }
 
     .fighter-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
 
-      gap: 7px;
+      gap: 6px;
 
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       font-weight: 900;
     }
 
-    .fighter-status.ai .fighter-top {
+    .fighter.ai .fighter-top {
       flex-direction: row-reverse;
     }
 
     .hp-track {
       height: 8px;
 
-      margin-top: 7px;
+      margin-top: 6px;
 
       overflow: hidden;
 
@@ -691,57 +648,57 @@
       border-radius: 999px;
     }
 
-    .hp-bar {
+    .hp {
       width: 100%;
       height: 100%;
 
       border-radius: inherit;
 
       transition:
-        width 0.5s ease;
+        width 0.48s ease;
     }
 
-    .hp-bar.player {
+    .hp.player {
       background:
         linear-gradient(
           90deg,
-          #6b79ff,
-          #81e6ff
+          #6978ff,
+          #7ee6ff
         );
     }
 
-    .hp-bar.ai {
+    .hp.ai {
       background:
         linear-gradient(
           90deg,
-          #ff7e88,
-          #ffb46f
+          #ff7785,
+          #ffb36d
         );
     }
 
-    .score-panel {
+    .score {
       text-align: center;
     }
 
-    .score-values {
+    .score-main {
       display: flex;
       justify-content: center;
       align-items: center;
 
       gap: 7px;
 
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 950;
     }
 
-    .round-text {
+    .score small {
       display: block;
 
       margin-top: 2px;
 
       color: var(--muted);
 
-      font-size: 0.58rem;
+      font-size: 0.55rem;
       letter-spacing: 0.1em;
     }
 
@@ -752,7 +709,7 @@
 
       gap: 10px;
 
-      padding: 9px 12px;
+      padding: 9px 11px;
 
       background:
         rgba(255, 255, 255, 0.045);
@@ -773,11 +730,11 @@
       min-width: 0;
     }
 
-    .turn-dot {
-      width: 14px;
-      height: 14px;
+    .turn-orb {
+      width: 13px;
+      height: 13px;
 
-      flex-shrink: 0;
+      flex: 0 0 auto;
 
       background: var(--cyan);
 
@@ -785,367 +742,178 @@
 
       box-shadow:
         0 0 12px
-        rgba(111, 220, 255, 0.7);
+        rgba(114, 221, 255, 0.7);
     }
 
-    .turn-message {
+    .turn-text {
       overflow: hidden;
 
-      font-size: 0.76rem;
+      font-size: 0.73rem;
       font-weight: 900;
 
       white-space: nowrap;
       text-overflow: ellipsis;
     }
 
-    .move-count {
-      flex-shrink: 0;
+    .move-text {
+      flex: 0 0 auto;
 
       color: var(--muted);
 
-      font-size: 0.65rem;
+      font-size: 0.62rem;
     }
 
-    /* =========================================
-       10×10 棋盤
-    ========================================= */
+    /* ================================
+       Three.js 棋盤
+    ================================ */
 
-    .board-wrapper {
-      display: grid;
-      place-items: center;
-
-      min-height: 0;
-    }
-
-    .board {
+    .stage {
       position: relative;
 
-      width:
-        min(
-          100%,
-          calc(100vh - 390px)
-        );
-
-      aspect-ratio: 1;
-
-      padding: 10px;
+      min-height: 0;
+      overflow: hidden;
 
       background:
+        radial-gradient(
+          circle at 50% 58%,
+          rgba(118, 91, 210, 0.17),
+          transparent 50%
+        ),
         linear-gradient(
           180deg,
-          rgba(38, 46, 83, 0.95),
-          rgba(14, 18, 34, 0.96)
+          rgba(19, 25, 50, 0.98),
+          rgba(6, 9, 20, 0.98)
         );
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.12);
+        var(--line);
 
-      border-radius: 18px;
+      border-radius: 19px;
 
       box-shadow:
-        0 22px 40px
-        rgba(0, 0, 0, 0.34),
+        0 20px 38px
+        rgba(0, 0, 0, 0.35),
         inset 0 1px 0
         rgba(255, 255, 255, 0.05);
     }
 
-    .board.locked {
+    .stage.locked {
       pointer-events: none;
-      filter: saturate(0.8);
+      filter: saturate(0.82);
     }
 
-    .board-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(10, 1fr);
-
-      grid-template-rows:
-        repeat(10, 1fr);
-
-      gap: 3px;
+    #gameCanvas {
+      display: block;
 
       width: 100%;
       height: 100%;
+
+      touch-action: none;
     }
 
-    .cell {
-      position: relative;
+    .stage-badge {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+
+      padding: 6px 10px;
+
+      color: var(--muted);
+      background:
+        rgba(6, 9, 20, 0.68);
 
       border:
         1px solid
-        rgba(255, 255, 255, 0.08);
+        rgba(255, 255, 255, 0.1);
 
-      border-radius: 6px;
+      border-radius: 999px;
 
-      cursor: pointer;
+      transform:
+        translateX(-50%);
 
+      font-size: 0.56rem;
+      letter-spacing: 0.08em;
+
+      pointer-events: none;
+    }
+
+    .thinking {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+
+      display: none;
+      align-items: center;
+
+      gap: 5px;
+
+      padding: 6px 9px;
+
+      color: #ffc3c8;
       background:
-        linear-gradient(
-          180deg,
-          var(--tile-a),
-          var(--tile-a-dark)
-        );
+        rgba(6, 9, 20, 0.7);
 
-      box-shadow:
-        0 3px 0
-        rgba(3, 4, 10, 0.7);
+      border-radius: 999px;
 
-      transition:
-        transform 0.12s ease,
-        filter 0.12s ease,
-        box-shadow 0.12s ease;
+      font-size: 0.55rem;
     }
 
-    .cell:nth-child(odd) {
-      background:
-        linear-gradient(
-          180deg,
-          var(--tile-b),
-          var(--tile-b-dark)
-        );
+    .thinking.show {
+      display: flex;
     }
 
-    .cell:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.18);
-    }
+    .thinking-dot {
+      width: 4px;
+      height: 4px;
 
-    .cell.occupied {
-      cursor: default;
-    }
+      background: currentColor;
 
-    .cell.last-move {
-      box-shadow:
-        0 0 0 2px
-        var(--gold),
-        0 0 14px
-        rgba(243, 202, 112, 0.7);
-    }
+      border-radius: 50%;
 
-    .cell.winning {
-      filter: brightness(1.35);
-
-      box-shadow:
-        0 0 0 2px
-        var(--green),
-        0 0 16px
-        rgba(123, 227, 164, 0.8);
-    }
-
-    .cell.frozen {
-      background:
-        linear-gradient(
-          180deg,
-          #bfefff,
-          #4fa7d5
-        );
-
-      box-shadow:
-        0 0 12px
-        rgba(111, 220, 255, 0.8);
-    }
-
-    .cell.skill-target {
       animation:
-        targetPulse
-        0.7s
-        ease-in-out
+        thinkingDot
+        0.8s
         infinite
         alternate;
     }
 
-    @keyframes targetPulse {
+    .thinking-dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .thinking-dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes thinkingDot {
       to {
-        transform:
-          translateY(-3px)
-          scale(1.04);
-
-        filter:
-          brightness(1.35);
+        opacity: 0.25;
+        transform: translateY(-2px);
       }
     }
 
-    /* =========================================
-       暫代 Character 棋子
-    ========================================= */
+    /* ================================
+       角色控制區
+    ================================ */
 
-    .unit {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-
-      width: 58%;
-      aspect-ratio: 0.75;
-
-      transform:
-        translate(-50%, -73%);
-
-      border:
-        1px solid
-        rgba(255, 255, 255, 0.28);
-
-      border-radius:
-        45%
-        45%
-        34%
-        34%;
-
-      pointer-events: none;
-
-      filter:
-        drop-shadow(
-          0 5px 4px
-          rgba(0, 0, 0, 0.45)
-        );
-
-      animation:
-        unitDrop
-        0.2s
-        ease-out;
-    }
-
-    .unit::before {
-      content: "";
-
-      position: absolute;
-      top: -31%;
-      left: 50%;
-
-      width: 70%;
-      aspect-ratio: 1;
-
-      transform:
-        translateX(-50%);
-
-      border:
-        1px solid
-        rgba(255, 255, 255, 0.32);
-
-      border-radius: 50%;
-    }
-
-    .unit::after {
-      content: "";
-
-      position: absolute;
-      bottom: 10%;
-      left: 50%;
-
-      width: 55%;
-      height: 35%;
-
-      transform:
-        translateX(-50%);
-
-      background:
-        rgba(255, 255, 255, 0.28);
-
-      border-radius: 50%;
-    }
-
-    .unit.player.staff {
-      background:
-        linear-gradient(
-          165deg,
-          #a8eeff,
-          #786be0 46%,
-          #27244d
-        );
-    }
-
-    .unit.player.staff::before {
-      background:
-        radial-gradient(
-          circle at 35% 30%,
-          #ffffff,
-          #b7efff 22%,
-          #746de0 55%,
-          #27244d
-        );
-    }
-
-    .unit.player.sword {
-      background:
-        linear-gradient(
-          165deg,
-          #fff0b6,
-          #abb4c7 44%,
-          #3d4658
-        );
-    }
-
-    .unit.player.sword::before {
-      background:
-        radial-gradient(
-          circle at 35% 30%,
-          #fffbe1,
-          #f0d88f 22%,
-          #83766e 56%,
-          #2e2a36
-        );
-    }
-
-    .unit.ai {
-      background:
-        linear-gradient(
-          165deg,
-          #ffb49c,
-          #c6425d 46%,
-          #45152c
-        );
-    }
-
-    .unit.ai::before {
-      background:
-        radial-gradient(
-          circle at 35% 30%,
-          #fff1df,
-          #ff9b86 22%,
-          #a62c4d 55%,
-          #391227
-        );
-    }
-
-    @keyframes unitDrop {
-      from {
-        opacity: 0;
-
-        transform:
-          translate(-50%, -45%)
-          scale(0.45);
-      }
-
-      to {
-        opacity: 1;
-
-        transform:
-          translate(-50%, -73%)
-          scale(1);
-      }
-    }
-
-    /* =========================================
-       角色與技能控制區
-    ========================================= */
-
-    .control-panel {
+    .controls {
       display: grid;
 
       grid-template-columns:
-        1fr
+        0.9fr
         1.25fr
-        1fr;
+        0.9fr;
 
-      gap: 9px;
+      gap: 8px;
     }
 
     .character-card,
-    .skill-panel {
-      min-height: 112px;
+    .skills {
+      min-width: 0;
+      min-height: 104px;
 
-      padding: 11px;
+      padding: 9px;
 
       background:
         linear-gradient(
@@ -1158,7 +926,7 @@
         1px solid
         var(--line);
 
-      border-radius: 16px;
+      border-radius: 15px;
     }
 
     .character-card {
@@ -1167,93 +935,80 @@
       align-items: center;
       justify-content: center;
 
+      overflow: hidden;
+
       text-align: center;
     }
 
-    .character-icon {
-      width: 38px;
-      height: 38px;
+    .icon-canvas {
+      display: block;
 
-      margin-bottom: 7px;
+      width: 44px;
+      height: 44px;
 
-      background:
-        radial-gradient(
-          circle at 35% 30%,
-          #ffffff,
-          #b9a8ff 25%,
-          #6247bc 62%,
-          #21184b
-        );
-
-      border-radius: 50%;
-
-      box-shadow:
-        0 0 14px
-        rgba(155, 124, 255, 0.5);
-    }
-
-    .character-card.enemy .character-icon {
-      background:
-        radial-gradient(
-          circle at 35% 30%,
-          #fff4e3,
-          #ff9a82 25%,
-          #a42b4b 62%,
-          #391227
-        );
-
-      box-shadow:
-        0 0 14px
-        rgba(255, 126, 136, 0.45);
+      margin-bottom: 5px;
     }
 
     .character-card strong {
-      font-size: 0.78rem;
+      max-width: 100%;
+
+      overflow: hidden;
+
+      font-size: 0.72rem;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .character-card span {
-      margin-top: 4px;
+      max-width: 100%;
+
+      margin-top: 3px;
+
+      overflow: hidden;
 
       color: var(--muted);
 
-      font-size: 0.62rem;
+      font-size: 0.56rem;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
-    .skill-panel {
+    .skills {
       display: flex;
       flex-direction: column;
 
-      gap: 8px;
+      gap: 6px;
     }
 
-    .skill-header {
+    .skills-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      gap: 7px;
+
+      font-size: 0.67rem;
     }
 
-    .skill-header strong {
-      font-size: 0.76rem;
-    }
-
-    .skill-header span {
+    .skills-header span {
       color: var(--muted);
-
-      font-size: 0.58rem;
+      font-size: 0.54rem;
     }
 
-    .skill-buttons {
+    .skill-grid {
       display: grid;
 
       grid-template-columns:
         1fr
         1fr;
 
-      gap: 7px;
+      gap: 6px;
     }
 
     .skill-button {
-      min-height: 46px;
+      min-height: 42px;
 
       background:
         rgba(255, 255, 255, 0.05);
@@ -1262,28 +1017,28 @@
         1px solid
         rgba(255, 255, 255, 0.12);
 
-      border-radius: 11px;
+      border-radius: 10px;
 
       cursor: pointer;
 
-      font-size: 0.66rem;
+      font-size: 0.62rem;
       font-weight: 900;
     }
 
     .skill-button.fire {
       box-shadow:
-        inset 0 0 20px
-        rgba(255, 91, 74, 0.08);
+        inset 0 0 18px
+        rgba(255, 83, 69, 0.08);
     }
 
     .skill-button.ice {
       box-shadow:
-        inset 0 0 20px
-        rgba(91, 201, 255, 0.08);
+        inset 0 0 18px
+        rgba(84, 194, 255, 0.08);
     }
 
     .skill-button:disabled {
-      opacity: 0.35;
+      opacity: 0.32;
       cursor: not-allowed;
     }
 
@@ -1294,14 +1049,33 @@
     }
 
     .skill-message {
-      min-height: 26px;
+      min-height: 24px;
 
       color: var(--muted);
 
-      font-size: 0.61rem;
-      line-height: 1.4;
+      font-size: 0.55rem;
+      line-height: 1.35;
 
       text-align: center;
+    }
+
+    .cancel-button {
+      align-self: center;
+
+      padding: 5px 9px;
+
+      background:
+        rgba(255, 255, 255, 0.06);
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius: 999px;
+
+      cursor: pointer;
+
+      font-size: 0.53rem;
     }
 
     .battle-footer {
@@ -1309,24 +1083,24 @@
       justify-content: space-between;
       align-items: center;
 
-      gap: 9px;
+      gap: 8px;
     }
 
     .best-of {
       color: var(--muted);
 
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       letter-spacing: 0.12em;
     }
 
-    /* =========================================
+    /* ================================
        Overlay
-    ========================================= */
+    ================================ */
 
     .overlay {
       position: absolute;
       inset: 0;
-      z-index: 20;
+      z-index: 30;
 
       display: grid;
       place-items: center;
@@ -1338,14 +1112,14 @@
       pointer-events: none;
 
       background:
-        rgba(4, 6, 13, 0.76);
+        rgba(3, 5, 12, 0.76);
 
       backdrop-filter:
         blur(8px);
 
       transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
+        opacity 0.24s ease,
+        visibility 0.24s ease;
     }
 
     .overlay.show {
@@ -1357,15 +1131,15 @@
     .modal {
       width: 100%;
 
-      padding: 28px;
+      padding: 27px;
 
       text-align: center;
 
       background:
         linear-gradient(
           160deg,
-          rgba(28, 34, 62, 0.98),
-          rgba(11, 14, 27, 0.98)
+          rgba(27, 34, 62, 0.98),
+          rgba(10, 13, 26, 0.98)
         );
 
       border:
@@ -1381,16 +1155,15 @@
 
     .modal h2 {
       margin-top: 8px;
-
-      font-size: 1.7rem;
+      font-size: 1.65rem;
     }
 
     .modal-description {
-      margin-top: 10px;
+      margin-top: 9px;
 
       color: var(--muted);
 
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       line-height: 1.6;
     }
 
@@ -1399,13 +1172,13 @@
       justify-content: center;
       align-items: center;
 
-      gap: 26px;
+      gap: 24px;
 
-      margin: 24px 0;
+      margin: 22px 0;
     }
 
     .result-score strong {
-      font-size: 2.4rem;
+      font-size: 2.3rem;
     }
 
     .result-actions {
@@ -1413,24 +1186,22 @@
       flex-direction: column;
       align-items: center;
 
-      gap: 10px;
+      gap: 9px;
     }
 
     .toast {
       position: absolute;
       left: 50%;
-      bottom: 8%;
-      z-index: 30;
+      bottom: 7%;
+      z-index: 40;
 
-      padding: 10px 15px;
+      padding: 9px 14px;
 
       opacity: 0;
 
-      transform:
-        translate(-50%, 20px);
-
+      color: var(--text);
       background:
-        rgba(8, 11, 22, 0.94);
+        rgba(7, 10, 21, 0.94);
 
       border:
         1px solid
@@ -1438,11 +1209,14 @@
 
       border-radius: 999px;
 
-      font-size: 0.7rem;
+      transform:
+        translate(-50%, 18px);
+
+      font-size: 0.67rem;
 
       transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
+        opacity 0.2s ease,
+        transform 0.2s ease;
     }
 
     .toast.show {
@@ -1452,25 +1226,26 @@
         translate(-50%, 0);
     }
 
-    .damage-text {
+    .damage {
       position: absolute;
-      z-index: 18;
+      top: 9%;
+      z-index: 35;
 
       opacity: 0;
 
-      color: #fff1b9;
+      color: #fff1b8;
 
-      font-size: 1.6rem;
+      font-size: 1.55rem;
       font-weight: 950;
 
       text-shadow:
         0 0 14px
-        rgba(255, 113, 74, 0.9);
+        rgba(255, 105, 71, 0.9);
 
       pointer-events: none;
     }
 
-    .damage-text.show {
+    .damage.show {
       animation:
         damageFloat
         0.8s
@@ -1482,11 +1257,11 @@
         opacity: 0;
 
         transform:
-          translateY(10px)
+          translateY(8px)
           scale(0.6);
       }
 
-      30% {
+      28% {
         opacity: 1;
       }
 
@@ -1494,37 +1269,38 @@
         opacity: 0;
 
         transform:
-          translateY(-35px)
-          scale(1.15);
+          translateY(-34px)
+          scale(1.16);
       }
     }
 
     @media (max-height: 760px) {
-      .battle-screen {
-        gap: 7px;
-        padding: 10px;
+      .battle {
+        gap: 6px;
+        padding: 9px;
       }
 
-      .battle-hud {
-        padding: 8px;
+      .hud {
+        padding: 8px 9px;
       }
 
-      .board {
-        width:
-          min(
-            100%,
-            calc(100vh - 345px)
-          );
-      }
-
-      .control-panel {
-        gap: 7px;
+      .turn-bar {
+        padding: 7px 9px;
       }
 
       .character-card,
-      .skill-panel {
-        min-height: 95px;
-        padding: 8px;
+      .skills {
+        min-height: 92px;
+        padding: 7px;
+      }
+
+      .icon-canvas {
+        width: 36px;
+        height: 36px;
+      }
+
+      .skill-button {
+        min-height: 36px;
       }
     }
   </style>
@@ -1535,14 +1311,14 @@
     <!-- 首頁 -->
     <section
       id="homeScreen"
-      class="screen home-screen active"
+      class="screen home active"
     >
       <div
-        class="home-logo"
+        class="logo-orb"
         aria-hidden="true"
       ></div>
 
-      <h1 class="home-title">
+      <h1>
         魔法の五目並べ
       </h1>
 
@@ -1551,13 +1327,13 @@
       </p>
 
       <p class="home-description">
-        在 10×10 魔法戰棋盤上進行五子連線。
+        在正向 8×8 魔法戰棋盤上進行五子連線。
         每回合抽取杖或劍，率先取得兩勝的一方贏得整場對決。
       </p>
 
       <button
         id="startButton"
-        class="primary-button"
+        class="btn btn-primary"
         type="button"
       >
         開始遊玩
@@ -1567,21 +1343,21 @@
     <!-- 模式選擇 -->
     <section
       id="modeScreen"
-      class="screen mode-screen"
+      class="screen mode"
     >
       <header class="mode-header">
         <div>
-          <p class="section-kicker">
+          <p class="kicker">
             SELECT MODE
           </p>
 
-          <h2 class="mode-title">
+          <h2>
             選擇遊戲模式
           </h2>
         </div>
 
-        <span class="mode-badge">
-          9:16 DEMO
+        <span class="pill">
+          THREE.JS 3D
         </span>
       </header>
 
@@ -1691,25 +1467,25 @@
       <footer class="mode-footer">
         <button
           id="modeBackButton"
-          class="secondary-button"
+          class="btn btn-secondary"
           type="button"
         >
           返回
         </button>
 
-        <span class="mode-footer-note">
+        <span>
           選擇單機模式開始 Demo
         </span>
       </footer>
     </section>
 
-    <!-- 對戰畫面 -->
+    <!-- 對戰 -->
     <section
       id="battleScreen"
-      class="screen battle-screen"
+      class="screen battle"
     >
-      <header class="battle-hud">
-        <section class="fighter-status">
+      <header class="hud">
+        <section class="fighter">
           <div class="fighter-top">
             <span>
               PLAYER
@@ -1723,13 +1499,13 @@
           <div class="hp-track">
             <div
               id="playerHpBar"
-              class="hp-bar player"
+              class="hp player"
             ></div>
           </div>
         </section>
 
-        <section class="score-panel">
-          <div class="score-values">
+        <section class="score">
+          <div class="score-main">
             <span id="playerScore">
               0
             </span>
@@ -1743,15 +1519,12 @@
             </span>
           </div>
 
-          <span
-            id="roundText"
-            class="round-text"
-          >
+          <small id="roundText">
             ROUND 1
-          </span>
+          </small>
         </section>
 
-        <section class="fighter-status ai">
+        <section class="fighter ai">
           <div class="fighter-top">
             <span>
               AI
@@ -1765,7 +1538,7 @@
           <div class="hp-track">
             <div
               id="aiHpBar"
-              class="hp-bar ai"
+              class="hp ai"
             ></div>
           </div>
         </section>
@@ -1774,56 +1547,69 @@
       <div class="turn-bar">
         <div class="turn-left">
           <span
-            id="turnDot"
-            class="turn-dot"
+            id="turnOrb"
+            class="turn-orb"
           ></span>
 
           <span
-            id="turnMessage"
-            class="turn-message"
+            id="turnText"
+            class="turn-text"
           >
             準備開始
           </span>
         </div>
 
         <span
-          id="moveCount"
-          class="move-count"
+          id="moveText"
+          class="move-text"
         >
           MOVE 0
         </span>
       </div>
 
-      <div class="board-wrapper">
+      <div
+        id="stage"
+        class="stage locked"
+      >
+        <canvas
+          id="gameCanvas"
+          aria-label="8×8 Three.js 魔法戰棋盤"
+        ></canvas>
+
+        <span class="stage-badge">
+          8 × 8｜五子連線
+        </span>
+
         <div
-          id="board"
-          class="board locked"
+          id="thinking"
+          class="thinking"
         >
-          <div
-            id="boardGrid"
-            class="board-grid"
-          ></div>
+          AI THINKING
+
+          <i class="thinking-dot"></i>
+          <i class="thinking-dot"></i>
+          <i class="thinking-dot"></i>
         </div>
       </div>
 
-      <section class="control-panel">
+      <section class="controls">
         <article class="character-card">
-          <div
-            class="character-icon"
-            aria-hidden="true"
-          ></div>
+          <canvas
+            id="playerIcon"
+            class="icon-canvas"
+          ></canvas>
 
-          <strong id="playerRoleName">
+          <strong id="roleName">
             等待 Spin
           </strong>
 
-          <span id="playerRoleDescription">
+          <span id="roleDescription">
             50% 杖 / 50% 劍
           </span>
         </article>
 
-        <section class="skill-panel">
-          <header class="skill-header">
+        <section class="skills">
+          <header class="skills-header">
             <strong>
               角色行動
             </strong>
@@ -1833,7 +1619,7 @@
             </span>
           </header>
 
-          <div class="skill-buttons">
+          <div class="skill-grid">
             <button
               id="fireButton"
               class="skill-button fire"
@@ -1861,8 +1647,8 @@
           </p>
 
           <button
-            id="cancelSkillButton"
-            class="small-button"
+            id="cancelButton"
+            class="cancel-button"
             type="button"
             hidden
           >
@@ -1870,11 +1656,11 @@
           </button>
         </section>
 
-        <article class="character-card enemy">
-          <div
-            class="character-icon"
-            aria-hidden="true"
-          ></div>
+        <article class="character-card">
+          <canvas
+            id="aiIcon"
+            class="icon-canvas"
+          ></canvas>
 
           <strong>
             赤焰術師
@@ -1889,7 +1675,7 @@
       <footer class="battle-footer">
         <button
           id="battleBackButton"
-          class="small-button"
+          class="btn btn-small"
           type="button"
         >
           模式選擇
@@ -1901,7 +1687,7 @@
 
         <button
           id="restartButton"
-          class="small-button"
+          class="btn btn-small"
           type="button"
         >
           重新對戰
@@ -1909,13 +1695,13 @@
       </footer>
     </section>
 
-    <!-- 回合開始 -->
+    <!-- 回合提示 -->
     <div
       id="roundOverlay"
       class="overlay"
     >
       <section class="modal">
-        <p class="section-kicker">
+        <p class="kicker">
           ROUND START
         </p>
 
@@ -1932,13 +1718,13 @@
       </section>
     </div>
 
-    <!-- 最終結果 -->
+    <!-- 結果 -->
     <div
       id="resultOverlay"
       class="overlay"
     >
       <section class="modal">
-        <p class="section-kicker">
+        <p class="kicker">
           MATCH RESULT
         </p>
 
@@ -1970,7 +1756,7 @@
         <div class="result-actions">
           <button
             id="playAgainButton"
-            class="primary-button"
+            class="btn btn-primary"
             type="button"
           >
             重新對戰
@@ -1978,7 +1764,7 @@
 
           <button
             id="resultModeButton"
-            class="secondary-button"
+            class="btn btn-secondary"
             type="button"
           >
             模式選擇
@@ -1996,24 +1782,23 @@
 
     <div
       id="damageText"
-      class="damage-text"
+      class="damage"
     >
       -50
     </div>
   </main>
 
-  <script>
-    "use strict";
+  <script type="module">
+    import * as THREE from "three";
 
-    /* =========================================
-       基礎常數
-    ========================================= */
+    const $ = (id) =>
+      document.getElementById(id);
 
     const PLAYER = 1;
     const AI = 2;
     const EMPTY = 0;
 
-    const BOARD_SIZE = 10;
+    const BOARD_SIZE = 8;
     const WIN_SCORE = 2;
     const MAX_HP = 100;
 
@@ -2023,13 +1808,6 @@
       [1, 1],
       [1, -1]
     ];
-
-    const $ = (id) =>
-      document.getElementById(id);
-
-    /* =========================================
-       遊戲狀態
-    ========================================= */
 
     let board = [];
     let roleBoard = [];
@@ -2055,72 +1833,217 @@
 
     let lastMove = null;
     let winningCells = [];
+
     let frozenCells = [];
+    let freezePending = false;
 
-    let activeTimers = [];
+    let timers = [];
 
-    /* =========================================
-       Timer
-    ========================================= */
+    /* ================================
+       Three.js 主棋盤
+    ================================ */
 
-    function setGameTimer(
-      callback,
-      delay
-    ) {
-      const timerId =
-        window.setTimeout(
-          callback,
-          delay
-        );
+    const gameCanvas =
+      $("gameCanvas");
 
-      activeTimers.push(timerId);
+    const renderer =
+      new THREE.WebGLRenderer({
+        canvas: gameCanvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
 
-      return timerId;
-    }
+    renderer.setPixelRatio(
+      Math.min(
+        window.devicePixelRatio,
+        2
+      )
+    );
 
-    function clearGameTimers() {
-      activeTimers.forEach(
-        (timerId) =>
-          window.clearTimeout(timerId)
+    renderer.shadowMap.enabled = true;
+
+    renderer.shadowMap.type =
+      THREE.PCFSoftShadowMap;
+
+    renderer.outputColorSpace =
+      THREE.SRGBColorSpace;
+
+    const scene =
+      new THREE.Scene();
+
+    const camera =
+      new THREE.OrthographicCamera(
+        -5,
+        5,
+        5,
+        -5,
+        0.1,
+        100
       );
 
-      activeTimers = [];
-    }
+    camera.position.set(
+      0,
+      9.5,
+      2.4
+    );
 
-    /* =========================================
-       畫面切換
-    ========================================= */
+    camera.lookAt(
+      0,
+      0,
+      0
+    );
 
-    function showScreen(screenId) {
-      document
-        .querySelectorAll(".screen")
-        .forEach((screen) => {
-          screen.classList.remove("active");
-        });
+    const hemisphereLight =
+      new THREE.HemisphereLight(
+        0xbfd1ff,
+        0x11121f,
+        1.65
+      );
 
-      $(screenId).classList.add("active");
-    }
+    scene.add(
+      hemisphereLight
+    );
 
-    function showToast(message) {
-      const toast = $("toast");
+    const keyLight =
+      new THREE.DirectionalLight(
+        0xffe5b0,
+        2.1
+      );
 
-      toast.textContent = message;
-      toast.classList.add("show");
+    keyLight.position.set(
+      -4,
+      8,
+      5
+    );
 
-      setGameTimer(() => {
-        toast.classList.remove("show");
-      }, 1100);
-    }
+    keyLight.castShadow = true;
 
-    /* =========================================
-       棋盤建立
-    ========================================= */
+    keyLight.shadow.mapSize.set(
+      1024,
+      1024
+    );
 
-    function createBoardGrid() {
-      const boardGrid =
-        $("boardGrid");
+    scene.add(
+      keyLight
+    );
 
-      boardGrid.innerHTML = "";
+    const fillLight =
+      new THREE.PointLight(
+        0x7f63ff,
+        9,
+        16,
+        2
+      );
+
+    fillLight.position.set(
+      0,
+      4,
+      -1
+    );
+
+    scene.add(
+      fillLight
+    );
+
+    const boardGroup =
+      new THREE.Group();
+
+    const pieceGroup =
+      new THREE.Group();
+
+    const effectGroup =
+      new THREE.Group();
+
+    scene.add(
+      boardGroup,
+      pieceGroup,
+      effectGroup
+    );
+
+    const tileMeshes = [];
+
+    const raycaster =
+      new THREE.Raycaster();
+
+    const pointer =
+      new THREE.Vector2();
+
+    let hoveredTile = null;
+
+    const tileGeometry =
+      new THREE.BoxGeometry(
+        0.92,
+        0.18,
+        0.92
+      );
+
+    const tileMaterialA =
+      new THREE.MeshStandardMaterial({
+        color: 0x6857a4,
+        roughness: 0.62,
+        metalness: 0.16
+      });
+
+    const tileMaterialB =
+      new THREE.MeshStandardMaterial({
+        color: 0x51447f,
+        roughness: 0.66,
+        metalness: 0.13
+      });
+
+    const frozenMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0x64d7ff,
+        emissive: 0x1c79a7,
+        emissiveIntensity: 0.65,
+        roughness: 0.35,
+        metalness: 0.2
+      });
+
+    const targetMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0xf0c865,
+        emissive: 0x7b4c06,
+        emissiveIntensity: 0.8,
+        roughness: 0.35
+      });
+
+    const winningMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0x65e39f,
+        emissive: 0x176d42,
+        emissiveIntensity: 0.85,
+        roughness: 0.35
+      });
+
+    function buildBoard3D() {
+      boardGroup.clear();
+      tileMeshes.length = 0;
+
+      const boardFrame =
+        new THREE.Mesh(
+          new THREE.BoxGeometry(
+            8.55,
+            0.28,
+            8.55
+          ),
+          new THREE.MeshStandardMaterial({
+            color: 0x20284c,
+            roughness: 0.7,
+            metalness: 0.15
+          })
+        );
+
+      boardFrame.position.y =
+        -0.18;
+
+      boardFrame.receiveShadow =
+        true;
+
+      boardGroup.add(
+        boardFrame
+      );
 
       for (
         let row = 0;
@@ -2132,36 +2055,923 @@
           col < BOARD_SIZE;
           col += 1
         ) {
-          const cell =
-            document.createElement(
-              "button"
+          const material =
+            (
+              (row + col) % 2 === 0
+                ? tileMaterialA
+                : tileMaterialB
+            ).clone();
+
+          const tile =
+            new THREE.Mesh(
+              tileGeometry,
+              material
             );
 
-          cell.type = "button";
-          cell.className = "cell";
-
-          cell.dataset.row =
-            String(row);
-
-          cell.dataset.col =
-            String(col);
-
-          cell.setAttribute(
-            "aria-label",
-            `第 ${row + 1} 列，第 ${col + 1} 格`
+          tile.position.set(
+            col - 3.5,
+            0,
+            row - 3.5
           );
 
-          cell.addEventListener(
-            "click",
-            handleCellClick
+          tile.receiveShadow = true;
+
+          tile.userData = {
+            row,
+            col
+          };
+
+          boardGroup.add(
+            tile
           );
 
-          boardGrid.appendChild(cell);
+          tileMeshes.push(
+            tile
+          );
         }
       }
     }
 
-    function resetRoundState() {
+    function boardToWorld(
+      row,
+      col
+    ) {
+      return new THREE.Vector3(
+        col - 3.5,
+        0.1,
+        row - 3.5
+      );
+    }
+
+    function createUnit(
+      player,
+      role
+    ) {
+      const group =
+        new THREE.Group();
+
+      const isPlayer =
+        player === PLAYER;
+
+      const mainColor =
+        isPlayer
+          ? (
+              role === "sword"
+                ? 0xe7c87c
+                : 0x7c78e8
+            )
+          : 0xd3495e;
+
+      const glowColor =
+        isPlayer
+          ? (
+              role === "sword"
+                ? 0xffd96d
+                : 0x76dfff
+            )
+          : 0xff6b72;
+
+      const base =
+        new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            0.29,
+            0.34,
+            0.1,
+            24
+          ),
+          new THREE.MeshStandardMaterial({
+            color: 0x171b31,
+            metalness: 0.45,
+            roughness: 0.35
+          })
+        );
+
+      base.position.y = 0.06;
+      base.castShadow = true;
+
+      group.add(base);
+
+      const body =
+        new THREE.Mesh(
+          new THREE.CapsuleGeometry(
+            0.18,
+            0.36,
+            6,
+            14
+          ),
+          new THREE.MeshStandardMaterial({
+            color: mainColor,
+            emissive: glowColor,
+            emissiveIntensity: 0.16,
+            roughness: 0.38,
+            metalness: 0.22
+          })
+        );
+
+      body.position.y = 0.39;
+      body.castShadow = true;
+
+      group.add(body);
+
+      const head =
+        new THREE.Mesh(
+          new THREE.SphereGeometry(
+            0.18,
+            20,
+            16
+          ),
+          new THREE.MeshStandardMaterial({
+            color:
+              isPlayer
+                ? 0xdfeaff
+                : 0xffc0ae,
+
+            emissive: glowColor,
+            emissiveIntensity: 0.2,
+            roughness: 0.3
+          })
+        );
+
+      head.position.y = 0.76;
+      head.castShadow = true;
+
+      group.add(head);
+
+      const ring =
+        new THREE.Mesh(
+          new THREE.TorusGeometry(
+            0.26,
+            0.025,
+            10,
+            28
+          ),
+          new THREE.MeshBasicMaterial({
+            color: glowColor,
+            transparent: true,
+            opacity: 0.85
+          })
+        );
+
+      ring.rotation.x =
+        Math.PI / 2;
+
+      ring.position.y = 0.13;
+
+      group.add(ring);
+
+      if (role === "staff") {
+        const staff =
+          new THREE.Mesh(
+            new THREE.CylinderGeometry(
+              0.025,
+              0.025,
+              0.62,
+              10
+            ),
+            new THREE.MeshStandardMaterial({
+              color: 0xd6c2ff,
+              metalness: 0.5,
+              roughness: 0.3
+            })
+          );
+
+        staff.position.set(
+          0.27,
+          0.46,
+          0
+        );
+
+        staff.rotation.z = -0.12;
+
+        group.add(staff);
+
+        const orb =
+          new THREE.Mesh(
+            new THREE.SphereGeometry(
+              0.075,
+              14,
+              10
+            ),
+            new THREE.MeshBasicMaterial({
+              color: glowColor
+            })
+          );
+
+        orb.position.set(
+          0.31,
+          0.78,
+          0
+        );
+
+        group.add(orb);
+      } else {
+        const blade =
+          new THREE.Mesh(
+            new THREE.BoxGeometry(
+              0.055,
+              0.48,
+              0.035
+            ),
+            new THREE.MeshStandardMaterial({
+              color: 0xf2f5ff,
+              metalness: 0.85,
+              roughness: 0.18
+            })
+          );
+
+        blade.position.set(
+          0.26,
+          0.5,
+          0
+        );
+
+        blade.rotation.z =
+          -0.35;
+
+        group.add(blade);
+      }
+
+      group.scale.setScalar(
+        0.01
+      );
+
+      group.userData.targetScale =
+        1;
+
+      return group;
+    }
+
+    function renderPieces() {
+      pieceGroup.clear();
+
+      for (
+        let row = 0;
+        row < BOARD_SIZE;
+        row += 1
+      ) {
+        for (
+          let col = 0;
+          col < BOARD_SIZE;
+          col += 1
+        ) {
+          const value =
+            board[row][col];
+
+          if (value === EMPTY) {
+            continue;
+          }
+
+          const unit =
+            createUnit(
+              value,
+              roleBoard[row][col] ||
+              "staff"
+            );
+
+          unit.position.copy(
+            boardToWorld(
+              row,
+              col
+            )
+          );
+
+          unit.userData.row =
+            row;
+
+          unit.userData.col =
+            col;
+
+          pieceGroup.add(
+            unit
+          );
+        }
+      }
+    }
+
+    function refreshTiles() {
+      tileMeshes.forEach(
+        (tile) => {
+          const {
+            row,
+            col
+          } = tile.userData;
+
+          tile.material =
+            (
+              (row + col) % 2 === 0
+                ? tileMaterialA
+                : tileMaterialB
+            ).clone();
+
+          if (
+            isFrozenFor(
+              AI,
+              row,
+              col
+            ) &&
+            board[row][col] === EMPTY
+          ) {
+            tile.material =
+              frozenMaterial.clone();
+          }
+
+          if (
+            selectedSkill === "fire" &&
+            board[row][col] === PLAYER
+          ) {
+            tile.material =
+              targetMaterial.clone();
+          }
+
+          if (
+            selectedSkill === "ice" &&
+            board[row][col] === AI
+          ) {
+            tile.material =
+              targetMaterial.clone();
+          }
+
+          if (
+            winningCells.some(
+              (cell) =>
+                cell.row === row &&
+                cell.col === col
+            )
+          ) {
+            tile.material =
+              winningMaterial.clone();
+          }
+
+          tile.position.y =
+            (
+              lastMove &&
+              lastMove.row === row &&
+              lastMove.col === col
+            )
+              ? 0.08
+              : 0;
+        }
+      );
+    }
+
+    function createBurst(
+      row,
+      col,
+      color
+    ) {
+      const position =
+        boardToWorld(
+          row,
+          col
+        );
+
+      for (
+        let index = 0;
+        index < 18;
+        index += 1
+      ) {
+        const particle =
+          new THREE.Mesh(
+            new THREE.SphereGeometry(
+              0.025,
+              6,
+              4
+            ),
+            new THREE.MeshBasicMaterial({
+              color,
+              transparent: true,
+              opacity: 1
+            })
+          );
+
+        particle.position.copy(
+          position
+        );
+
+        particle.position.y =
+          0.45;
+
+        particle.userData.velocity =
+          new THREE.Vector3(
+            (Math.random() - 0.5) *
+              0.07,
+
+            Math.random() *
+              0.08 +
+              0.03,
+
+            (Math.random() - 0.5) *
+              0.07
+          );
+
+        particle.userData.life =
+          1;
+
+        effectGroup.add(
+          particle
+        );
+      }
+    }
+
+    function resizeRenderer() {
+      const rect =
+        gameCanvas.getBoundingClientRect();
+
+      const width =
+        Math.max(
+          1,
+          Math.floor(
+            rect.width
+          )
+        );
+
+      const height =
+        Math.max(
+          1,
+          Math.floor(
+            rect.height
+          )
+        );
+
+      renderer.setSize(
+        width,
+        height,
+        false
+      );
+
+      const aspect =
+        width / height;
+
+      const viewSize =
+        9.2;
+
+      camera.left =
+        -viewSize *
+        aspect /
+        2;
+
+      camera.right =
+        viewSize *
+        aspect /
+        2;
+
+      camera.top =
+        viewSize / 2;
+
+      camera.bottom =
+        -viewSize / 2;
+
+      camera.updateProjectionMatrix();
+    }
+
+    new ResizeObserver(
+      resizeRenderer
+    ).observe(
+      gameCanvas
+    );
+
+    function updatePointer(
+      event
+    ) {
+      const rect =
+        gameCanvas.getBoundingClientRect();
+
+      pointer.x =
+        (
+          (
+            event.clientX -
+            rect.left
+          ) /
+          rect.width
+        ) *
+        2 -
+        1;
+
+      pointer.y =
+        -(
+          (
+            event.clientY -
+            rect.top
+          ) /
+          rect.height
+        ) *
+        2 +
+        1;
+    }
+
+    gameCanvas.addEventListener(
+      "pointermove",
+      (event) => {
+        updatePointer(event);
+
+        raycaster.setFromCamera(
+          pointer,
+          camera
+        );
+
+        const hit =
+          raycaster
+            .intersectObjects(
+              tileMeshes,
+              false
+            )[0]?.object ||
+          null;
+
+        if (
+          hoveredTile !== hit
+        ) {
+          if (hoveredTile) {
+            hoveredTile.scale.set(
+              1,
+              1,
+              1
+            );
+          }
+
+          hoveredTile = hit;
+
+          if (
+            hoveredTile &&
+            !$("stage")
+              .classList
+              .contains("locked")
+          ) {
+            hoveredTile.scale.set(
+              1.04,
+              1.04,
+              1.04
+            );
+          }
+        }
+      }
+    );
+
+    gameCanvas.addEventListener(
+      "pointerleave",
+      () => {
+        if (hoveredTile) {
+          hoveredTile.scale.set(
+            1,
+            1,
+            1
+          );
+        }
+
+        hoveredTile = null;
+      }
+    );
+
+    gameCanvas.addEventListener(
+      "pointerup",
+      (event) => {
+        if (
+          $("stage")
+            .classList
+            .contains("locked")
+        ) {
+          return;
+        }
+
+        updatePointer(event);
+
+        raycaster.setFromCamera(
+          pointer,
+          camera
+        );
+
+        const tile =
+          raycaster
+            .intersectObjects(
+              tileMeshes,
+              false
+            )[0]?.object;
+
+        if (!tile) {
+          return;
+        }
+
+        handleBoardClick(
+          tile.userData.row,
+          tile.userData.col
+        );
+      }
+    );
+
+    /* ================================
+       Three.js 小型角色 Icon
+    ================================ */
+
+    class MiniIcon {
+      constructor(
+        canvas,
+        color,
+        role = "staff"
+      ) {
+        this.renderer =
+          new THREE.WebGLRenderer({
+            canvas,
+            antialias: true,
+            alpha: true
+          });
+
+        this.renderer.setPixelRatio(
+          Math.min(
+            window.devicePixelRatio,
+            2
+          )
+        );
+
+        this.scene =
+          new THREE.Scene();
+
+        this.camera =
+          new THREE.PerspectiveCamera(
+            30,
+            1,
+            0.1,
+            20
+          );
+
+        this.camera.position.set(
+          0,
+          0,
+          4
+        );
+
+        this.scene.add(
+          new THREE.HemisphereLight(
+            0xffffff,
+            0x111122,
+            2
+          )
+        );
+
+        this.light =
+          new THREE.PointLight(
+            color,
+            12,
+            8
+          );
+
+        this.light.position.set(
+          2,
+          2,
+          3
+        );
+
+        this.scene.add(
+          this.light
+        );
+
+        this.group =
+          new THREE.Group();
+
+        this.scene.add(
+          this.group
+        );
+
+        this.set(
+          color,
+          role
+        );
+
+        this.resize();
+      }
+
+      set(
+        color,
+        role
+      ) {
+        this.group.clear();
+
+        this.light.color.setHex(
+          color
+        );
+
+        const orb =
+          new THREE.Mesh(
+            new THREE.SphereGeometry(
+              0.72,
+              30,
+              22
+            ),
+            new THREE.MeshStandardMaterial({
+              color,
+              emissive: color,
+              emissiveIntensity: 0.35,
+              roughness: 0.25,
+              metalness: 0.18
+            })
+          );
+
+        this.group.add(
+          orb
+        );
+
+        const ring =
+          new THREE.Mesh(
+            new THREE.TorusGeometry(
+              0.9,
+              0.035,
+              10,
+              42
+            ),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              transparent: true,
+              opacity: 0.55
+            })
+          );
+
+        ring.rotation.x = 1.1;
+        ring.rotation.z = 0.4;
+
+        this.group.add(
+          ring
+        );
+
+        if (role === "sword") {
+          const blade =
+            new THREE.Mesh(
+              new THREE.BoxGeometry(
+                0.08,
+                1.15,
+                0.05
+              ),
+              new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                metalness: 0.9,
+                roughness: 0.1
+              })
+            );
+
+          blade.rotation.z = -0.55;
+
+          this.group.add(
+            blade
+          );
+        } else {
+          const staff =
+            new THREE.Mesh(
+              new THREE.CylinderGeometry(
+                0.035,
+                0.035,
+                1.25,
+                10
+              ),
+              new THREE.MeshStandardMaterial({
+                color: 0xe5d8ff,
+                metalness: 0.5
+              })
+            );
+
+          staff.rotation.z = -0.55;
+
+          this.group.add(
+            staff
+          );
+        }
+      }
+
+      resize() {
+        const rect =
+          this.renderer
+            .domElement
+            .getBoundingClientRect();
+
+        this.renderer.setSize(
+          Math.max(
+            1,
+            rect.width
+          ),
+          Math.max(
+            1,
+            rect.height
+          ),
+          false
+        );
+      }
+
+      render(time) {
+        this.group.rotation.y =
+          time * 0.001;
+
+        this.group.rotation.x =
+          Math.sin(
+            time * 0.0012
+          ) *
+          0.08;
+
+        this.renderer.render(
+          this.scene,
+          this.camera
+        );
+      }
+    }
+
+    const playerIcon =
+      new MiniIcon(
+        $("playerIcon"),
+        0x756ee8,
+        "staff"
+      );
+
+    const aiIcon =
+      new MiniIcon(
+        $("aiIcon"),
+        0xd5485c,
+        "staff"
+      );
+
+    new ResizeObserver(
+      () => {
+        playerIcon.resize();
+        aiIcon.resize();
+      }
+    ).observe(
+      $("playerIcon")
+    );
+
+    /* ================================
+       Timer 與畫面
+    ================================ */
+
+    function setGameTimer(
+      callback,
+      delay
+    ) {
+      const timerId =
+        window.setTimeout(
+          callback,
+          delay
+        );
+
+      timers.push(
+        timerId
+      );
+
+      return timerId;
+    }
+
+    function clearGameTimers() {
+      timers.forEach(
+        (timerId) =>
+          window.clearTimeout(
+            timerId
+          )
+      );
+
+      timers = [];
+    }
+
+    function showScreen(
+      screenId
+    ) {
+      document
+        .querySelectorAll(
+          ".screen"
+        )
+        .forEach(
+          (screen) => {
+            screen.classList.remove(
+              "active"
+            );
+          }
+        );
+
+      $(screenId)
+        .classList
+        .add("active");
+    }
+
+    function showToast(
+      message
+    ) {
+      const toast =
+        $("toast");
+
+      toast.textContent =
+        message;
+
+      toast.classList.add(
+        "show"
+      );
+
+      setGameTimer(
+        () => {
+          toast.classList.remove(
+            "show"
+          );
+        },
+        1100
+      );
+    }
+
+    /* ================================
+       對戰初始化
+    ================================ */
+
+    function resetRound() {
       board =
         Array.from(
           {
@@ -2196,15 +3006,14 @@
 
       lastMove = null;
       winningCells = [];
+
       frozenCells = [];
+      freezePending = false;
 
+      renderPieces();
+      refreshTiles();
       updateInterface();
-      renderBoard();
     }
-
-    /* =========================================
-       對戰流程
-    ========================================= */
 
     function startMatch() {
       clearGameTimers();
@@ -2223,13 +3032,15 @@
         .classList
         .remove("show");
 
-      showScreen("battleScreen");
+      showScreen(
+        "battleScreen"
+      );
 
       startRound();
     }
 
     function startRound() {
-      resetRoundState();
+      resetRound();
 
       $("roundText").textContent =
         `ROUND ${roundNumber}`;
@@ -2251,18 +3062,25 @@
         .classList
         .add("show");
 
-      setGameTimer(() => {
-        $("roundOverlay")
-          .classList
-          .remove("show");
+      setGameTimer(
+        () => {
+          $("roundOverlay")
+            .classList
+            .remove("show");
 
-        if (playerStarts) {
-          beginPlayerTurn();
-        } else {
-          beginAiTurn();
-        }
-      }, 900);
+          if (playerStarts) {
+            beginPlayerTurn();
+          } else {
+            beginAiTurn();
+          }
+        },
+        850
+      );
     }
+
+    /* ================================
+       回合
+    ================================ */
 
     function beginPlayerTurn() {
       if (
@@ -2276,16 +3094,123 @@
       aiThinking = false;
       selectedSkill = null;
 
-      $("turnMessage").textContent =
+      $("thinking")
+        .classList
+        .remove("show");
+
+      $("stage")
+        .classList
+        .add("locked");
+
+      $("turnText").textContent =
         "玩家角色抽取中";
 
-      $("turnDot").style.background =
-        "var(--cyan)";
-
-      $("turnDot").style.boxShadow =
-        "0 0 12px rgba(111,220,255,.7)";
+      setTurnColor(true);
 
       spinPlayerRole();
+    }
+
+    function spinPlayerRole() {
+      $("roleName").textContent =
+        "抽取中…";
+
+      $("roleDescription").textContent =
+        "杖 / 劍";
+
+      $("skillState").textContent =
+        "SPIN";
+
+      let previewIndex = 0;
+
+      const previewNames = [
+        "杖｜戰場控制型",
+        "劍｜單體破壞型"
+      ];
+
+      const previewTimer =
+        window.setInterval(
+          () => {
+            $("roleName").textContent =
+              previewNames[
+                previewIndex %
+                previewNames.length
+              ];
+
+            if (
+              previewIndex % 2 === 0
+            ) {
+              playerIcon.set(
+                0x756ee8,
+                "staff"
+              );
+            } else {
+              playerIcon.set(
+                0xe3c477,
+                "sword"
+              );
+            }
+
+            previewIndex += 1;
+          },
+          85
+        );
+
+      setGameTimer(
+        () => {
+          window.clearInterval(
+            previewTimer
+          );
+
+          playerRole =
+            Math.random() < 0.5
+              ? "staff"
+              : "sword";
+
+          if (
+            playerRole === "staff"
+          ) {
+            $("roleName").textContent =
+              "杖";
+
+            $("roleDescription").textContent =
+              "戰場控制型";
+
+            $("skillMessage").textContent =
+              "可使用 FIRE 或 ICE";
+
+            playerIcon.set(
+              0x756ee8,
+              "staff"
+            );
+          } else {
+            $("roleName").textContent =
+              "劍";
+
+            $("roleDescription").textContent =
+              "單體破壞型";
+
+            $("skillMessage").textContent =
+              "本回合只能正常落子";
+
+            playerIcon.set(
+              0xe3c477,
+              "sword"
+            );
+          }
+
+          $("stage")
+            .classList
+            .remove("locked");
+
+          $("turnText").textContent =
+            playerRole === "staff"
+              ? "玩家回合｜杖"
+              : "玩家回合｜劍";
+
+          updateInterface();
+        },
+        620
+      );
     }
 
     function beginAiTurn() {
@@ -2300,122 +3225,59 @@
       aiThinking = true;
       selectedSkill = null;
 
-      $("board").classList.add("locked");
-
-      $("turnMessage").textContent =
-        "赤焰術師思考中";
-
-      $("turnDot").style.background =
-        "var(--red)";
-
-      $("turnDot").style.boxShadow =
-        "0 0 12px rgba(255,126,136,.7)";
-
-      updateInterface();
-
-      setGameTimer(() => {
-        const move =
-          chooseAiMove();
-
-        if (move) {
-          placeStone(
-            move.row,
-            move.col,
-            AI
-          );
-        }
-      }, 520);
-    }
-
-    /* =========================================
-       玩家角色 Spin
-    ========================================= */
-
-    function spinPlayerRole() {
-      $("board")
+      $("stage")
         .classList
         .add("locked");
 
-      $("playerRoleName").textContent =
-        "抽取中…";
+      $("thinking")
+        .classList
+        .add("show");
 
-      $("playerRoleDescription").textContent =
-        "杖 / 劍";
+      $("turnText").textContent =
+        "赤焰術師思考中";
 
-      $("skillState").textContent =
-        "SPIN";
+      setTurnColor(false);
+      updateInterface();
 
-      const previewRoles = [
-        "杖｜戰場控制型",
-        "劍｜單體破壞型"
-      ];
+      setGameTimer(
+        () => {
+          const move =
+            chooseAiMove();
 
-      let previewIndex = 0;
-
-      const previewTimer =
-        window.setInterval(() => {
-          $("playerRoleName").textContent =
-            previewRoles[
-              previewIndex %
-              previewRoles.length
-            ];
-
-          previewIndex += 1;
-        }, 90);
-
-      setGameTimer(() => {
-        window.clearInterval(
-          previewTimer
-        );
-
-        playerRole =
-          Math.random() < 0.5
-            ? "staff"
-            : "sword";
-
-        if (
-          playerRole === "staff"
-        ) {
-          $("playerRoleName").textContent =
-            "杖";
-
-          $("playerRoleDescription").textContent =
-            "戰場控制型";
-
-          $("skillMessage").textContent =
-            "可使用 FIRE 或 ICE";
-        } else {
-          $("playerRoleName").textContent =
-            "劍";
-
-          $("playerRoleDescription").textContent =
-            "單體破壞型";
-
-          $("skillMessage").textContent =
-            "本回合只能正常落子";
-        }
-
-        $("skillState").textContent =
-          "READY";
-
-        $("board")
-          .classList
-          .remove("locked");
-
-        $("turnMessage").textContent =
-          playerRole === "staff"
-            ? "玩家回合｜杖"
-            : "玩家回合｜劍";
-
-        updateInterface();
-      }, 650);
+          if (move) {
+            placeStone(
+              move.row,
+              move.col,
+              AI
+            );
+          }
+        },
+        480
+      );
     }
 
-    /* =========================================
-       落子
-    ========================================= */
+    function setTurnColor(
+      isPlayer
+    ) {
+      $("turnOrb").style.background =
+        isPlayer
+          ? "var(--cyan)"
+          : "var(--red)";
 
-    function handleCellClick(event) {
+      $("turnOrb").style.boxShadow =
+        isPlayer
+          ? "0 0 12px rgba(114,221,255,.7)"
+          : "0 0 12px rgba(255,121,134,.7)";
+    }
+
+    /* ================================
+       落子
+    ================================ */
+
+    function handleBoardClick(
+      row,
+      col
+    ) {
       if (
         roundEnded ||
         matchEnded ||
@@ -2424,16 +3286,6 @@
       ) {
         return;
       }
-
-      const row =
-        Number(
-          event.currentTarget.dataset.row
-        );
-
-      const col =
-        Number(
-          event.currentTarget.dataset.col
-        );
 
       if (selectedSkill) {
         handleSkillTarget(
@@ -2464,7 +3316,7 @@
     ) {
       if (
         board[row][col] !== EMPTY ||
-        isCellFrozenFor(
+        isFrozenFor(
           player,
           row,
           col
@@ -2488,7 +3340,18 @@
         col
       };
 
-      renderBoard();
+      renderPieces();
+      refreshTiles();
+
+      createBurst(
+        row,
+        col,
+        player === PLAYER
+          ? 0x77ddff
+          : 0xff6877
+      );
+
+      updateInterface();
 
       const winResult =
         checkWin(
@@ -2501,7 +3364,7 @@
         winningCells =
           winResult.cells;
 
-        renderBoard();
+        refreshTiles();
         finishRound(player);
 
         return;
@@ -2516,22 +3379,26 @@
         return;
       }
 
-      if (player === PLAYER) {
-        if (
-          frozenCells.length > 0
-        ) {
-          frozenCells = [];
-        }
+      if (
+        player === AI &&
+        freezePending
+      ) {
+        frozenCells = [];
+        freezePending = false;
 
+        refreshTiles();
+      }
+
+      if (player === PLAYER) {
         beginAiTurn();
       } else {
         beginPlayerTurn();
       }
     }
 
-    /* =========================================
+    /* ================================
        五連判定
-    ========================================= */
+    ================================ */
 
     function checkWin(
       row,
@@ -2551,7 +3418,7 @@
           }
         ];
 
-        collectConnectedCells(
+        collectConnected(
           row,
           col,
           player,
@@ -2560,7 +3427,7 @@
           cells
         );
 
-        collectConnectedCells(
+        collectConnected(
           row,
           col,
           player,
@@ -2585,7 +3452,7 @@
       };
     }
 
-    function collectConnectedCells(
+    function collectConnected(
       row,
       col,
       player,
@@ -2629,91 +3496,16 @@
       );
     }
 
-    /* =========================================
+    /* ================================
        AI
-    ========================================= */
+    ================================ */
 
     function chooseAiMove() {
-      const winningMove =
-        findImmediateMove(AI);
-
-      if (winningMove) {
-        return winningMove;
-      }
-
-      const blockingMove =
-        findImmediateMove(PLAYER);
-
-      if (blockingMove) {
-        return blockingMove;
-      }
-
-      let bestScore =
-        -Infinity;
-
-      let bestMoves = [];
-
-      for (
-        let row = 0;
-        row < BOARD_SIZE;
-        row += 1
-      ) {
-        for (
-          let col = 0;
-          col < BOARD_SIZE;
-          col += 1
-        ) {
-          if (
-            board[row][col] !== EMPTY ||
-            isCellFrozenFor(
-              AI,
-              row,
-              col
-            )
-          ) {
-            continue;
-          }
-
-          const score =
-            evaluateMove(
-              row,
-              col
-            );
-
-          if (
-            score > bestScore
-          ) {
-            bestScore = score;
-
-            bestMoves = [
-              {
-                row,
-                col
-              }
-            ];
-          } else if (
-            score === bestScore
-          ) {
-            bestMoves.push({
-              row,
-              col
-            });
-          }
-        }
-      }
-
-      if (
-        bestMoves.length === 0
-      ) {
-        return null;
-      }
-
-      return bestMoves[
-        Math.floor(
-          Math.random() *
-          bestMoves.length
-        )
-      ];
+      return (
+        findImmediateMove(AI) ||
+        findImmediateMove(PLAYER) ||
+        findBestScoredMove()
+      );
     }
 
     function findImmediateMove(
@@ -2731,7 +3523,7 @@
         ) {
           if (
             board[row][col] !== EMPTY ||
-            isCellFrozenFor(
+            isFrozenFor(
               player,
               row,
               col
@@ -2765,24 +3557,95 @@
       return null;
     }
 
-    function evaluateMove(
+    function findBestScoredMove() {
+      let bestScore =
+        -Infinity;
+
+      let bestMoves = [];
+
+      for (
+        let row = 0;
+        row < BOARD_SIZE;
+        row += 1
+      ) {
+        for (
+          let col = 0;
+          col < BOARD_SIZE;
+          col += 1
+        ) {
+          if (
+            board[row][col] !== EMPTY ||
+            isFrozenFor(
+              AI,
+              row,
+              col
+            )
+          ) {
+            continue;
+          }
+
+          const score =
+            scoreMove(
+              row,
+              col
+            );
+
+          if (
+            score > bestScore
+          ) {
+            bestScore =
+              score;
+
+            bestMoves = [
+              {
+                row,
+                col
+              }
+            ];
+          } else if (
+            score === bestScore
+          ) {
+            bestMoves.push({
+              row,
+              col
+            });
+          }
+        }
+      }
+
+      if (
+        bestMoves.length === 0
+      ) {
+        return null;
+      }
+
+      return bestMoves[
+        Math.floor(
+          Math.random() *
+          bestMoves.length
+        )
+      ];
+    }
+
+    function scoreMove(
       row,
       col
     ) {
       board[row][col] = AI;
 
       let score =
-        evaluatePatterns(
+        evaluatePattern(
           row,
           col,
           AI
-        ) * 1.15;
+        ) *
+        1.15;
 
       board[row][col] =
         PLAYER;
 
       score +=
-        evaluatePatterns(
+        evaluatePattern(
           row,
           col,
           PLAYER
@@ -2794,21 +3657,60 @@
       score +=
         Math.max(
           0,
-          12 -
+          10 -
           (
             Math.abs(
-              row - 4.5
+              row - 3.5
             ) +
             Math.abs(
-              col - 4.5
+              col - 3.5
             )
           )
         );
 
+      for (
+        let nearbyRow =
+          Math.max(
+            0,
+            row - 2
+          );
+
+        nearbyRow <=
+        Math.min(
+          BOARD_SIZE - 1,
+          row + 2
+        );
+
+        nearbyRow += 1
+      ) {
+        for (
+          let nearbyCol =
+            Math.max(
+              0,
+              col - 2
+            );
+
+          nearbyCol <=
+          Math.min(
+            BOARD_SIZE - 1,
+            col + 2
+          );
+
+          nearbyCol += 1
+        ) {
+          if (
+            board[nearbyRow][nearbyCol] !==
+            EMPTY
+          ) {
+            score += 1.2;
+          }
+        }
+      }
+
       return score;
     }
 
-    function evaluatePatterns(
+    function evaluatePattern(
       row,
       col,
       player
@@ -2919,37 +3821,37 @@
       return total;
     }
 
-    /* =========================================
+    /* ================================
        技能
-    ========================================= */
+    ================================ */
 
     function selectSkill(
       skillType
     ) {
-      const canUseSkill =
+      const canUse =
         currentPlayer === PLAYER &&
         playerRole === "staff" &&
         !playerSkillUsed &&
         !aiThinking &&
         !roundEnded;
 
-      if (!canUseSkill) {
+      if (!canUse) {
         return;
       }
 
       selectedSkill =
         skillType;
 
-      $("skillMessage").textContent =
-        skillType === "fire"
-          ? "選擇自己的棋子：移除其正上與正下敵棋"
-          : "選擇敵方棋子：冰封其上下左右空格";
-
-      $("cancelSkillButton").hidden =
+      $("cancelButton").hidden =
         false;
 
+      $("skillMessage").textContent =
+        skillType === "fire"
+          ? "選擇自己的單位：移除其正上與正下敵軍"
+          : "選擇敵方單位：冰封其上下左右空格";
+
+      refreshTiles();
       updateInterface();
-      renderBoard();
     }
 
     function handleSkillTarget(
@@ -2963,11 +3865,7 @@
           row,
           col
         );
-
-        return;
-      }
-
-      if (
+      } else if (
         selectedSkill === "ice"
       ) {
         castIce(
@@ -2985,7 +3883,7 @@
         board[row][col] !== PLAYER
       ) {
         $("skillMessage").textContent =
-          "FIRE 必須選擇自己的棋子";
+          "FIRE 必須選擇自己的單位";
 
         return;
       }
@@ -3017,14 +3915,20 @@
               null;
 
             removedCount += 1;
+
+            createBurst(
+              targetRow,
+              targetCol,
+              0xff693f
+            );
           }
         }
       );
 
       completeSkill(
         removedCount > 0
-          ? `FIRE 移除 ${removedCount} 顆敵棋`
-          : "FIRE 啟動，但沒有命中敵棋"
+          ? `FIRE 移除 ${removedCount} 個敵方單位`
+          : "FIRE 啟動，但沒有命中敵軍"
       );
     }
 
@@ -3036,42 +3940,42 @@
         board[row][col] !== AI
       ) {
         $("skillMessage").textContent =
-          "ICE 必須選擇敵方棋子";
+          "ICE 必須選擇敵方單位";
 
         return;
       }
 
-      const targets = [
+      frozenCells = [
         [row - 1, col],
         [row + 1, col],
         [row, col - 1],
         [row, col + 1]
-      ];
+      ]
+        .filter(
+          ([
+            targetRow,
+            targetCol
+          ]) =>
+            isInsideBoard(
+              targetRow,
+              targetCol
+            ) &&
+            board[targetRow][targetCol] ===
+              EMPTY
+        )
+        .map(
+          ([
+            targetRow,
+            targetCol
+          ]) => ({
+            row: targetRow,
+            col: targetCol,
+            blockedPlayer: AI
+          })
+        );
 
-      frozenCells =
-        targets
-          .filter(
-            ([
-              targetRow,
-              targetCol
-            ]) =>
-              isInsideBoard(
-                targetRow,
-                targetCol
-              ) &&
-              board[targetRow][targetCol] ===
-                EMPTY
-          )
-          .map(
-            ([
-              targetRow,
-              targetCol
-            ]) => ({
-              row: targetRow,
-              col: targetCol,
-              blockedPlayer: AI
-            })
-          );
+      freezePending =
+        frozenCells.length > 0;
 
       completeSkill(
         frozenCells.length > 0
@@ -3086,34 +3990,36 @@
       playerSkillUsed = true;
       selectedSkill = null;
 
-      $("cancelSkillButton").hidden =
+      $("cancelButton").hidden =
         true;
 
       $("skillMessage").textContent =
         message;
 
-      renderBoard();
+      renderPieces();
+      refreshTiles();
       updateInterface();
 
-      setGameTimer(() => {
-        beginAiTurn();
-      }, 650);
+      setGameTimer(
+        beginAiTurn,
+        620
+      );
     }
 
-    function cancelSkillSelection() {
+    function cancelSkill() {
       selectedSkill = null;
 
-      $("cancelSkillButton").hidden =
+      $("cancelButton").hidden =
         true;
 
       $("skillMessage").textContent =
         "已取消技能";
 
+      refreshTiles();
       updateInterface();
-      renderBoard();
     }
 
-    function isCellFrozenFor(
+    function isFrozenFor(
       player,
       row,
       col
@@ -3127,29 +4033,36 @@
       );
     }
 
-    /* =========================================
-       單局結算
-    ========================================= */
+    /* ================================
+       結算
+    ================================ */
 
     function finishRound(
       winner
     ) {
       roundEnded = true;
 
-      $("board")
+      $("stage")
         .classList
         .add("locked");
+
+      $("thinking")
+        .classList
+        .remove("show");
 
       if (
         winner === EMPTY
       ) {
-        $("turnMessage").textContent =
+        $("turnText").textContent =
           "本局和棋";
 
-        setGameTimer(() => {
-          roundNumber += 1;
-          startRound();
-        }, 1500);
+        setGameTimer(
+          () => {
+            roundNumber += 1;
+            startRound();
+          },
+          1450
+        );
 
         return;
       }
@@ -3202,7 +4115,7 @@
 
       updateInterface();
 
-      $("turnMessage").textContent =
+      $("turnText").textContent =
         winner === PLAYER
           ? `玩家勝利｜造成 ${damage} 傷害`
           : `AI 勝利｜造成 ${damage} 傷害`;
@@ -3211,33 +4124,33 @@
         playerScore >= WIN_SCORE ||
         aiScore >= WIN_SCORE;
 
-      setGameTimer(() => {
-        if (matchEnded) {
-          showMatchResult();
-        } else {
-          roundNumber += 1;
-          startRound();
-        }
-      }, 1500);
+      setGameTimer(
+        () => {
+          if (matchEnded) {
+            showResult();
+          } else {
+            roundNumber += 1;
+            startRound();
+          }
+        },
+        1500
+      );
     }
 
     function showDamage(
-      damage,
+      value,
       toPlayer
     ) {
       const damageText =
         $("damageText");
 
       damageText.textContent =
-        `-${damage}`;
+        `-${value}`;
 
       damageText.style.left =
         toPlayer
-          ? "22%"
+          ? "20%"
           : "72%";
-
-      damageText.style.top =
-        "11%";
 
       damageText.classList.remove(
         "show"
@@ -3250,7 +4163,7 @@
       );
     }
 
-    function showMatchResult() {
+    function showResult() {
       $("finalPlayerScore").textContent =
         String(playerScore);
 
@@ -3270,9 +4183,9 @@
         .add("show");
     }
 
-    /* =========================================
-       UI 更新
-    ========================================= */
+    /* ================================
+       UI
+    ================================ */
 
     function updateInterface() {
       $("playerScore").textContent =
@@ -3293,7 +4206,7 @@
       $("aiHpBar").style.width =
         `${aiHp}%`;
 
-      $("moveCount").textContent =
+      $("moveText").textContent =
         `MOVE ${moveNumber}`;
 
       const canUseSkill =
@@ -3333,116 +4246,15 @@
           playerRole === "staff"
             ? "READY"
             : "NORMAL";
+      } else {
+        $("skillState").textContent =
+          "WAIT";
       }
     }
 
-    function renderBoard() {
-      document
-        .querySelectorAll(".cell")
-        .forEach((cell) => {
-          const row =
-            Number(
-              cell.dataset.row
-            );
-
-          const col =
-            Number(
-              cell.dataset.col
-            );
-
-          cell.className =
-            "cell";
-
-          if (
-            lastMove &&
-            lastMove.row === row &&
-            lastMove.col === col
-          ) {
-            cell.classList.add(
-              "last-move"
-            );
-          }
-
-          if (
-            winningCells.some(
-              (winningCell) =>
-                winningCell.row === row &&
-                winningCell.col === col
-            )
-          ) {
-            cell.classList.add(
-              "winning"
-            );
-          }
-
-          if (
-            isCellFrozenFor(
-              AI,
-              row,
-              col
-            ) &&
-            board[row][col] === EMPTY
-          ) {
-            cell.classList.add(
-              "frozen"
-            );
-          }
-
-          if (
-            selectedSkill === "fire" &&
-            board[row][col] === PLAYER
-          ) {
-            cell.classList.add(
-              "skill-target"
-            );
-          }
-
-          if (
-            selectedSkill === "ice" &&
-            board[row][col] === AI
-          ) {
-            cell.classList.add(
-              "skill-target"
-            );
-          }
-
-          cell.innerHTML = "";
-
-          if (
-            board[row][col] === EMPTY
-          ) {
-            return;
-          }
-
-          cell.classList.add(
-            "occupied"
-          );
-
-          const unit =
-            document.createElement(
-              "span"
-            );
-
-          if (
-            board[row][col] === PLAYER
-          ) {
-            unit.className =
-              `unit player ${
-                roleBoard[row][col] ||
-                "staff"
-              }`;
-          } else {
-            unit.className =
-              "unit ai";
-          }
-
-          cell.appendChild(unit);
-        });
-    }
-
-    /* =========================================
+    /* ================================
        事件
-    ========================================= */
+    ================================ */
 
     $("startButton")
       .addEventListener(
@@ -3468,23 +4280,25 @@
       .querySelectorAll(
         ".mode-card"
       )
-      .forEach((modeCard) => {
-        modeCard.addEventListener(
-          "click",
-          () => {
-            if (
-              modeCard.dataset.mode ===
-              "single"
-            ) {
-              startMatch();
-            } else {
-              showToast(
-                "此模式尚未開放"
-              );
+      .forEach(
+        (card) => {
+          card.addEventListener(
+            "click",
+            () => {
+              if (
+                card.dataset.mode ===
+                "single"
+              ) {
+                startMatch();
+              } else {
+                showToast(
+                  "此模式尚未開放"
+                );
+              }
             }
-          }
-        );
-      });
+          );
+        }
+      );
 
     $("battleBackButton")
       .addEventListener(
@@ -3528,7 +4342,9 @@
       .addEventListener(
         "click",
         () => {
-          selectSkill("fire");
+          selectSkill(
+            "fire"
+          );
         }
       );
 
@@ -3536,21 +4352,146 @@
       .addEventListener(
         "click",
         () => {
-          selectSkill("ice");
+          selectSkill(
+            "ice"
+          );
         }
       );
 
-    $("cancelSkillButton")
+    $("cancelButton")
       .addEventListener(
         "click",
-        cancelSkillSelection
+        cancelSkill
       );
 
-    /* =========================================
-       啟動
-    ========================================= */
+    /* ================================
+       Animation Loop
+    ================================ */
 
-    createBoardGrid();
+    const clock =
+      new THREE.Clock();
+
+    function animate(
+      time
+    ) {
+      window.requestAnimationFrame(
+        animate
+      );
+
+      const deltaTime =
+        Math.min(
+          clock.getDelta(),
+          0.033
+        );
+
+      pieceGroup.children.forEach(
+        (unit) => {
+          const targetScale =
+            unit.userData.targetScale ||
+            1;
+
+          const nextScale =
+            THREE.MathUtils.damp(
+              unit.scale.x,
+              targetScale,
+              10,
+              deltaTime
+            );
+
+          unit.scale.setScalar(
+            nextScale
+          );
+
+          unit.rotation.y =
+            Math.sin(
+              time * 0.001 +
+              unit.position.x * 0.4 +
+              unit.position.z * 0.3
+            ) *
+            0.035;
+        }
+      );
+
+      [
+        ...effectGroup.children
+      ].forEach(
+        (particle) => {
+          particle.position.add(
+            particle.userData.velocity
+          );
+
+          particle.userData.velocity.y -=
+            0.003;
+
+          particle.userData.life -=
+            0.025;
+
+          particle.material.opacity =
+            Math.max(
+              0,
+              particle.userData.life
+            );
+
+          if (
+            particle.userData.life <= 0
+          ) {
+            effectGroup.remove(
+              particle
+            );
+
+            particle.geometry.dispose();
+            particle.material.dispose();
+          }
+        }
+      );
+
+      if (lastMove) {
+        const lastTile =
+          tileMeshes.find(
+            (tile) =>
+              tile.userData.row ===
+                lastMove.row &&
+              tile.userData.col ===
+                lastMove.col
+          );
+
+        if (
+          lastTile &&
+          winningCells.length === 0
+        ) {
+          lastTile.position.y =
+            0.06 +
+            Math.sin(
+              time * 0.008
+            ) *
+            0.025;
+        }
+      }
+
+      fillLight.intensity =
+        8.5 +
+        Math.sin(
+          time * 0.0014
+        ) *
+        1.2;
+
+      renderer.render(
+        scene,
+        camera
+      );
+
+      playerIcon.render(
+        time
+      );
+
+      aiIcon.render(
+        time
+      );
+    }
+
+    buildBoard3D();
+    resizeRenderer();
+    animate(0);
   </script>
 </body>
 </html>
