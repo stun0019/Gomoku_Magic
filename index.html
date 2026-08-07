@@ -85,6 +85,7 @@
     body {
       width:100%;
       height:100%;
+
       overscroll-behavior:none;
     }
 
@@ -139,6 +140,10 @@
     [hidden] {
       display:none !important;
     }
+
+    /* =========================================================
+       APP
+    ========================================================= */
 
     .app {
       position:relative;
@@ -241,9 +246,9 @@
         );
     }
 
-    /* =========================================
-       Sakura
-    ========================================= */
+    /* =========================================================
+       SAKURA
+    ========================================================= */
 
     .sakura-layer {
       position:absolute;
@@ -281,34 +286,43 @@
 
     .petal:nth-child(1) {
       left:6%;
+
       animation-duration:13s;
       animation-delay:-4s;
     }
 
     .petal:nth-child(2) {
       left:24%;
+
       transform:scale(.7);
+
       animation-duration:16s;
       animation-delay:-12s;
     }
 
     .petal:nth-child(3) {
       left:47%;
+
       transform:scale(.9);
+
       animation-duration:14s;
       animation-delay:-7s;
     }
 
     .petal:nth-child(4) {
       left:69%;
+
       transform:scale(.65);
+
       animation-duration:18s;
       animation-delay:-14s;
     }
 
     .petal:nth-child(5) {
       left:89%;
+
       transform:scale(.82);
+
       animation-duration:15s;
       animation-delay:-9s;
     }
@@ -333,9 +347,9 @@
       }
     }
 
-    /* =========================================
-       Screen
-    ========================================= */
+    /* =========================================================
+       SCREEN
+    ========================================================= */
 
     .screen {
       position:absolute;
@@ -363,9 +377,9 @@
         translateY(0);
     }
 
-    /* =========================================
-       Buttons
-    ========================================= */
+    /* =========================================================
+       BUTTON
+    ========================================================= */
 
     .button {
       border:
@@ -417,27 +431,17 @@
         rgba(233,189,101,.22);
     }
 
-    .button-secondary,
-    .button-small {
+    .button-secondary {
+      padding:
+        12px 20px;
+
       background:
         rgba(255,255,255,.055);
     }
 
-    .button-secondary {
-      padding:
-        12px 20px;
-    }
-
-    .button-small {
-      padding:
-        9px 12px;
-
-      font-size:.69rem;
-    }
-
-    /* =========================================
-       Sound
-    ========================================= */
+    /* =========================================================
+       SOUND
+    ========================================================= */
 
     .sound-toggle {
       position:absolute;
@@ -479,16 +483,38 @@
 
       backdrop-filter:
         blur(8px);
+
+      transition:
+        .2s ease;
     }
 
     .sound-toggle.off {
       color:var(--muted);
-      border-color:var(--line);
+
+      border-color:
+        var(--line);
     }
 
-    /* =========================================
-       Home
-    ========================================= */
+    .app.in-battle
+    .sound-toggle {
+      top:auto;
+      right:12px;
+      bottom:92px;
+
+      width:28px;
+      height:28px;
+
+      z-index:22;
+
+      font-size:.5rem;
+
+      background:
+        rgba(6,9,20,.68);
+    }
+
+    /* =========================================================
+       HOME
+    ========================================================= */
 
     .home-screen {
       display:flex;
@@ -635,8 +661,7 @@
       margin:
         7% 0 5%;
 
-      color:
-        var(--muted);
+      color:var(--muted);
 
       font-size:.81rem;
       line-height:1.85;
@@ -678,9 +703,9 @@
       letter-spacing:.12em;
     }
 
-    /* =========================================
-       Mode
-    ========================================= */
+    /* =========================================================
+       MODE
+    ========================================================= */
 
     .mode-screen {
       display:grid;
@@ -837,6 +862,7 @@
 
     .mode-card.locked {
       opacity:.48;
+
       cursor:not-allowed;
     }
 
@@ -918,35 +944,37 @@
       font-size:.65rem;
     }
 
-    /* =========================================
-       Battle Layout
-    ========================================= */
+    /* =========================================================
+       BATTLE
+    ========================================================= */
 
     .battle-screen {
       display:grid;
 
       grid-template-rows:
         auto
-        auto
         minmax(0,1fr)
-        auto
         auto;
 
-      gap:7px;
+      gap:6px;
 
       padding:
         max(
-          10px,
+          8px,
           env(safe-area-inset-top)
         )
-        10px
+        8px
         max(
-          9px,
+          8px,
           env(safe-area-inset-bottom)
         );
 
       overflow:hidden;
     }
+
+    /* =========================================================
+       HUD
+    ========================================================= */
 
     .hud {
       position:relative;
@@ -960,27 +988,29 @@
 
       align-items:center;
 
-      gap:9px;
+      gap:8px;
+
+      min-height:54px;
 
       padding:
-        10px 11px;
+        8px 10px;
 
       background:
         linear-gradient(
           180deg,
-          rgba(8,13,29,.88),
-          rgba(8,12,25,.7)
+          rgba(8,13,29,.9),
+          rgba(8,12,25,.72)
         );
 
       border:
         1px solid
         var(--line);
 
-      border-radius:17px;
+      border-radius:15px;
 
       box-shadow:
-        0 12px 24px
-        rgba(0,0,0,.18);
+        0 10px 22px
+        rgba(0,0,0,.16);
     }
 
     .hud::before,
@@ -988,12 +1018,12 @@
       content:"";
 
       position:absolute;
-      top:9px;
-      bottom:9px;
+      top:8px;
+      bottom:8px;
 
       width:2px;
 
-      opacity:.55;
+      opacity:.5;
 
       background:
         linear-gradient(
@@ -1004,11 +1034,11 @@
     }
 
     .hud::before {
-      left:6px;
+      left:5px;
     }
 
     .hud::after {
-      right:6px;
+      right:5px;
     }
 
     .fighter {
@@ -1026,7 +1056,7 @@
 
       gap:6px;
 
-      font-size:.64rem;
+      font-size:.62rem;
       font-weight:900;
     }
 
@@ -1036,21 +1066,25 @@
     }
 
     .fighter-jp {
+      display:block;
+
+      margin-top:1px;
+
       color:var(--muted);
 
       font-family:
         "Yu Mincho",
         serif;
 
-      font-size:.5rem;
+      font-size:.46rem;
     }
 
     .hp-track {
       position:relative;
 
-      height:8px;
+      height:7px;
 
-      margin-top:6px;
+      margin-top:4px;
 
       overflow:hidden;
 
@@ -1109,6 +1143,8 @@
     }
 
     .score-panel {
+      min-width:70px;
+
       text-align:center;
     }
 
@@ -1117,127 +1153,41 @@
       justify-content:center;
       align-items:center;
 
-      gap:7px;
+      gap:6px;
 
-      font-size:1.3rem;
+      font-size:1.25rem;
       font-weight:950;
+      line-height:1;
+    }
+
+    .score-meta {
+      display:flex;
+      justify-content:center;
+
+      gap:5px;
+
+      margin-top:3px;
+
+      color:var(--muted);
+
+      font-size:.44rem;
+      letter-spacing:.06em;
+
+      white-space:nowrap;
     }
 
     .round-label {
-      display:block;
-
-      margin-top:1px;
-
       color:
         var(--gold-light);
 
       font-family:
         "Yu Mincho",
         serif;
-
-      font-size:.51rem;
-      letter-spacing:.12em;
     }
 
-    .turn-bar {
-      display:grid;
-
-      grid-template-columns:
-        minmax(0,1fr)
-        auto;
-
-      align-items:center;
-
-      gap:10px;
-
-      min-height:43px;
-
-      padding:
-        7px 10px;
-
-      background:
-        linear-gradient(
-          90deg,
-          rgba(89,104,200,.12),
-          rgba(255,255,255,.04),
-          rgba(228,95,82,.08)
-        );
-
-      border:
-        1px solid
-        var(--line);
-
-      border-radius:13px;
-    }
-
-    .turn-left {
-      display:flex;
-      align-items:center;
-
-      gap:9px;
-
-      min-width:0;
-    }
-
-    .turn-mon {
-      width:22px;
-      height:22px;
-
-      flex:0 0 auto;
-
-      border:
-        1px solid
-        rgba(255,255,255,.22);
-
-      border-radius:50%;
-
-      background:
-        radial-gradient(
-          circle at 35% 30%,
-          #fff,
-          var(--cyan) 26%,
-          #4b5cc1 68%
-        );
-
-      box-shadow:
-        0 0 12px
-        rgba(126,231,238,.5);
-
-      transition:
-        .22s ease;
-    }
-
-    .turn-text {
-      overflow:hidden;
-
-      font-size:.71rem;
-      font-weight:900;
-
-      white-space:nowrap;
-      text-overflow:ellipsis;
-    }
-
-    .turn-subtext {
-      display:block;
-
-      margin-top:1px;
-
-      color:var(--muted);
-
-      font-size:.49rem;
-      font-weight:500;
-    }
-
-    .move-text {
-      color:var(--muted);
-
-      font-size:.59rem;
-      letter-spacing:.05em;
-    }
-
-    /* =========================================
-       Three Stage
-    ========================================= */
+    /* =========================================================
+       STAGE
+    ========================================================= */
 
     .stage {
       position:relative;
@@ -1253,13 +1203,13 @@
 
       background:
         radial-gradient(
-          circle at 50% 58%,
-          rgba(112,95,191,.2),
-          transparent 48%
+          circle at 50% 48%,
+          rgba(120,104,200,.18),
+          transparent 49%
         ),
         linear-gradient(
           180deg,
-          rgba(18,25,49,.99),
+          rgba(17,24,47,.99),
           rgba(6,9,19,.99)
         );
 
@@ -1267,7 +1217,7 @@
         1px solid
         var(--line);
 
-      border-radius:19px;
+      border-radius:18px;
 
       box-shadow:
         var(--shadow),
@@ -1279,14 +1229,14 @@
       content:"";
 
       position:absolute;
-      inset:8px;
+      inset:6px;
       z-index:2;
 
       border:
         1px solid
-        rgba(233,189,101,.13);
+        rgba(233,189,101,.12);
 
-      border-radius:14px;
+      border-radius:13px;
 
       pointer-events:none;
     }
@@ -1295,24 +1245,25 @@
       content:"対局";
 
       position:absolute;
-      right:13px;
-      bottom:10px;
+      right:11px;
+      bottom:8px;
       z-index:2;
 
       color:
-        rgba(255,232,165,.22);
+        rgba(255,232,165,.18);
 
       font-family:
         "Yu Mincho",
         serif;
 
-      font-size:.56rem;
-      letter-spacing:.18em;
+      font-size:.5rem;
+      letter-spacing:.16em;
 
       pointer-events:none;
     }
 
-    .stage.locked {
+    .stage.locked
+    #gameCanvas {
       pointer-events:none;
     }
 
@@ -1327,55 +1278,162 @@
 
     .stage-topline {
       position:absolute;
-      top:9px;
+
+      top:8px;
       left:50%;
       z-index:3;
 
       display:flex;
       align-items:center;
 
-      gap:7px;
+      gap:6px;
 
       padding:
-        5px 9px;
+        4px 8px;
 
-      color:var(--muted);
+      color:
+        rgba(255,255,255,.38);
 
       background:
-        rgba(6,9,20,.66);
+        rgba(6,9,20,.52);
 
       border:
         1px solid
-        rgba(255,255,255,.09);
+        rgba(255,255,255,.07);
 
       border-radius:999px;
 
       transform:
         translateX(-50%);
 
-      font-size:.51rem;
+      font-size:.45rem;
       letter-spacing:.08em;
 
       pointer-events:none;
     }
 
-    .stage-topline::before,
-    .stage-topline::after {
-      content:"";
+    /* =========================================================
+       TURN HINT
+    ========================================================= */
 
-      width:12px;
-      height:1px;
+    .turn-hint {
+      position:absolute;
+
+      left:50%;
+      top:15%;
+      z-index:14;
+
+      min-width:170px;
+
+      padding:
+        8px 18px 9px;
+
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+
+      text-align:center;
+
+      transform:
+        translate(-50%,-7px)
+        scale(.96);
 
       background:
-        var(--gold);
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(7,11,24,.9) 18%,
+          rgba(13,19,38,.96) 50%,
+          rgba(7,11,24,.9) 82%,
+          transparent
+        );
 
-      opacity:.55;
+      border-top:
+        1px solid
+        rgba(233,189,101,.3);
+
+      border-bottom:
+        1px solid
+        rgba(233,189,101,.3);
     }
+
+    .turn-hint.show {
+      animation:
+        turnHintFade
+        .86s ease
+        forwards;
+    }
+
+    .turn-hint small {
+      display:block;
+
+      color:var(--gold);
+
+      font-size:.45rem;
+      font-weight:900;
+      letter-spacing:.18em;
+    }
+
+    .turn-hint strong {
+      display:block;
+
+      margin-top:2px;
+
+      font-family:
+        "Yu Mincho",
+        serif;
+
+      font-size:.9rem;
+      letter-spacing:.05em;
+    }
+
+    @keyframes turnHintFade {
+      0% {
+        opacity:0;
+        visibility:visible;
+
+        transform:
+          translate(-50%,-7px)
+          scale(.96);
+      }
+
+      18% {
+        opacity:1;
+        visibility:visible;
+
+        transform:
+          translate(-50%,0)
+          scale(1);
+      }
+
+      70% {
+        opacity:1;
+        visibility:visible;
+
+        transform:
+          translate(-50%,0)
+          scale(1);
+      }
+
+      100% {
+        opacity:0;
+        visibility:hidden;
+
+        transform:
+          translate(-50%,-6px)
+          scale(1.01);
+      }
+    }
+
+    /* =========================================================
+       THINKING
+    ========================================================= */
 
     .thinking {
       position:absolute;
-      top:9px;
-      right:10px;
+
+      top:8px;
+      right:9px;
       z-index:4;
 
       display:none;
@@ -1384,17 +1442,17 @@
       gap:4px;
 
       padding:
-        5px 8px;
+        4px 7px;
 
       color:
         var(--sakura-light);
 
       background:
-        rgba(6,9,20,.74);
+        rgba(6,9,20,.7);
 
       border-radius:999px;
 
-      font-size:.48rem;
+      font-size:.44rem;
 
       pointer-events:none;
     }
@@ -1404,8 +1462,8 @@
     }
 
     .thinking-dot {
-      width:4px;
-      height:4px;
+      width:3px;
+      height:3px;
 
       background:
         currentColor;
@@ -1436,20 +1494,25 @@
       }
     }
 
+    /* =========================================================
+       ROUND
+    ========================================================= */
+
     .round-banner {
       position:absolute;
+
       left:50%;
-      top:38%;
+      top:42%;
       z-index:12;
 
       width:
         min(
-          76%,
-          430px
+          74%,
+          410px
         );
 
       padding:
-        14px 18px;
+        12px 16px;
 
       opacity:0;
       visibility:hidden;
@@ -1458,8 +1521,8 @@
       text-align:center;
 
       transform:
-        translate(-50%,-42%)
-        scale(.94);
+        translate(-50%,-44%)
+        scale(.95);
 
       background:
         linear-gradient(
@@ -1497,41 +1560,46 @@
     .round-banner small {
       color:var(--gold);
 
-      font-size:.51rem;
+      font-size:.48rem;
       letter-spacing:.2em;
     }
 
     .round-banner strong {
       display:block;
 
-      margin-top:4px;
+      margin-top:3px;
 
       font-family:
         "Yu Mincho",
         serif;
 
-      font-size:1.32rem;
+      font-size:1.2rem;
     }
 
     .round-banner span {
       display:block;
 
-      margin-top:3px;
+      margin-top:2px;
 
       color:var(--muted);
 
-      font-size:.54rem;
-      letter-spacing:.08em;
+      font-size:.5rem;
+      letter-spacing:.07em;
     }
+
+    /* =========================================================
+       COMBAT CALLOUT
+    ========================================================= */
 
     .combat-callout {
       position:absolute;
+
       left:50%;
-      top:16%;
+      top:12%;
       z-index:13;
 
       padding:
-        7px 14px;
+        6px 13px;
 
       opacity:0;
 
@@ -1544,7 +1612,7 @@
       color:#fff;
 
       background:
-        rgba(9,13,27,.82);
+        rgba(9,13,27,.8);
 
       border:
         1px solid
@@ -1556,7 +1624,7 @@
         "Yu Mincho",
         serif;
 
-      font-size:.67rem;
+      font-size:.61rem;
       font-weight:800;
       letter-spacing:.08em;
     }
@@ -1597,6 +1665,142 @@
       }
     }
 
+    /* =========================================================
+       TARGET HINT
+    ========================================================= */
+
+    .target-hint {
+      position:absolute;
+
+      left:50%;
+      bottom:13px;
+      z-index:15;
+
+      display:flex;
+      align-items:center;
+
+      gap:8px;
+
+      max-width:82%;
+
+      padding:
+        6px 7px
+        6px 11px;
+
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+
+      transform:
+        translate(-50%,8px);
+
+      background:
+        rgba(7,11,24,.9);
+
+      border:
+        1px solid
+        var(--line-gold);
+
+      border-radius:999px;
+
+      box-shadow:
+        0 8px 24px
+        rgba(0,0,0,.28);
+
+      transition:
+        opacity .18s ease,
+        visibility .18s ease,
+        transform .18s ease;
+    }
+
+    .target-hint.show {
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+
+      transform:
+        translate(-50%,0);
+    }
+
+    .target-hint span {
+      overflow:hidden;
+
+      color:#e7e1d5;
+
+      font-size:.5rem;
+
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+
+    .cancel-action {
+      flex:0 0 auto;
+
+      padding:
+        4px 7px;
+
+      color:
+        var(--gold-light);
+
+      background:
+        rgba(255,255,255,.05);
+
+      border:
+        1px solid
+        rgba(255,255,255,.1);
+
+      border-radius:999px;
+
+      cursor:pointer;
+
+      font-size:.45rem;
+    }
+
+    /* =========================================================
+       STAGE TOOLS
+    ========================================================= */
+
+    .stage-tools {
+      position:absolute;
+
+      left:9px;
+      bottom:9px;
+      z-index:5;
+
+      display:flex;
+
+      gap:5px;
+
+      pointer-events:auto;
+    }
+
+    .stage-tool {
+      min-width:34px;
+      height:28px;
+
+      padding:
+        0 8px;
+
+      color:
+        rgba(255,255,255,.55);
+
+      background:
+        rgba(6,9,20,.62);
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      border-radius:999px;
+
+      cursor:pointer;
+
+      font-size:.46rem;
+
+      backdrop-filter:
+        blur(6px);
+    }
+
     .stage.impact {
       animation:
         impactShake
@@ -1626,38 +1830,28 @@
       }
     }
 
-    /* =========================================
-       Controls
-    ========================================= */
+    /* =========================================================
+       COMMAND DOCK
+    ========================================================= */
 
-    .controls {
+    .command-dock {
       display:grid;
 
       grid-template-columns:
-        .9fr
-        1.45fr
-        .9fr;
+        82px
+        minmax(0,1fr);
 
-      gap:7px;
-    }
+      gap:6px;
 
-    .character-card,
-    .action-panel {
-      min-width:0;
-      min-height:110px;
+      min-height:76px;
 
-      padding:8px;
+      padding:6px;
 
       background:
         linear-gradient(
-          160deg,
-          rgba(255,255,255,.07),
-          rgba(255,255,255,.022)
-        ),
-        radial-gradient(
-          circle at 50% 0%,
-          rgba(129,149,255,.08),
-          transparent 52%
+          180deg,
+          rgba(10,15,31,.9),
+          rgba(7,10,22,.82)
         );
 
       border:
@@ -1665,28 +1859,54 @@
         var(--line);
 
       border-radius:15px;
+
+      box-shadow:
+        0 10px 25px
+        rgba(0,0,0,.2);
     }
 
-    .character-card {
+    .role-chip {
       position:relative;
 
-      display:flex;
-      flex-direction:column;
+      display:grid;
+
+      grid-template-columns:
+        34px
+        minmax(0,1fr);
+
       align-items:center;
-      justify-content:center;
+
+      gap:5px;
+
+      min-width:0;
+
+      padding:
+        5px 6px;
 
       overflow:hidden;
 
-      text-align:center;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(104,121,217,.11),
+          rgba(255,255,255,.025)
+        );
+
+      border:
+        1px solid
+        rgba(140,161,255,.16);
+
+      border-radius:11px;
     }
 
-    .character-card::before {
+    .role-chip::after {
       content:"";
 
       position:absolute;
-      left:12px;
-      right:12px;
-      bottom:7px;
+
+      left:8px;
+      right:8px;
+      bottom:4px;
 
       height:1px;
 
@@ -1694,129 +1914,116 @@
         linear-gradient(
           90deg,
           transparent,
-          rgba(233,189,101,.42),
+          rgba(233,189,101,.35),
           transparent
         );
     }
 
-    .character-side-label {
-      position:absolute;
-      top:6px;
-      left:8px;
+    .role-chip
+    .icon-canvas {
+      width:34px;
+      height:44px;
+
+      margin:0;
+
+      pointer-events:none;
+    }
+
+    .role-copy {
+      min-width:0;
+    }
+
+    .role-label {
+      display:block;
 
       color:
-        rgba(255,255,255,.28)
-        !important;
+        rgba(255,255,255,.34);
 
       font-family:
         "Yu Mincho",
         serif;
 
-      font-size:
-        .44rem
-        !important;
-
-      letter-spacing:.1em;
+      font-size:.4rem;
+      letter-spacing:.08em;
     }
 
-    .icon-canvas {
-      width:50px;
-      height:50px;
+    .role-name {
+      display:block;
 
-      margin-bottom:3px;
-
-      pointer-events:none;
-    }
-
-    .character-card strong {
-      max-width:100%;
+      margin-top:2px;
 
       overflow:hidden;
 
-      font-size:.7rem;
+      color:var(--text);
+
+      font-size:.64rem;
+      font-weight:900;
 
       white-space:nowrap;
       text-overflow:ellipsis;
     }
 
-    .character-card span {
-      max-width:100%;
+    .role-description {
+      display:block;
 
-      margin-top:3px;
+      margin-top:1px;
 
       overflow:hidden;
 
       color:var(--muted);
 
-      font-size:.51rem;
+      font-size:.42rem;
 
       white-space:nowrap;
       text-overflow:ellipsis;
     }
 
-    .action-panel {
-      display:flex;
-      flex-direction:column;
-
-      gap:5px;
-    }
-
-    .action-header {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-
-      gap:6px;
-
-      min-height:18px;
-
-      font-size:.64rem;
-    }
-
     .action-state {
+      position:absolute;
+
+      top:4px;
+      right:5px;
+
       color:
         var(--gold-light);
 
-      font-size:.49rem;
-      letter-spacing:.08em;
+      font-size:.36rem;
+      letter-spacing:.06em;
     }
 
-    .action-grid {
+    .action-strip {
       display:grid;
 
       grid-template-columns:
         repeat(
-          2,
+          4,
           minmax(0,1fr)
         );
 
       gap:5px;
+
+      min-width:0;
     }
 
     .action-button {
-      display:grid;
+      position:relative;
 
-      grid-template-columns:
-        27px
-        minmax(0,1fr);
-
+      display:flex;
+      flex-direction:column;
       align-items:center;
+      justify-content:center;
 
-      gap:4px;
-
-      min-height:42px;
+      min-width:0;
 
       padding:
-        4px 5px;
-
-      text-align:left;
+        4px 2px 3px;
 
       background:
         rgba(255,255,255,.045);
 
       border:
         1px solid
-        rgba(255,255,255,.11);
+        rgba(255,255,255,.1);
 
       border-radius:10px;
 
@@ -1825,7 +2032,8 @@
       transition:
         background .16s ease,
         border-color .16s ease,
-        transform .16s ease;
+        transform .16s ease,
+        opacity .16s ease;
     }
 
     .action-button:hover:not(:disabled) {
@@ -1834,7 +2042,8 @@
     }
 
     .action-button:disabled {
-      opacity:.3;
+      opacity:.27;
+
       cursor:not-allowed;
     }
 
@@ -1855,8 +2064,8 @@
     }
 
     .action-icon {
-      width:27px;
-      height:27px;
+      width:29px;
+      height:29px;
 
       pointer-events:none;
     }
@@ -1864,81 +2073,20 @@
     .action-button b {
       display:block;
 
-      font-size:.55rem;
-      line-height:1.05;
+      margin-top:1px;
+
+      font-size:.45rem;
+      line-height:1;
+      letter-spacing:.02em;
     }
 
     .action-button small {
-      display:block;
-
-      margin-top:2px;
-
-      color:var(--muted);
-
-      font-size:.4rem;
+      display:none;
     }
 
-    .action-message {
-      min-height:24px;
-
-      color:var(--muted);
-
-      font-size:.5rem;
-      line-height:1.35;
-
-      text-align:center;
-    }
-
-    .cancel-action {
-      align-self:center;
-
-      padding:
-        4px 8px;
-
-      color:var(--muted);
-
-      background:
-        rgba(255,255,255,.05);
-
-      border:
-        1px solid
-        var(--line);
-
-      border-radius:999px;
-
-      cursor:pointer;
-
-      font-size:.46rem;
-    }
-
-    .battle-footer {
-      display:grid;
-
-      grid-template-columns:
-        1fr
-        auto
-        1fr;
-
-      align-items:center;
-
-      gap:8px;
-    }
-
-    .battle-footer
-    .button:last-child {
-      justify-self:end;
-    }
-
-    .best-of {
-      color:var(--muted);
-
-      font-size:.56rem;
-      letter-spacing:.12em;
-    }
-
-    /* =========================================
-       Result
-    ========================================= */
+    /* =========================================================
+       RESULT
+    ========================================================= */
 
     .result-overlay {
       position:absolute;
@@ -2043,8 +2191,13 @@
       gap:9px;
     }
 
+    /* =========================================================
+       TOAST / DAMAGE
+    ========================================================= */
+
     .toast {
       position:absolute;
+
       left:50%;
       bottom:7%;
       z-index:40;
@@ -2084,6 +2237,7 @@
 
     .damage-text {
       position:absolute;
+
       top:8.5%;
       z-index:35;
 
@@ -2129,85 +2283,77 @@
       }
     }
 
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
     @media(max-height:760px) {
       .battle-screen {
         gap:5px;
 
-        padding:
-          7px 8px;
-      }
-
-      .hud {
-        padding:
-          7px 8px;
-      }
-
-      .turn-bar {
-        min-height:38px;
-
-        padding:
-          5px 8px;
-      }
-
-      .character-card,
-      .action-panel {
-        min-height:92px;
-
         padding:6px;
       }
 
-      .icon-canvas {
-        width:39px;
-        height:39px;
+      .hud {
+        min-height:48px;
+
+        padding:
+          6px 8px;
       }
 
-      .action-button {
-        min-height:35px;
+      .fighter-jp {
+        display:none;
+      }
 
+      .command-dock {
         grid-template-columns:
-          22px
+          72px
           minmax(0,1fr);
 
-        padding:3px;
+        min-height:68px;
+
+        padding:5px;
+      }
+
+      .role-chip {
+        grid-template-columns:
+          29px
+          minmax(0,1fr);
+
+        padding:4px;
+      }
+
+      .role-chip
+      .icon-canvas {
+        width:29px;
+        height:38px;
       }
 
       .action-icon {
-        width:22px;
-        height:22px;
+        width:25px;
+        height:25px;
       }
 
-      .action-message {
-        min-height:18px;
-
-        font-size:.46rem;
+      .action-button b {
+        font-size:.42rem;
       }
     }
 
     @media(max-width:390px) {
       .battle-screen {
-        padding-inline:7px;
+        padding-inline:5px;
       }
 
-      .controls {
-        gap:5px;
-
+      .command-dock {
         grid-template-columns:
-          .86fr
-          1.5fr
-          .86fr;
-      }
+          70px
+          minmax(0,1fr);
 
-      .character-card,
-      .action-panel {
-        padding:5px;
-      }
-
-      .action-grid {
         gap:4px;
       }
 
-      .action-button {
-        padding-inline:3px;
+      .action-strip {
+        gap:4px;
       }
     }
 
@@ -2216,16 +2362,13 @@
       *::before,
       *::after {
         animation-duration:
-          .01ms
-          !important;
+          .01ms !important;
 
         animation-iteration-count:
-          1
-          !important;
+          1 !important;
 
         transition-duration:
-          .01ms
-          !important;
+          .01ms !important;
       }
     }
   </style>
@@ -2256,9 +2399,9 @@
       音
     </button>
 
-    <!-- =====================================
+    <!-- ======================================================
          HOME
-    ====================================== -->
+    ======================================================= -->
 
     <section
       id="homeScreen"
@@ -2288,10 +2431,7 @@
         率先取得兩勝。
       </p>
 
-      <div
-        class="home-rule"
-        aria-label="遊戲規則"
-      >
+      <div class="home-rule">
         <span>
           八乘八棋盤
         </span>
@@ -2314,13 +2454,13 @@
       </button>
 
       <p class="version-badge">
-        V0.9・CHARACTER / BATTLE POLISH
+        V0.9・BOARD FIRST UI
       </p>
     </section>
 
-    <!-- =====================================
+    <!-- ======================================================
          MODE
-    ====================================== -->
+    ======================================================= -->
 
     <section
       id="modeScreen"
@@ -2462,14 +2602,16 @@
       </footer>
     </section>
 
-    <!-- =====================================
+    <!-- ======================================================
          BATTLE
-    ====================================== -->
+    ======================================================= -->
 
     <section
       id="battleScreen"
       class="screen battle-screen"
     >
+      <!-- Top HUD -->
+
       <header class="hud">
         <section class="fighter">
           <div class="fighter-name-row">
@@ -2509,12 +2651,22 @@
             </span>
           </div>
 
-          <span
-            id="roundText"
-            class="round-label"
-          >
-            第一局
-          </span>
+          <div class="score-meta">
+            <span
+              id="roundText"
+              class="round-label"
+            >
+              第一局
+            </span>
+
+            <span>
+              ·
+            </span>
+
+            <span id="moveText">
+              MOVE 0
+            </span>
+          </div>
         </section>
 
         <section class="fighter ai">
@@ -2541,37 +2693,7 @@
         </section>
       </header>
 
-      <div class="turn-bar">
-        <div class="turn-left">
-          <span
-            id="turnMon"
-            class="turn-mon"
-          ></span>
-
-          <div>
-            <span
-              id="turnText"
-              class="turn-text"
-            >
-              準備開始
-            </span>
-
-            <span
-              id="turnSubtext"
-              class="turn-subtext"
-            >
-              對局初始化中
-            </span>
-          </div>
-        </div>
-
-        <span
-          id="moveText"
-          class="move-text"
-        >
-          MOVE 0
-        </span>
-      </div>
+      <!-- Main Board -->
 
       <div
         id="stage"
@@ -2586,6 +2708,23 @@
           八乘八・五子連線
         </div>
 
+        <!-- 每回合只短暫顯示 -->
+
+        <div
+          id="turnHint"
+          class="turn-hint"
+        >
+          <small id="turnHintKicker">
+            PLAYER TURN
+          </small>
+
+          <strong id="turnHintTitle">
+            玩家回合
+          </strong>
+        </div>
+
+        <!-- AI 思考只在 AI 思考期間顯示 -->
+
         <div
           id="thinking"
           class="thinking"
@@ -2596,6 +2735,8 @@
           <i class="thinking-dot"></i>
           <i class="thinking-dot"></i>
         </div>
+
+        <!-- 每局開始 -->
 
         <div
           id="roundBanner"
@@ -2614,205 +2755,179 @@
           </span>
         </div>
 
+        <!-- 技能 / 五連演出 -->
+
         <div
           id="combatCallout"
           class="combat-callout"
         >
           烈焰穿透
         </div>
-      </div>
 
-      <!-- =====================================
-           CHARACTER / ACTION
-      ====================================== -->
+        <!-- 選技能後才顯示 -->
 
-      <section class="controls">
-        <article class="character-card">
-          <span class="character-side-label">
-            PLAYER
+        <div
+          id="targetHint"
+          class="target-hint"
+        >
+          <span id="targetHintText">
+            選擇目標
           </span>
-
-          <canvas
-            id="playerIcon"
-            class="icon-canvas"
-          ></canvas>
-
-          <strong id="roleName">
-            等待抽取
-          </strong>
-
-          <span id="roleDescription">
-            杖 / 劍
-          </span>
-        </article>
-
-        <section class="action-panel">
-          <header class="action-header">
-            <strong>
-              角色行動
-            </strong>
-
-            <span
-              id="actionState"
-              class="action-state"
-            >
-              SPIN
-            </span>
-          </header>
-
-          <div class="action-grid">
-            <button
-              id="fireButton"
-              class="action-button"
-              type="button"
-              disabled
-            >
-              <canvas
-                id="fireIcon"
-                class="action-icon"
-              ></canvas>
-
-              <span>
-                <b>
-                  FIRE
-                </b>
-
-                <small>
-                  烈焰穿透
-                </small>
-              </span>
-            </button>
-
-            <button
-              id="iceButton"
-              class="action-button"
-              type="button"
-              disabled
-            >
-              <canvas
-                id="iceIcon"
-                class="action-icon"
-              ></canvas>
-
-              <span>
-                <b>
-                  ICE
-                </b>
-
-                <small>
-                  霜封領域
-                </small>
-              </span>
-            </button>
-
-            <button
-              id="slashButton"
-              class="action-button"
-              type="button"
-              disabled
-            >
-              <canvas
-                id="slashIcon"
-                class="action-icon"
-              ></canvas>
-
-              <span>
-                <b>
-                  IAI
-                </b>
-
-                <small>
-                  瞬斬
-                </small>
-              </span>
-            </button>
-
-            <button
-              id="normalButton"
-              class="action-button"
-              type="button"
-              disabled
-            >
-              <canvas
-                id="placeIcon"
-                class="action-icon"
-              ></canvas>
-
-              <span>
-                <b>
-                  PLACE
-                </b>
-
-                <small>
-                  一般部署
-                </small>
-              </span>
-            </button>
-          </div>
-
-          <p
-            id="actionMessage"
-            class="action-message"
-          >
-            每個玩家回合會抽取角色；特殊技每局限用一次
-          </p>
 
           <button
             id="cancelActionButton"
             class="cancel-action"
             type="button"
-            hidden
           >
-            取消選擇
+            取消
           </button>
-        </section>
+        </div>
 
-        <article class="character-card">
-          <span class="character-side-label">
-            RIVAL
-          </span>
+        <!-- 不佔版面的浮動工具 -->
 
+        <div class="stage-tools">
+          <button
+            id="battleBackButton"
+            class="stage-tool"
+            type="button"
+          >
+            返回
+          </button>
+
+          <button
+            id="restartButton"
+            class="stage-tool"
+            type="button"
+          >
+            重開
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Command Dock -->
+
+      <section class="command-dock">
+        <article class="role-chip">
           <canvas
-            id="aiIcon"
+            id="playerIcon"
             class="icon-canvas"
           ></canvas>
 
-          <strong>
-            赤焰術師
-          </strong>
+          <div class="role-copy">
+            <span class="role-label">
+              PLAYER ROLE
+            </span>
 
-          <span>
-            火行・固定對手
+            <strong
+              id="roleName"
+              class="role-name"
+            >
+              等待抽取
+            </strong>
+
+            <span
+              id="roleDescription"
+              class="role-description"
+            >
+              杖 / 劍
+            </span>
+          </div>
+
+          <span
+            id="actionState"
+            class="action-state"
+          >
+            SPIN
           </span>
         </article>
+
+        <div class="action-strip">
+          <button
+            id="fireButton"
+            class="action-button"
+            type="button"
+            disabled
+          >
+            <canvas
+              id="fireIcon"
+              class="action-icon"
+            ></canvas>
+
+            <b>
+              FIRE
+            </b>
+
+            <small>
+              烈焰穿透
+            </small>
+          </button>
+
+          <button
+            id="iceButton"
+            class="action-button"
+            type="button"
+            disabled
+          >
+            <canvas
+              id="iceIcon"
+              class="action-icon"
+            ></canvas>
+
+            <b>
+              ICE
+            </b>
+
+            <small>
+              霜封領域
+            </small>
+          </button>
+
+          <button
+            id="slashButton"
+            class="action-button"
+            type="button"
+            disabled
+          >
+            <canvas
+              id="slashIcon"
+              class="action-icon"
+            ></canvas>
+
+            <b>
+              IAI
+            </b>
+
+            <small>
+              瞬斬
+            </small>
+          </button>
+
+          <button
+            id="normalButton"
+            class="action-button"
+            type="button"
+            disabled
+          >
+            <canvas
+              id="placeIcon"
+              class="action-icon"
+            ></canvas>
+
+            <b>
+              PLACE
+            </b>
+
+            <small>
+              一般部署
+            </small>
+          </button>
+        </div>
       </section>
-
-      <footer class="battle-footer">
-        <button
-          id="battleBackButton"
-          class="button button-small"
-          type="button"
-        >
-          模式選擇
-        </button>
-
-        <span class="best-of">
-          BEST OF 3
-        </span>
-
-        <button
-          id="restartButton"
-          class="button button-small"
-          type="button"
-        >
-          重新對戰
-        </button>
-      </footer>
     </section>
 
-    <!-- =====================================
+    <!-- ======================================================
          RESULT
-    ====================================== -->
+    ======================================================= -->
 
     <div
       id="resultOverlay"
@@ -2889,9 +3004,9 @@
 
     "use strict";
 
-    /* =========================================
-       Constants
-    ========================================= */
+    /* =========================================================
+       CONSTANTS
+    ========================================================= */
 
     const $ = (id) =>
       document.getElementById(id);
@@ -2901,6 +3016,16 @@
     const AI = 2;
 
     const BOARD_SIZE = 8;
+
+    /*
+      Camera 有輕微斜視角。
+
+      Z 軸增加約 10%，
+      補償視角造成的縱向壓縮，
+      讓玩家看到的 8×8 棋盤更接近正方形。
+    */
+    const BOARD_Z_SCALE = 1.10;
+
     const WIN_SCORE = 2;
     const MAX_HP = 100;
 
@@ -2917,6 +3042,10 @@
       "第三局",
       "延長局"
     ];
+
+    /* =========================================================
+       STATE
+    ========================================================= */
 
     let board = [];
     let roleBoard = [];
@@ -2950,45 +3079,46 @@
 
     /*
       null
+      normal
       fire
       ice
       slash
-      normal
     */
     let actionMode =
       null;
 
-    /*
-      FIRE / ICE / IAI
-      每一局共用一次特殊技能機會。
-    */
-    let specialUsedThisRound =
+    let specialUsedThisTurn =
       false;
 
     let lastMove =
       null;
 
-    let winningCells = [];
+    let winningCells =
+      [];
 
-    let frozenCells = [];
+    let frozenCells =
+      [];
 
     let freezePending =
       false;
 
-    let timers = [];
+    let timers =
+      [];
 
     let previewInterval =
       null;
 
-    /* =========================================
-       Audio
-    ========================================= */
+    /* =========================================================
+       AUDIO
+    ========================================================= */
 
     class AudioDirector {
       constructor() {
-        this.ctx = null;
+        this.ctx =
+          null;
 
-        this.enabled = true;
+        this.enabled =
+          true;
 
         this.musicTimer =
           null;
@@ -3006,19 +3136,20 @@
         }
 
         if (!this.ctx) {
-          const AudioContextClass =
+          const AC =
             window.AudioContext ||
             window.webkitAudioContext;
 
-          if (!AudioContextClass) {
+          if (!AC) {
             return;
           }
 
           this.ctx =
-            new AudioContextClass();
+            new AC();
 
           this.master =
-            this.ctx.createGain();
+            this.ctx
+              .createGain();
 
           this.master.gain.value =
             0.72;
@@ -3040,9 +3171,9 @@
 
       tone(
         frequency,
-        duration = 0.08,
+        duration = .08,
         type = "sine",
-        gainValue = 0.025,
+        gainValue = .025,
         delay = 0
       ) {
         if (!this.enabled) {
@@ -3063,10 +3194,12 @@
           delay;
 
         const oscillator =
-          this.ctx.createOscillator();
+          this.ctx
+            .createOscillator();
 
         const gain =
-          this.ctx.createGain();
+          this.ctx
+            .createGain();
 
         oscillator.type =
           type;
@@ -3079,22 +3212,22 @@
 
         gain.gain
           .setValueAtTime(
-            0.0001,
+            .0001,
             start
           );
 
         gain.gain
           .exponentialRampToValueAtTime(
             Math.max(
-              0.0002,
+              .0002,
               gainValue
             ),
-            start + 0.012
+            start + .012
           );
 
         gain.gain
           .exponentialRampToValueAtTime(
-            0.0001,
+            .0001,
             start + duration
           );
 
@@ -3102,34 +3235,36 @@
           .connect(gain)
           .connect(this.master);
 
-        oscillator.start(start);
+        oscillator.start(
+          start
+        );
 
         oscillator.stop(
           start +
           duration +
-          0.03
+          .03
         );
       }
 
       pluck(
         frequency,
         delay = 0,
-        gain = 0.018
+        gainValue = .018
       ) {
         this.tone(
           frequency,
-          0.18,
+          .18,
           "triangle",
-          gain,
+          gainValue,
           delay
         );
 
         this.tone(
           frequency * 2,
-          0.12,
+          .12,
           "sine",
-          gain * 0.25,
-          delay + 0.012
+          gainValue * .25,
+          delay + .012
         );
       }
 
@@ -3150,16 +3285,16 @@
         const scale = [
           293.66,
           329.63,
-          392.0,
-          440.0,
+          392,
+          440,
           523.25
         ];
 
         const bass = [
           146.83,
-          196.0,
+          196,
           164.81,
-          220.0
+          220
         ];
 
         const tick = () => {
@@ -3179,7 +3314,7 @@
                 scale.length
               ],
               0,
-              0.009
+              .009
             );
           }
 
@@ -3189,14 +3324,15 @@
             this.tone(
               bass[
                 (
-                  step / 4
+                  step /
+                  4
                 ) %
                 bass.length |
                 0
               ],
-              0.72,
+              .72,
               "sine",
-              0.005
+              .005
             );
           }
 
@@ -3206,13 +3342,14 @@
             this.pluck(
               scale[
                 (
-                  step + 2
+                  step +
+                  2
                 ) %
                 scale.length
               ] *
-              0.5,
-              0.16,
-              0.006
+              .5,
+              .16,
+              .006
             );
           }
         };
@@ -3227,7 +3364,9 @@
       }
 
       stopMusic() {
-        if (this.musicTimer) {
+        if (
+          this.musicTimer
+        ) {
           window.clearInterval(
             this.musicTimer
           );
@@ -3254,7 +3393,9 @@
             ? "音"
             : "静";
 
-        if (this.enabled) {
+        if (
+          this.enabled
+        ) {
           this.ensure();
           this.startMusic();
         } else {
@@ -3267,70 +3408,70 @@
           player === PLAYER
             ? 520
             : 330,
-          0.07,
+          .07,
           "triangle",
-          0.026
+          .026
         );
 
         this.tone(
           player === PLAYER
             ? 760
             : 470,
-          0.08,
+          .08,
           "sine",
-          0.015,
-          0.035
+          .015,
+          .035
         );
       }
 
       fire() {
         this.tone(
           230,
-          0.18,
+          .18,
           "sawtooth",
-          0.023
+          .023
         );
 
         this.tone(
           430,
-          0.16,
+          .16,
           "triangle",
-          0.018,
-          0.05
+          .018,
+          .05
         );
       }
 
       ice() {
         this.tone(
           880,
-          0.18,
+          .18,
           "sine",
-          0.022
+          .022
         );
 
         this.tone(
           1180,
-          0.2,
+          .2,
           "triangle",
-          0.016,
-          0.04
+          .016,
+          .04
         );
       }
 
       slash() {
         this.tone(
           900,
-          0.045,
+          .045,
           "square",
-          0.018
+          .018
         );
 
         this.tone(
           310,
-          0.12,
+          .12,
           "triangle",
-          0.022,
-          0.035
+          .022,
+          .035
         );
       }
 
@@ -3339,9 +3480,9 @@
           staff
             ? 640
             : 520,
-          0.035,
+          .035,
           "sine",
-          0.007
+          .007
         );
       }
 
@@ -3350,11 +3491,11 @@
           role === "staff"
             ? 780
             : 560,
-          0.12,
+          .12,
           role === "staff"
             ? "sine"
             : "triangle",
-          0.024
+          .024
         );
       }
 
@@ -3370,10 +3511,10 @@
           ) => {
             this.tone(
               frequency,
-              0.2,
+              .2,
               "sine",
-              0.028,
-              index * 0.09
+              .028,
+              index * .09
             );
           }
         );
@@ -3391,10 +3532,10 @@
           ) => {
             this.tone(
               frequency,
-              0.22,
+              .22,
               "triangle",
-              0.025,
-              index * 0.09
+              .025,
+              index * .09
             );
           }
         );
@@ -3404,39 +3545,42 @@
     const audio =
       new AudioDirector();
 
-    /* =========================================
-       Timer / Navigation
-    ========================================= */
+    /* =========================================================
+       TIMER
+    ========================================================= */
 
     function setGameTimer(
       callback,
       delay
     ) {
-      const timerId =
+      const id =
         window.setTimeout(
           callback,
           delay
         );
 
       timers.push(
-        timerId
+        id
       );
 
-      return timerId;
+      return id;
     }
 
     function clearGameTimers() {
       timers.forEach(
-        (timerId) => {
+        (id) => {
           window.clearTimeout(
-            timerId
+            id
           );
         }
       );
 
-      timers = [];
+      timers =
+        [];
 
-      if (previewInterval) {
+      if (
+        previewInterval
+      ) {
         window.clearInterval(
           previewInterval
         );
@@ -3445,6 +3589,10 @@
           null;
       }
     }
+
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
 
     function showScreen(
       screenId
@@ -3457,13 +3605,25 @@
           (screen) => {
             screen
               .classList
-              .remove("active");
+              .remove(
+                "active"
+              );
           }
         );
 
       $(screenId)
         .classList
-        .add("active");
+        .add(
+          "active"
+        );
+
+      $("app")
+        .classList
+        .toggle(
+          "in-battle",
+          screenId ===
+            "battleScreen"
+        );
 
       if (
         screenId ===
@@ -3488,6 +3648,10 @@
       }
     }
 
+    /* =========================================================
+       UI HINT
+    ========================================================= */
+
     function showToast(
       message
     ) {
@@ -3497,15 +3661,19 @@
       toast.textContent =
         message;
 
-      toast.classList.add(
-        "show"
-      );
+      toast
+        .classList
+        .add(
+          "show"
+        );
 
       setGameTimer(
         () => {
           toast
             .classList
-            .remove("show");
+            .remove(
+              "show"
+            );
         },
         1150
       );
@@ -3522,13 +3690,69 @@
 
       element
         .classList
-        .remove("show");
+        .remove(
+          "show"
+        );
 
       void element.offsetWidth;
 
       element
         .classList
-        .add("show");
+        .add(
+          "show"
+        );
+    }
+
+    function showTurnHint(
+      kicker,
+      title
+    ) {
+      const hint =
+        $("turnHint");
+
+      $("turnHintKicker")
+        .textContent =
+        kicker;
+
+      $("turnHintTitle")
+        .textContent =
+        title;
+
+      hint
+        .classList
+        .remove(
+          "show"
+        );
+
+      void hint.offsetWidth;
+
+      hint
+        .classList
+        .add(
+          "show"
+        );
+    }
+
+    function showTargetHint(
+      message
+    ) {
+      $("targetHintText")
+        .textContent =
+        message;
+
+      $("targetHint")
+        .classList
+        .add(
+          "show"
+        );
+    }
+
+    function hideTargetHint() {
+      $("targetHint")
+        .classList
+        .remove(
+          "show"
+        );
     }
 
     function impactStage() {
@@ -3537,22 +3761,27 @@
 
       stage
         .classList
-        .remove("impact");
+        .remove(
+          "impact"
+        );
 
       void stage.offsetWidth;
 
       stage
         .classList
-        .add("impact");
+        .add(
+          "impact"
+        );
 
-      navigator.vibrate?.(
-        24
-      );
+      navigator
+        .vibrate?.(
+          24
+        );
     }
 
-    /* =========================================
-       Three.js
-    ========================================= */
+    /* =========================================================
+       THREE.JS RENDERER
+    ========================================================= */
 
     const gameCanvas =
       $("gameCanvas");
@@ -3588,7 +3817,7 @@
       THREE.SRGBColorSpace;
 
     /*
-      Character 不使用地面 Shadow。
+      不繪製 Character 地面陰影。
     */
     renderer.shadowMap.enabled =
       false;
@@ -3596,13 +3825,20 @@
     const scene =
       new THREE.Scene();
 
+    /*
+      正交相機：
+      不產生 Perspective 近大遠小變形。
+
+      Camera 保留輕微傾角，
+      Character 還能看得到正面造型。
+    */
     const camera =
       new THREE.OrthographicCamera(
         -5,
         5,
         5,
         -5,
-        0.1,
+        .1,
         100
       );
 
@@ -3615,7 +3851,7 @@
     camera.lookAt(
       0,
       0,
-      0.15
+      .15
     );
 
     scene.add(
@@ -3693,7 +3929,8 @@
       effectGroup
     );
 
-    const tileMeshes = [];
+    const tileMeshes =
+      [];
 
     const characterMap =
       new Map();
@@ -3745,11 +3982,15 @@
       });
     }
 
+    /* =========================================================
+       LAST MOVE
+    ========================================================= */
+
     const lastMoveRing =
       new THREE.Mesh(
         new THREE.TorusGeometry(
-          0.31,
-          0.026,
+          .31,
+          .026,
           10,
           36
         ),
@@ -3761,7 +4002,7 @@
             true,
 
           opacity:
-            0.95
+            .95
         })
       );
 
@@ -3778,13 +4019,24 @@
     let winningLine =
       null;
 
+    /* =========================================================
+       BOARD
+    ========================================================= */
+
     function buildPersistentBoard() {
+      /*
+        棋盤只建立一次。
+        每個 Round 都不重新建立，
+        避免 Canvas / Mesh 閃爍。
+      */
+
       const platform =
         new THREE.Mesh(
           new THREE.BoxGeometry(
             8.65,
-            0.24,
-            8.65
+            .24,
+            8.65 *
+            BOARD_Z_SCALE
           ),
           toonMaterial(
             palette.tileSide
@@ -3792,7 +4044,7 @@
         );
 
       platform.position.y =
-        -0.2;
+        -.2;
 
       boardGroup.add(
         platform
@@ -3803,8 +4055,9 @@
           new THREE.EdgesGeometry(
             new THREE.BoxGeometry(
               8.72,
-              0.26,
-              8.72
+              .26,
+              8.72 *
+              BOARD_Z_SCALE
             )
           ),
           new THREE.LineBasicMaterial({
@@ -3815,12 +4068,12 @@
               true,
 
             opacity:
-              0.42
+              .42
           })
         );
 
       border.position.y =
-        -0.19;
+        -.19;
 
       boardGroup.add(
         border
@@ -3828,9 +4081,10 @@
 
       const tileGeometry =
         new THREE.BoxGeometry(
-          0.92,
-          0.17,
-          0.92
+          .92,
+          .17,
+          .92 *
+          BOARD_Z_SCALE
         );
 
       for (
@@ -3845,7 +4099,8 @@
         ) {
           const baseColor =
             (
-              row + col
+              row +
+              col
             ) %
             2 ===
             0
@@ -3870,7 +4125,11 @@
           tile.position.set(
             col - 3.5,
             0,
-            row - 3.5
+            (
+              row -
+              3.5
+            ) *
+            BOARD_Z_SCALE
           );
 
           tile.userData = {
@@ -3896,29 +4155,33 @@
     ) {
       return new THREE.Vector3(
         col - 3.5,
-        0.1,
-        row - 3.5
+        .1,
+        (
+          row -
+          3.5
+        ) *
+        BOARD_Z_SCALE
       );
     }
 
-    /* =========================================
-       Character Visual
-    ========================================= */
+    /* =========================================================
+       CHARACTER HELPERS
+    ========================================================= */
 
     function addFace(
       group,
-      skinColor,
-      y = 0.78
+      skin,
+      y = .78
     ) {
       const head =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.19,
+            .19,
             18,
             14
           ),
           toonMaterial(
-            skinColor
+            skin
           )
         );
 
@@ -3936,14 +4199,14 @@
         });
 
       [
-        -0.064,
-        0.064
+        -.064,
+        .064
       ].forEach(
         (x) => {
           const eye =
             new THREE.Mesh(
               new THREE.SphereGeometry(
-                0.017,
+                .017,
                 8,
                 6
               ),
@@ -3952,8 +4215,8 @@
 
           eye.position.set(
             x,
-            y + 0.015,
-            0.176
+            y + .015,
+            .176
           );
 
           group.add(
@@ -3965,9 +4228,9 @@
       const mouth =
         new THREE.Mesh(
           new THREE.BoxGeometry(
-            0.055,
-            0.008,
-            0.008
+            .055,
+            .008,
+            .008
           ),
           new THREE.MeshBasicMaterial({
             color:
@@ -3977,8 +4240,8 @@
 
       mouth.position.set(
         0,
-        y - 0.06,
-        0.184
+        y - .06,
+        .184
       );
 
       group.add(
@@ -4000,8 +4263,8 @@
           const sleeve =
             new THREE.Mesh(
               new THREE.CapsuleGeometry(
-                0.052,
-                0.18,
+                .052,
+                .18,
                 4,
                 8
               ),
@@ -4011,13 +4274,13 @@
             );
 
           sleeve.position.set(
-            side * 0.2,
-            0.55,
+            side * .2,
+            .55,
             0
           );
 
           sleeve.rotation.z =
-            side * -0.55;
+            side * -.55;
 
           group.add(
             sleeve
@@ -4026,6 +4289,10 @@
       );
     }
 
+    /* =========================================================
+       STAFF CHARACTER
+    ========================================================= */
+
     function createPlayerStaffCharacter() {
       const group =
         new THREE.Group();
@@ -4033,19 +4300,19 @@
       const robe =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.25,
-            0.54,
+            .25,
+            .54,
             18
           ),
           toonMaterial(
             0x6676d8,
             0x26346d,
-            0.18
+            .18
           )
         );
 
       robe.position.y =
-        0.38;
+        .38;
 
       group.add(
         robe
@@ -4054,8 +4321,8 @@
       const sash =
         new THREE.Mesh(
           new THREE.TorusGeometry(
-            0.155,
-            0.024,
+            .155,
+            .024,
             8,
             24
           ),
@@ -4068,7 +4335,7 @@
         Math.PI / 2;
 
       sash.position.y =
-        0.46;
+        .46;
 
       group.add(
         sash
@@ -4077,13 +4344,13 @@
       addFace(
         group,
         0xf3cfb6,
-        0.77
+        .77
       );
 
       const hair =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.205,
+            .205,
             18,
             12,
             0,
@@ -4097,7 +4364,7 @@
         );
 
       hair.position.y =
-        0.79;
+        .79;
 
       group.add(
         hair
@@ -4106,25 +4373,25 @@
       const hat =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.25,
-            0.38,
+            .25,
+            .38,
             18
           ),
           toonMaterial(
             0x3d4b9f,
             0x1b2459,
-            0.12
+            .12
           )
         );
 
       hat.position.set(
         0,
         1.04,
-        -0.015
+        -.015
       );
 
       hat.rotation.z =
-        -0.08;
+        -.08;
 
       group.add(
         hat
@@ -4133,8 +4400,8 @@
       const band =
         new THREE.Mesh(
           new THREE.TorusGeometry(
-            0.19,
-            0.025,
+            .19,
+            .025,
             8,
             24
           ),
@@ -4147,7 +4414,7 @@
         Math.PI / 2;
 
       band.position.y =
-        0.91;
+        .91;
 
       group.add(
         band
@@ -4161,9 +4428,9 @@
       const staff =
         new THREE.Mesh(
           new THREE.CylinderGeometry(
-            0.018,
-            0.022,
-            0.78,
+            .018,
+            .022,
+            .78,
             10
           ),
           toonMaterial(
@@ -4172,13 +4439,13 @@
         );
 
       staff.position.set(
-        0.31,
-        0.54,
+        .31,
+        .54,
         0
       );
 
       staff.rotation.z =
-        -0.1;
+        -.1;
 
       group.add(
         staff
@@ -4187,20 +4454,20 @@
       const orb =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.07,
+            .07,
             14,
             10
           ),
           toonMaterial(
             0x8af2f1,
             0x2dbabd,
-            0.7
+            .7
           )
         );
 
       orb.position.set(
-        0.35,
-        0.94,
+        .35,
+        .94,
         0
       );
 
@@ -4214,6 +4481,10 @@
       return group;
     }
 
+    /* =========================================================
+       SWORD CHARACTER
+    ========================================================= */
+
     function createPlayerSwordCharacter() {
       const group =
         new THREE.Group();
@@ -4221,19 +4492,19 @@
       const hakama =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.26,
-            0.52,
+            .26,
+            .52,
             18
           ),
           toonMaterial(
             0xe8dfc7,
             0x7c6547,
-            0.08
+            .08
           )
         );
 
       hakama.position.y =
-        0.37;
+        .37;
 
       group.add(
         hakama
@@ -4242,8 +4513,8 @@
       const jacket =
         new THREE.Mesh(
           new THREE.CapsuleGeometry(
-            0.14,
-            0.2,
+            .14,
+            .2,
             5,
             10
           ),
@@ -4253,7 +4524,7 @@
         );
 
       jacket.position.y =
-        0.56;
+        .56;
 
       group.add(
         jacket
@@ -4262,9 +4533,9 @@
       const belt =
         new THREE.Mesh(
           new THREE.BoxGeometry(
-            0.31,
-            0.055,
-            0.22
+            .31,
+            .055,
+            .22
           ),
           toonMaterial(
             0xc64e55
@@ -4272,7 +4543,7 @@
         );
 
       belt.position.y =
-        0.46;
+        .46;
 
       group.add(
         belt
@@ -4281,13 +4552,13 @@
       addFace(
         group,
         0xf0c9ac,
-        0.79
+        .79
       );
 
       const hair =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.205,
+            .205,
             18,
             12,
             0,
@@ -4301,7 +4572,7 @@
         );
 
       hair.position.y =
-        0.81;
+        .81;
 
       group.add(
         hair
@@ -4310,7 +4581,7 @@
       const knot =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.075,
+            .075,
             12,
             9
           ),
@@ -4322,7 +4593,7 @@
       knot.position.set(
         0,
         1.01,
-        -0.03
+        -.03
       );
 
       group.add(
@@ -4337,9 +4608,9 @@
       const blade =
         new THREE.Mesh(
           new THREE.BoxGeometry(
-            0.035,
-            0.68,
-            0.025
+            .035,
+            .68,
+            .025
           ),
           toonMaterial(
             0xf5f6ff
@@ -4347,13 +4618,13 @@
         );
 
       blade.position.set(
-        0.28,
-        0.61,
-        0.01
+        .28,
+        .61,
+        .01
       );
 
       blade.rotation.z =
-        -0.42;
+        -.42;
 
       group.add(
         blade
@@ -4362,9 +4633,9 @@
       const guard =
         new THREE.Mesh(
           new THREE.BoxGeometry(
-            0.18,
-            0.035,
-            0.07
+            .18,
+            .035,
+            .07
           ),
           toonMaterial(
             0xe0b354
@@ -4372,13 +4643,13 @@
         );
 
       guard.position.set(
-        0.14,
-        0.39,
-        0.01
+        .14,
+        .39,
+        .01
       );
 
       guard.rotation.z =
-        -0.42;
+        -.42;
 
       group.add(
         guard
@@ -4387,9 +4658,9 @@
       const sheath =
         new THREE.Mesh(
           new THREE.CylinderGeometry(
-            0.025,
-            0.025,
-            0.62,
+            .025,
+            .025,
+            .62,
             8
           ),
           toonMaterial(
@@ -4398,13 +4669,13 @@
         );
 
       sheath.position.set(
-        -0.22,
-        0.48,
-        -0.02
+        -.22,
+        .48,
+        -.02
       );
 
       sheath.rotation.z =
-        0.36;
+        .36;
 
       group.add(
         sheath
@@ -4416,6 +4687,10 @@
       return group;
     }
 
+    /* =========================================================
+       AI CHARACTER
+    ========================================================= */
+
     function createAiFireCharacter() {
       const group =
         new THREE.Group();
@@ -4423,19 +4698,19 @@
       const robe =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.27,
-            0.56,
+            .27,
+            .56,
             18
           ),
           toonMaterial(
             0xb83d50,
             0x681725,
-            0.2
+            .2
           )
         );
 
       robe.position.y =
-        0.38;
+        .38;
 
       group.add(
         robe
@@ -4444,8 +4719,8 @@
       const inner =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.17,
-            0.42,
+            .17,
+            .42,
             18
           ),
           toonMaterial(
@@ -4455,8 +4730,8 @@
 
       inner.position.set(
         0,
-        0.42,
-        0.16
+        .42,
+        .16
       );
 
       group.add(
@@ -4466,13 +4741,13 @@
       addFace(
         group,
         0xf2c2aa,
-        0.78
+        .78
       );
 
       const hair =
         new THREE.Mesh(
           new THREE.SphereGeometry(
-            0.208,
+            .208,
             18,
             12,
             0,
@@ -4486,7 +4761,7 @@
         );
 
       hair.position.y =
-        0.81;
+        .81;
 
       group.add(
         hair
@@ -4495,9 +4770,9 @@
       const hat =
         new THREE.Mesh(
           new THREE.CylinderGeometry(
-            0.11,
-            0.2,
-            0.27,
+            .11,
+            .2,
+            .27,
             10
           ),
           toonMaterial(
@@ -4515,9 +4790,9 @@
       const ribbon =
         new THREE.Mesh(
           new THREE.BoxGeometry(
-            0.42,
-            0.045,
-            0.08
+            .42,
+            .045,
+            .08
           ),
           toonMaterial(
             0xe7b55f
@@ -4526,7 +4801,7 @@
 
       ribbon.position.set(
         0,
-        0.91,
+        .91,
         0
       );
 
@@ -4545,19 +4820,19 @@
       const flameOuter =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.085,
-            0.24,
+            .085,
+            .24,
             12
           ),
           toonMaterial(
             0xff6b4d,
             0xa32319,
-            0.75
+            .75
           )
         );
 
       flameOuter.position.y =
-        0.1;
+        .1;
 
       flame.add(
         flameOuter
@@ -4566,21 +4841,21 @@
       const flameInner =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.042,
-            0.13,
+            .042,
+            .13,
             10
           ),
           toonMaterial(
             0xffd37b,
             0xff7a26,
-            0.9
+            .9
           )
         );
 
       flameInner.position.set(
         0,
-        0.05,
-        0.045
+        .05,
+        .045
       );
 
       flame.add(
@@ -4588,9 +4863,9 @@
       );
 
       flame.position.set(
-        0.31,
-        0.63,
-        0.02
+        .31,
+        .63,
+        .02
       );
 
       group.add(
@@ -4617,18 +4892,23 @@
             ? createPlayerSwordCharacter()
             : createPlayerStaffCharacter();
 
-      character.scale.setScalar(
-        0.01
-      );
+      character.scale
+        .setScalar(
+          .01
+        );
 
       character.userData.targetScale =
-        0.75;
+        .75;
 
       character.userData.player =
         player;
 
       return character;
     }
+
+    /* =========================================================
+       SYNC CHARACTER
+    ========================================================= */
 
     function syncCharacters() {
       const desiredKeys =
@@ -4683,7 +4963,9 @@
             continue;
           }
 
-          if (existing) {
+          if (
+            existing
+          ) {
             characterGroup.remove(
               existing
             );
@@ -4758,16 +5040,17 @@
       characterMap.clear();
     }
 
-    /* =========================================
-       Slash Target
-    ========================================= */
+    /* =========================================================
+       SLASH TARGET
+    ========================================================= */
 
     function isSlashTarget(
       row,
       col
     ) {
       if (
-        board[row][col] !== AI
+        board[row][col] !==
+        AI
       ) {
         return false;
       }
@@ -4785,10 +5068,12 @@
           colOffset
         ]) => {
           const targetRow =
-            row + rowOffset;
+            row +
+            rowOffset;
 
           const targetCol =
-            col + colOffset;
+            col +
+            colOffset;
 
           return (
             isInsideBoard(
@@ -4831,9 +5116,9 @@
       return false;
     }
 
-    /* =========================================
-       Tile Visual
-    ========================================= */
+    /* =========================================================
+       TILE VISUAL
+    ========================================================= */
 
     function updateTileVisuals() {
       tileMeshes.forEach(
@@ -4869,7 +5154,7 @@
               0x166c85;
 
             intensity =
-              0.65;
+              .65;
           }
 
           if (
@@ -4893,7 +5178,7 @@
               0x6e4108;
 
             intensity =
-              0.72;
+              .72;
           }
 
           if (
@@ -4911,14 +5196,16 @@
               0x7b2339;
 
             intensity =
-              0.72;
+              .72;
           }
 
           if (
             winningCells.some(
               (cell) =>
-                cell.row === row &&
-                cell.col === col
+                cell.row ===
+                  row &&
+                cell.col ===
+                  col
             )
           ) {
             color =
@@ -4928,7 +5215,7 @@
               0x155e3c;
 
             intensity =
-              0.8;
+              .8;
           }
 
           tile.material.color
@@ -4950,7 +5237,9 @@
         }
       );
 
-      if (lastMove) {
+      if (
+        lastMove
+      ) {
         const position =
           boardToWorld(
             lastMove.row,
@@ -4959,7 +5248,7 @@
 
         lastMoveRing.position.set(
           position.x,
-          0.115,
+          .115,
           position.z
         );
 
@@ -4973,20 +5262,28 @@
       updateWinningLine();
     }
 
+    /* =========================================================
+       WIN LINE
+    ========================================================= */
+
     function updateWinningLine() {
-      if (winningLine) {
+      if (
+        winningLine
+      ) {
         effectGroup.remove(
           winningLine
         );
 
-        winningLine.geometry.dispose();
+        winningLine.geometry
+          .dispose();
 
         winningLine =
           null;
       }
 
       if (
-        winningCells.length < 5
+        winningCells.length <
+        5
       ) {
         return;
       }
@@ -4995,10 +5292,16 @@
         [
           ...winningCells
         ].sort(
-          (a,b) =>
-            a.row === b.row
-              ? a.col - b.col
-              : a.row - b.row
+          (
+            a,
+            b
+          ) =>
+            a.row ===
+            b.row
+              ? a.col -
+                b.col
+              : a.row -
+                b.row
         );
 
       const first =
@@ -5007,28 +5310,30 @@
           sorted[0].col
         );
 
-      const last =
+      const final =
         boardToWorld(
           sorted[
-            sorted.length - 1
+            sorted.length -
+            1
           ].row,
           sorted[
-            sorted.length - 1
+            sorted.length -
+            1
           ].col
         );
 
       first.y =
-        0.24;
+        .24;
 
-      last.y =
-        0.24;
+      final.y =
+        .24;
 
       winningLine =
         new THREE.Line(
           new THREE.BufferGeometry()
             .setFromPoints([
               first,
-              last
+              final
             ]),
           new THREE.LineBasicMaterial({
             color:
@@ -5038,7 +5343,7 @@
               true,
 
             opacity:
-              0.95
+              .95
           })
         );
 
@@ -5047,9 +5352,9 @@
       );
     }
 
-    /* =========================================
-       Three Effects
-    ========================================= */
+    /* =========================================================
+       PARTICLE
+    ========================================================= */
 
     function createBurst(
       row,
@@ -5071,7 +5376,7 @@
         const particle =
           new THREE.Mesh(
             new THREE.SphereGeometry(
-              0.022,
+              .022,
               6,
               4
             ),
@@ -5087,25 +5392,25 @@
         );
 
         particle.position.y =
-          0.48;
+          .48;
 
         particle.userData.velocity =
           new THREE.Vector3(
             (
               Math.random() -
-              0.5
+              .5
             ) *
-            0.075,
+            .075,
 
             Math.random() *
-            0.075 +
-            0.025,
+            .075 +
+            .025,
 
             (
               Math.random() -
-              0.5
+              .5
             ) *
-            0.075
+            .075
           );
 
         particle.userData.life =
@@ -5130,8 +5435,8 @@
       const glyph =
         new THREE.Mesh(
           new THREE.RingGeometry(
-            0.18,
-            0.33,
+            .18,
+            .33,
             6
           ),
           new THREE.MeshBasicMaterial({
@@ -5142,7 +5447,7 @@
               true,
 
             opacity:
-              0.95,
+              .95,
 
             side:
               THREE.DoubleSide
@@ -5154,7 +5459,7 @@
 
       glyph.position.set(
         position.x,
-        0.14,
+        .14,
         position.z
       );
 
@@ -5183,22 +5488,24 @@
         new THREE.EllipseCurve(
           0,
           0,
-          0.45,
-          0.45,
-          Math.PI * 0.12,
-          Math.PI * 0.88,
+          .45,
+          .45,
+          Math.PI * .12,
+          Math.PI * .88,
           false,
           0
         );
 
       const points =
         curve
-          .getPoints(28)
+          .getPoints(
+            28
+          )
           .map(
             (point) =>
               new THREE.Vector3(
                 point.x,
-                0.36,
+                .36,
                 point.y
               )
           );
@@ -5261,20 +5568,20 @@
       const flame =
         new THREE.Mesh(
           new THREE.ConeGeometry(
-            0.16,
-            0.75,
+            .16,
+            .75,
             12
           ),
           toonMaterial(
             0xff693f,
             0xa32618,
-            0.8
+            .8
           )
         );
 
       flame.position.set(
         position.x,
-        0.48,
+        .48,
         position.z
       );
 
@@ -5289,9 +5596,9 @@
       );
     }
 
-    /* =========================================
-       Resize / Input
-    ========================================= */
+    /* =========================================================
+       RESIZE
+    ========================================================= */
 
     function resizeMainRenderer() {
       const rect =
@@ -5299,8 +5606,8 @@
           .getBoundingClientRect();
 
       /*
-        隱藏畫面時不重設成 1×1。
-        避免重新切回棋盤時閃爍。
+        Battle 畫面隱藏時尺寸可能為 0。
+        此時不動 Renderer，避免切回畫面閃爍。
       */
       if (
         rect.width < 20 ||
@@ -5325,8 +5632,10 @@
         );
 
       if (
-        currentSize.x !== width ||
-        currentSize.y !== height
+        currentSize.x !==
+          width ||
+        currentSize.y !==
+          height
       ) {
         renderer.setSize(
           width,
@@ -5336,26 +5645,36 @@
       }
 
       const aspect =
-        width / height;
+        width /
+        height;
 
+      /*
+        原本 9.55。
+        改為 8.95，
+        讓棋盤幾乎使用整個畫面寬度。
+      */
       const viewWidth =
-        9.55;
+        8.95;
 
       const viewHeight =
         viewWidth /
         aspect;
 
       camera.left =
-        -viewWidth / 2;
+        -viewWidth /
+        2;
 
       camera.right =
-        viewWidth / 2;
+        viewWidth /
+        2;
 
       camera.top =
-        viewHeight / 2;
+        viewHeight /
+        2;
 
       camera.bottom =
-        -viewHeight / 2;
+        -viewHeight /
+        2;
 
       camera
         .updateProjectionMatrix();
@@ -5366,6 +5685,10 @@
     ).observe(
       $("stage")
     );
+
+    /* =========================================================
+       POINTER
+    ========================================================= */
 
     function updatePointer(
       event
@@ -5397,77 +5720,36 @@
         1;
     }
 
-    gameCanvas
-      .addEventListener(
-        "pointermove",
-        (event) => {
-          updatePointer(
-            event
+    gameCanvas.addEventListener(
+      "pointermove",
+      (event) => {
+        updatePointer(
+          event
+        );
+
+        raycaster
+          .setFromCamera(
+            pointer,
+            camera
           );
 
+        const hit =
           raycaster
-            .setFromCamera(
-              pointer,
-              camera
-            );
+            .intersectObjects(
+              tileMeshes,
+              false
+            )[0]
+            ?.object ||
+          null;
 
-          const hit =
-            raycaster
-              .intersectObjects(
-                tileMeshes,
-                false
-              )[0]
-              ?.object ||
-            null;
-
-          if (
-            hoveredTile !==
-            hit
-          ) {
-            if (
-              hoveredTile
-            ) {
-              hoveredTile
-                .scale
-                .set(
-                  1,
-                  1,
-                  1
-                );
-            }
-
-            hoveredTile =
-              hit;
-
-            if (
-              hoveredTile &&
-              !$("stage")
-                .classList
-                .contains(
-                  "locked"
-                )
-            ) {
-              hoveredTile
-                .scale
-                .set(
-                  1.035,
-                  1.08,
-                  1.035
-                );
-            }
-          }
-        }
-      );
-
-    gameCanvas
-      .addEventListener(
-        "pointerleave",
-        () => {
+        if (
+          hoveredTile !==
+          hit
+        ) {
           if (
             hoveredTile
           ) {
-            hoveredTile
-              .scale
+            hoveredTile.scale
               .set(
                 1,
                 1,
@@ -5476,56 +5758,91 @@
           }
 
           hoveredTile =
-            null;
-        }
-      );
+            hit;
 
-    gameCanvas
-      .addEventListener(
-        "pointerup",
-        (event) => {
           if (
-            $("stage")
+            hoveredTile &&
+            !$("stage")
               .classList
               .contains(
                 "locked"
               )
           ) {
-            return;
+            hoveredTile.scale
+              .set(
+                1.035,
+                1.08,
+                1.035
+              );
           }
-
-          updatePointer(
-            event
-          );
-
-          raycaster
-            .setFromCamera(
-              pointer,
-              camera
-            );
-
-          const tile =
-            raycaster
-              .intersectObjects(
-                tileMeshes,
-                false
-              )[0]
-              ?.object;
-
-          if (!tile) {
-            return;
-          }
-
-          handleBoardClick(
-            tile.userData.row,
-            tile.userData.col
-          );
         }
-      );
+      }
+    );
 
-    /* =========================================
-       Three UI Icons
-    ========================================= */
+    gameCanvas.addEventListener(
+      "pointerleave",
+      () => {
+        if (
+          hoveredTile
+        ) {
+          hoveredTile.scale
+            .set(
+              1,
+              1,
+              1
+            );
+        }
+
+        hoveredTile =
+          null;
+      }
+    );
+
+    gameCanvas.addEventListener(
+      "pointerup",
+      (event) => {
+        if (
+          $("stage")
+            .classList
+            .contains(
+              "locked"
+            )
+        ) {
+          return;
+        }
+
+        updatePointer(
+          event
+        );
+
+        raycaster
+          .setFromCamera(
+            pointer,
+            camera
+          );
+
+        const tile =
+          raycaster
+            .intersectObjects(
+              tileMeshes,
+              false
+            )[0]
+            ?.object;
+
+        if (!tile) {
+          return;
+        }
+
+        handleBoardClick(
+          tile.userData.row,
+          tile.userData.col
+        );
+      }
+    );
+
+    /* =========================================================
+       MINI THREE.JS ICON
+    ========================================================= */
 
     class MiniScene {
       constructor(
@@ -5547,17 +5864,19 @@
               "low-power"
           });
 
-        this.renderer.setPixelRatio(
-          Math.min(
-            window.devicePixelRatio,
-            1.65
-          )
-        );
+        this.renderer
+          .setPixelRatio(
+            Math.min(
+              window.devicePixelRatio,
+              1.65
+            )
+          );
 
-        this.renderer.setClearColor(
-          0x000000,
-          0
-        );
+        this.renderer
+          .setClearColor(
+            0x000000,
+            0
+          );
 
         this.renderer.outputColorSpace =
           THREE.SRGBColorSpace;
@@ -5569,13 +5888,13 @@
           new THREE.PerspectiveCamera(
             32,
             1,
-            0.1,
+            .1,
             20
           );
 
         this.camera.position.set(
           0,
-          0.15,
+          .15,
           4.1
         );
 
@@ -5618,29 +5937,31 @@
 
       clear() {
         while (
-          this.group.children.length
+          this.group
+            .children
+            .length
         ) {
           this.group.remove(
-            this.group.children[0]
+            this.group
+              .children[0]
           );
         }
       }
 
-      setKind(kind) {
+      setKind(
+        kind
+      ) {
         this.kind =
           kind;
 
         this.clear();
 
-        const lightColors = {
+        const colors = {
           "player-staff":
             0x8297ff,
 
           "player-sword":
             0xf4c66e,
-
-          ai:
-            0xff796e,
 
           fire:
             0xff6b42,
@@ -5655,32 +5976,31 @@
             0x7eddb5
         };
 
-        this.light.color.setHex(
-          lightColors[kind] ||
-          0xffffff
-        );
+        this.light.color
+          .setHex(
+            colors[kind] ||
+            0xffffff
+          );
 
         if (
-          [
-            "player-staff",
-            "player-sword",
-            "ai"
-          ].includes(kind)
+          kind ===
+            "player-staff" ||
+          kind ===
+            "player-sword"
         ) {
           const character =
-            kind === "ai"
-              ? createAiFireCharacter()
-              : kind ===
-                "player-sword"
-                ? createPlayerSwordCharacter()
-                : createPlayerStaffCharacter();
+            kind ===
+              "player-sword"
+              ? createPlayerSwordCharacter()
+              : createPlayerStaffCharacter();
 
           character.position.y =
-            -0.55;
+            -.55;
 
-          character.scale.setScalar(
-            1.45
-          );
+          character.scale
+            .setScalar(
+              1.45
+            );
 
           this.group.add(
             character
@@ -5690,24 +6010,25 @@
         }
 
         if (
-          kind === "fire"
+          kind ===
+          "fire"
         ) {
           const outer =
             new THREE.Mesh(
               new THREE.ConeGeometry(
-                0.55,
+                .55,
                 1.35,
                 18
               ),
               toonMaterial(
                 0xf15f48,
                 0xa9281d,
-                0.8
+                .8
               )
             );
 
           outer.position.y =
-            -0.08;
+            -.08;
 
           this.group.add(
             outer
@@ -5716,21 +6037,21 @@
           const inner =
             new THREE.Mesh(
               new THREE.ConeGeometry(
-                0.26,
-                0.72,
+                .26,
+                .72,
                 16
               ),
               toonMaterial(
                 0xffd472,
                 0xff7a22,
-                0.9
+                .9
               )
             );
 
           inner.position.set(
             0,
-            -0.18,
-            0.18
+            -.18,
+            .18
           );
 
           this.group.add(
@@ -5741,13 +6062,14 @@
         }
 
         if (
-          kind === "ice"
+          kind ===
+          "ice"
         ) {
           const material =
             toonMaterial(
               0x9ae8ff,
               0x2784ad,
-              0.55
+              .55
             );
 
           for (
@@ -5759,8 +6081,8 @@
               new THREE.Mesh(
                 new THREE.OctahedronGeometry(
                   index === 0
-                    ? 0.56
-                    : 0.36,
+                    ? .56
+                    : .36,
                   0
                 ),
                 material
@@ -5768,13 +6090,14 @@
 
             crystal.position.set(
               (
-                index - 1
+                index -
+                1
               ) *
-              0.42,
+              .42,
 
               index === 0
-                ? 0.08
-                : -0.25,
+                ? .08
+                : -.25,
 
               0
             );
@@ -5782,7 +6105,7 @@
             crystal.scale.y =
               index === 0
                 ? 1.25
-                : 0.9;
+                : .9;
 
             this.group.add(
               crystal
@@ -5793,14 +6116,15 @@
         }
 
         if (
-          kind === "slash"
+          kind ===
+          "slash"
         ) {
           const blade =
             new THREE.Mesh(
               new THREE.BoxGeometry(
-                0.1,
+                .1,
                 1.55,
-                0.06
+                .06
               ),
               toonMaterial(
                 0xf7f7ff
@@ -5808,7 +6132,7 @@
             );
 
           blade.rotation.z =
-            -0.7;
+            -.7;
 
           this.group.add(
             blade
@@ -5817,11 +6141,12 @@
           const arc =
             new THREE.Mesh(
               new THREE.TorusGeometry(
-                0.72,
-                0.045,
+                .72,
+                .045,
                 10,
                 36,
-                Math.PI * 1.25
+                Math.PI *
+                1.25
               ),
               new THREE.MeshBasicMaterial({
                 color:
@@ -5830,7 +6155,7 @@
             );
 
           arc.rotation.z =
-            -0.2;
+            -.2;
 
           this.group.add(
             arc
@@ -5840,18 +6165,19 @@
         }
 
         if (
-          kind === "place"
+          kind ===
+          "place"
         ) {
           const core =
             new THREE.Mesh(
               new THREE.OctahedronGeometry(
-                0.64,
+                .64,
                 0
               ),
               toonMaterial(
                 0x7ee0bb,
                 0x1e7c61,
-                0.45
+                .45
               )
             );
 
@@ -5862,8 +6188,8 @@
           const ring =
             new THREE.Mesh(
               new THREE.TorusGeometry(
-                0.86,
-                0.035,
+                .86,
+                .035,
                 8,
                 32
               ),
@@ -5905,13 +6231,16 @@
           );
 
         const current =
-          this.renderer.getSize(
-            new THREE.Vector2()
-          );
+          this.renderer
+            .getSize(
+              new THREE.Vector2()
+            );
 
         if (
-          current.x !== width ||
-          current.y !== height
+          current.x !==
+            width ||
+          current.y !==
+            height
         ) {
           this.renderer.setSize(
             width,
@@ -5921,37 +6250,46 @@
         }
 
         this.camera.aspect =
-          width / height;
+          width /
+          height;
 
         this.camera
           .updateProjectionMatrix();
       }
 
-      render(time) {
+      render(
+        time
+      ) {
         if (
-          this.kind === "ice" ||
-          this.kind === "place"
+          this.kind ===
+            "ice" ||
+          this.kind ===
+            "place"
         ) {
           this.group.rotation.y =
-            time * 0.0007;
+            time *
+            .0007;
         } else {
           this.group.rotation.y =
             Math.sin(
-              time * 0.001
+              time *
+              .001
             ) *
-            0.18;
+            .18;
         }
 
         if (
-          this.kind === "fire"
+          this.kind ===
+          "fire"
         ) {
           this.group.scale
             .setScalar(
               1 +
               Math.sin(
-                time * 0.006
+                time *
+                .006
               ) *
-              0.045
+              .045
             );
         }
 
@@ -5966,12 +6304,6 @@
       new MiniScene(
         $("playerIcon"),
         "player-staff"
-      );
-
-    const aiMini =
-      new MiniScene(
-        $("aiIcon"),
-        "ai"
       );
 
     const fireMini =
@@ -6000,7 +6332,6 @@
 
     const miniRenderers = [
       playerMini,
-      aiMini,
       fireMini,
       iceMini,
       slashMini,
@@ -6019,9 +6350,9 @@
       }
     );
 
-    /* =========================================
-       Match Flow
-    ========================================= */
+    /* =========================================================
+       GAME FLOW
+    ========================================================= */
 
     function createEmptyBoard() {
       return Array.from(
@@ -6032,7 +6363,9 @@
         () =>
           Array(
             BOARD_SIZE
-          ).fill(EMPTY)
+          ).fill(
+            EMPTY
+          )
       );
     }
 
@@ -6049,7 +6382,9 @@
           () =>
             Array(
               BOARD_SIZE
-            ).fill(null)
+            ).fill(
+              null
+            )
         );
 
       moveNumber =
@@ -6064,7 +6399,7 @@
       actionMode =
         null;
 
-      specialUsedThisRound =
+      specialUsedThisTurn =
         false;
 
       lastMove =
@@ -6083,6 +6418,8 @@
 
       lastMoveRing.visible =
         false;
+
+      hideTargetHint();
 
       updateTileVisuals();
       updateInterface();
@@ -6114,7 +6451,9 @@
 
       $("resultOverlay")
         .classList
-        .remove("show");
+        .remove(
+          "show"
+        );
 
       showScreen(
         "battleScreen"
@@ -6134,7 +6473,8 @@
       $("roundText")
         .textContent =
         ROUND_NAMES[
-          roundNumber - 1
+          roundNumber -
+          1
         ] ||
         `第${roundNumber}局`;
 
@@ -6152,44 +6492,42 @@
 
       $("roundBanner")
         .classList
-        .add("show");
+        .add(
+          "show"
+        );
 
       $("stage")
         .classList
-        .add("locked");
-
-      $("turnText")
-        .textContent =
-        "新局準備";
-
-      $("turnSubtext")
-        .textContent =
-        playerStarts
-          ? "蒼月陣營取得先手"
-          : "赤焰陣營取得先手";
+        .add(
+          "locked"
+        );
 
       audio.tone(
         440,
-        0.08,
+        .08,
         "sine",
-        0.018
+        .018
       );
 
       audio.tone(
         660,
-        0.12,
+        .12,
         "sine",
-        0.018,
-        0.07
+        .018,
+        .07
       );
 
       setGameTimer(
         () => {
           $("roundBanner")
             .classList
-            .remove("show");
+            .remove(
+              "show"
+            );
 
-          if (playerStarts) {
+          if (
+            playerStarts
+          ) {
             beginPlayerTurn();
           } else {
             beginAiTurn();
@@ -6199,27 +6537,9 @@
       );
     }
 
-    /* =========================================
-       Turn
-    ========================================= */
-
-    function setTurnTheme(
-      isPlayer
-    ) {
-      $("turnMon")
-        .style
-        .background =
-        isPlayer
-          ? "radial-gradient(circle at 35% 30%,#fff,#7ee7ee 26%,#4b5cc1 68%)"
-          : "radial-gradient(circle at 35% 30%,#fff5e9,#ff9c83 26%,#9d2f43 68%)";
-
-      $("turnMon")
-        .style
-        .boxShadow =
-        isPlayer
-          ? "0 0 12px rgba(126,231,238,.5)"
-          : "0 0 12px rgba(255,121,134,.5)";
-    }
+    /* =========================================================
+       PLAYER TURN
+    ========================================================= */
 
     function beginPlayerTurn() {
       if (
@@ -6238,28 +6558,40 @@
       actionMode =
         null;
 
+      specialUsedThisTurn =
+        false;
+
       $("thinking")
         .classList
-        .remove("show");
+        .remove(
+          "show"
+        );
 
       $("stage")
         .classList
-        .add("locked");
+        .add(
+          "locked"
+        );
 
-      $("turnText")
-        .textContent =
-        "角色抽取中";
+      /*
+        不常駐任何玩家回合列。
 
-      $("turnSubtext")
-        .textContent =
-        "杖與劍各有一半機率";
-
-      setTurnTheme(
-        true
+        只在棋盤內短暫提示，
+        而且不顯示抽到杖或劍。
+      */
+      showTurnHint(
+        "PLAYER TURN",
+        "玩家回合"
       );
+
+      hideTargetHint();
 
       spinPlayerRole();
     }
+
+    /* =========================================================
+       ROLE SPIN
+    ========================================================= */
 
     function spinPlayerRole() {
       $("roleName")
@@ -6280,31 +6612,31 @@
       previewInterval =
         window.setInterval(
           () => {
-            const staffPreview =
+            const staff =
               previewIndex %
               2 ===
               0;
 
             $("roleName")
               .textContent =
-              staffPreview
+              staff
                 ? "杖"
                 : "劍";
 
             $("roleDescription")
               .textContent =
-              staffPreview
+              staff
                 ? "戰場控制型"
                 : "單體破壞型";
 
             playerMini.setKind(
-              staffPreview
+              staff
                 ? "player-staff"
                 : "player-sword"
             );
 
             audio.spin(
-              staffPreview
+              staff
             );
 
             previewIndex +=
@@ -6324,7 +6656,7 @@
 
           playerRole =
             Math.random() <
-            0.5
+            .5
               ? "staff"
               : "sword";
 
@@ -6340,18 +6672,6 @@
               .textContent =
               "戰場控制型";
 
-            if (
-              specialUsedThisRound
-            ) {
-              $("actionMessage")
-                .textContent =
-                "本局特殊技能已使用，可直接部署角色";
-            } else {
-              $("actionMessage")
-                .textContent =
-                "可使用 FIRE / ICE（本局限一次），或直接部署角色";
-            }
-
             playerMini.setKind(
               "player-staff"
             );
@@ -6364,24 +6684,6 @@
               .textContent =
               "單體破壞型";
 
-            if (
-              specialUsedThisRound
-            ) {
-              $("actionMessage")
-                .textContent =
-                "本局特殊技能已使用，可直接部署劍士";
-            } else if (
-              hasSlashTarget()
-            ) {
-              $("actionMessage")
-                .textContent =
-                "可使用 IAI 瞬斬（本局限一次），或直接部署";
-            } else {
-              $("actionMessage")
-                .textContent =
-                "目前無可瞬斬目標，可直接部署";
-            }
-
             playerMini.setKind(
               "player-sword"
             );
@@ -6391,29 +6693,21 @@
             playerRole
           );
 
-          $("turnText")
-            .textContent =
-            playerRole ===
-            "staff"
-              ? "玩家回合｜杖"
-              : "玩家回合｜劍";
-
-          $("turnSubtext")
-            .textContent =
-            playerRole ===
-            "staff"
-              ? "選擇術式或在空格部署角色"
-              : "使用居合斬或部署劍士";
-
           $("stage")
             .classList
-            .remove("locked");
+            .remove(
+              "locked"
+            );
 
           updateInterface();
         },
         620
       );
     }
+
+    /* =========================================================
+       AI TURN
+    ========================================================= */
 
     function beginAiTurn() {
       if (
@@ -6434,23 +6728,22 @@
 
       $("stage")
         .classList
-        .add("locked");
+        .add(
+          "locked"
+        );
 
       $("thinking")
         .classList
-        .add("show");
+        .add(
+          "show"
+        );
 
-      $("turnText")
-        .textContent =
-        "赤焰術師回合";
-
-      $("turnSubtext")
-        .textContent =
-        "正在判斷攻擊與防守位置";
-
-      setTurnTheme(
-        false
+      showTurnHint(
+        "RIVAL TURN",
+        "赤焰術師回合"
       );
+
+      hideTargetHint();
 
       updateInterface();
 
@@ -6475,7 +6768,9 @@
               chooseAiMove();
           }
 
-          if (move) {
+          if (
+            move
+          ) {
             placeStone(
               move.row,
               move.col,
@@ -6487,9 +6782,9 @@
       );
     }
 
-    /* =========================================
-       Placement
-    ========================================= */
+    /* =========================================================
+       BOARD CLICK
+    ========================================================= */
 
     function handleBoardClick(
       row,
@@ -6499,15 +6794,19 @@
         roundEnded ||
         matchEnded ||
         aiThinking ||
-        currentPlayer !== PLAYER
+        currentPlayer !==
+          PLAYER
       ) {
         return;
       }
 
       if (
-        actionMode === "fire" ||
-        actionMode === "ice" ||
-        actionMode === "slash"
+        actionMode ===
+          "fire" ||
+        actionMode ===
+          "ice" ||
+        actionMode ===
+          "slash"
       ) {
         handleSpecialTarget(
           row,
@@ -6534,6 +6833,10 @@
         PLAYER
       );
     }
+
+    /* =========================================================
+       PLACE CHARACTER
+    ========================================================= */
 
     function placeStone(
       row,
@@ -6585,9 +6888,10 @@
         player
       );
 
-      navigator.vibrate?.(
-        16
-      );
+      navigator
+        .vibrate?.(
+          16
+        );
 
       updateInterface();
 
@@ -6650,14 +6954,15 @@
         (row) =>
           row.every(
             (cell) =>
-              cell !== EMPTY
+              cell !==
+              EMPTY
           )
       );
     }
 
-    /* =========================================
-       Five In A Row
-    ========================================= */
+    /* =========================================================
+       WIN CHECK
+    ========================================================= */
 
     function checkWin(
       row,
@@ -6696,7 +7001,8 @@
         );
 
         if (
-          cells.length >= 5
+          cells.length >=
+          5
         ) {
           return {
             hasWon:true,
@@ -6720,10 +7026,12 @@
       cells
     ) {
       let targetRow =
-        row + rowStep;
+        row +
+        rowStep;
 
       let targetCol =
-        col + colStep;
+        col +
+        colStep;
 
       while (
         isInsideBoard(
@@ -6738,8 +7046,11 @@
           player
       ) {
         cells.push({
-          row:targetRow,
-          col:targetCol
+          row:
+            targetRow,
+
+          col:
+            targetCol
         });
 
         targetRow +=
@@ -6756,19 +7067,22 @@
     ) {
       return (
         row >= 0 &&
-        row < BOARD_SIZE &&
+        row <
+          BOARD_SIZE &&
         col >= 0 &&
-        col < BOARD_SIZE
+        col <
+          BOARD_SIZE
       );
     }
 
-    /* =========================================
+    /* =========================================================
        AI
-    ========================================= */
+    ========================================================= */
 
     function chooseAiMove() {
       if (
-        moveNumber === 0 &&
+        moveNumber ===
+          0 &&
         !isFrozenFor(
           AI,
           3,
@@ -6782,8 +7096,12 @@
       }
 
       return (
-        findImmediateMove(AI) ||
-        findImmediateMove(PLAYER) ||
+        findImmediateMove(
+          AI
+        ) ||
+        findImmediateMove(
+          PLAYER
+        ) ||
         findBestScoredMove()
       );
     }
@@ -6826,7 +7144,9 @@
           board[row][col] =
             EMPTY;
 
-          if (wins) {
+          if (
+            wins
+          ) {
             return {
               row,
               col
@@ -6946,10 +7266,12 @@
           10 -
           (
             Math.abs(
-              row - 3.5
+              row -
+              3.5
             ) +
             Math.abs(
-              col - 3.5
+              col -
+              3.5
             )
           )
         );
@@ -6958,31 +7280,39 @@
         let nearRow =
           Math.max(
             0,
-            row - 2
+            row -
+            2
           );
 
         nearRow <=
         Math.min(
-          BOARD_SIZE - 1,
-          row + 2
+          BOARD_SIZE -
+          1,
+          row +
+          2
         );
 
-        nearRow += 1
+        nearRow +=
+        1
       ) {
         for (
           let nearCol =
             Math.max(
               0,
-              col - 2
+              col -
+              2
             );
 
           nearCol <=
           Math.min(
-            BOARD_SIZE - 1,
-            col + 2
+            BOARD_SIZE -
+            1,
+            col +
+            2
           );
 
-          nearCol += 1
+          nearCol +=
+          1
         ) {
           if (
             board[
@@ -7001,7 +7331,7 @@
       return (
         score +
         Math.random() *
-        0.25
+        .25
       );
     }
 
@@ -7026,10 +7356,12 @@
           0;
 
         let targetRow =
-          row + rowStep;
+          row +
+          rowStep;
 
         let targetCol =
-          col + colStep;
+          col +
+          colStep;
 
         while (
           isInsideBoard(
@@ -7043,7 +7375,8 @@
           ] ===
             player
         ) {
-          count += 1;
+          count +=
+            1;
 
           targetRow +=
             rowStep;
@@ -7069,10 +7402,12 @@
         }
 
         targetRow =
-          row - rowStep;
+          row -
+          rowStep;
 
         targetCol =
-          col - colStep;
+          col -
+          colStep;
 
         while (
           isInsideBoard(
@@ -7086,7 +7421,8 @@
           ] ===
             player
         ) {
-          count += 1;
+          count +=
+            1;
 
           targetRow -=
             rowStep;
@@ -7112,35 +7448,44 @@
         }
 
         if (
-          count >= 5
+          count >=
+          5
         ) {
           total +=
             100000;
         } else if (
-          count === 4 &&
-          openEnds === 2
+          count ===
+            4 &&
+          openEnds ===
+            2
         ) {
           total +=
             12000;
         } else if (
-          count === 4
+          count ===
+          4
         ) {
           total +=
             4200;
         } else if (
-          count === 3 &&
-          openEnds === 2
+          count ===
+            3 &&
+          openEnds ===
+            2
         ) {
           total +=
             1100;
         } else if (
-          count === 3
+          count ===
+          3
         ) {
           total +=
             260;
         } else if (
-          count === 2 &&
-          openEnds === 2
+          count ===
+            2 &&
+          openEnds ===
+            2
         ) {
           total +=
             80;
@@ -7153,15 +7498,16 @@
       return total;
     }
 
-    /* =========================================
-       Player Actions
-    ========================================= */
+    /* =========================================================
+       ACTION SELECT
+    ========================================================= */
 
     function selectAction(
       type
     ) {
       if (
-        currentPlayer !== PLAYER ||
+        currentPlayer !==
+          PLAYER ||
         aiThinking ||
         roundEnded ||
         matchEnded
@@ -7170,18 +7516,15 @@
       }
 
       if (
-        type === "normal"
+        type ===
+        "normal"
       ) {
         actionMode =
           "normal";
 
-        $("actionMessage")
-          .textContent =
-          "一般部署：選擇一個空格放置角色";
-
-        $("cancelActionButton")
-          .hidden =
-          false;
+        showTargetHint(
+          "選擇空格部署角色"
+        );
 
         updateTileVisuals();
         updateInterface();
@@ -7190,35 +7533,23 @@
       }
 
       if (
-        specialUsedThisRound
-      ) {
-        showToast(
-          "本局特殊技能已使用"
-        );
-
-        return;
-      }
-
-      if (
         playerRole ===
           "staff" &&
         (
-          type === "fire" ||
-          type === "ice"
+          type ===
+            "fire" ||
+          type ===
+            "ice"
         )
       ) {
         actionMode =
           type;
 
-        $("cancelActionButton")
-          .hidden =
-          false;
-
-        $("actionMessage")
-          .textContent =
+        showTargetHint(
           type === "fire"
-            ? "選擇己方角色：燒除其正上與正下敵軍"
-            : "選擇敵方角色：冰封其上下左右空格";
+            ? "選擇己方角色：攻擊其正上、正下敵軍"
+            : "選擇敵方角色：冰封其上下左右空格"
+        );
 
         updateTileVisuals();
         updateInterface();
@@ -7229,7 +7560,8 @@
       if (
         playerRole ===
           "sword" &&
-        type === "slash"
+        type ===
+          "slash"
       ) {
         if (
           !hasSlashTarget()
@@ -7244,13 +7576,9 @@
         actionMode =
           "slash";
 
-        $("cancelActionButton")
-          .hidden =
-          false;
-
-        $("actionMessage")
-          .textContent =
-          "選擇與任一己方角色上下左右相鄰的敵軍";
+        showTargetHint(
+          "選擇與己方角色相鄰的敵軍"
+        );
 
         updateTileVisuals();
         updateInterface();
@@ -7296,9 +7624,9 @@
       }
     }
 
-    /* =========================================
+    /* =========================================================
        FIRE
-    ========================================= */
+    ========================================================= */
 
     function castFire(
       row,
@@ -7308,14 +7636,14 @@
         board[row][col] !==
         PLAYER
       ) {
-        $("actionMessage")
-          .textContent =
-          "FIRE 必須選擇己方角色";
+        showToast(
+          "FIRE 必須選擇己方角色"
+        );
 
         return;
       }
 
-      let removedCount =
+      let removed =
         0;
 
       [
@@ -7360,7 +7688,7 @@
             ] =
               null;
 
-            removedCount +=
+            removed +=
               1;
 
             createFireColumn(
@@ -7387,15 +7715,15 @@
       impactStage();
 
       completeSpecial(
-        removedCount
-          ? `FIRE 擊退 ${removedCount} 名敵方角色`
+        removed
+          ? `FIRE 擊退 ${removed} 名敵方角色`
           : "FIRE 發動，但沒有命中敵軍"
       );
     }
 
-    /* =========================================
+    /* =========================================================
        ICE
-    ========================================= */
+    ========================================================= */
 
     function castIce(
       row,
@@ -7405,9 +7733,9 @@
         board[row][col] !==
         AI
       ) {
-        $("actionMessage")
-          .textContent =
-          "ICE 必須選擇敵方角色";
+        showToast(
+          "ICE 必須選擇敵方角色"
+        );
 
         return;
       }
@@ -7489,9 +7817,9 @@
       );
     }
 
-    /* =========================================
+    /* =========================================================
        IAI
-    ========================================= */
+    ========================================================= */
 
     function castSlash(
       row,
@@ -7503,9 +7831,9 @@
           col
         )
       ) {
-        $("actionMessage")
-          .textContent =
-          "IAI 只能斬除與己方角色相鄰的敵軍";
+        showToast(
+          "IAI 只能斬除與己方角色相鄰的敵軍"
+        );
 
         return;
       }
@@ -7537,24 +7865,20 @@
     function completeSpecial(
       message
     ) {
-      specialUsedThisRound =
+      specialUsedThisTurn =
         true;
 
       actionMode =
         null;
 
-      $("cancelActionButton")
-        .hidden =
-        true;
+      hideTargetHint();
 
-      $("actionMessage")
-        .textContent =
-        message;
+      showToast(
+        message
+      );
 
       syncCharacters();
-
       updateTileVisuals();
-
       updateInterface();
 
       setGameTimer(
@@ -7567,33 +7891,9 @@
       actionMode =
         null;
 
-      $("cancelActionButton")
-        .hidden =
-        true;
-
-      if (
-        specialUsedThisRound
-      ) {
-        $("actionMessage")
-          .textContent =
-          "本局特殊技能已使用，可直接部署角色";
-      } else if (
-        playerRole ===
-        "staff"
-      ) {
-        $("actionMessage")
-          .textContent =
-          "可使用 FIRE / ICE（本局限一次），或直接部署角色";
-      } else {
-        $("actionMessage")
-          .textContent =
-          hasSlashTarget()
-            ? "可使用 IAI 瞬斬（本局限一次），或直接部署角色"
-            : "目前無可瞬斬目標，可直接部署";
-      }
+      hideTargetHint();
 
       updateTileVisuals();
-
       updateInterface();
     }
 
@@ -7613,9 +7913,9 @@
       );
     }
 
-    /* =========================================
-       Round Result
-    ========================================= */
+    /* =========================================================
+       ROUND RESULT
+    ========================================================= */
 
     function calculateDamage() {
       return Math.max(
@@ -7643,24 +7943,27 @@
       aiThinking =
         false;
 
+      hideTargetHint();
+
       $("stage")
         .classList
-        .add("locked");
+        .add(
+          "locked"
+        );
 
       $("thinking")
         .classList
-        .remove("show");
+        .remove(
+          "show"
+        );
 
       if (
-        winner === EMPTY
+        winner ===
+        EMPTY
       ) {
-        $("turnText")
-          .textContent =
-          "本局和棋";
-
-        $("turnSubtext")
-          .textContent =
-          "棋盤已無可部署位置";
+        showCallout(
+          "本局和棋"
+        );
 
         setGameTimer(
           () => {
@@ -7679,7 +7982,8 @@
         calculateDamage();
 
       if (
-        winner === PLAYER
+        winner ===
+        PLAYER
       ) {
         playerScore +=
           1;
@@ -7700,7 +8004,9 @@
 
         $("aiHpBar")
           .classList
-          .add("hit");
+          .add(
+            "hit"
+          );
       } else {
         aiScore +=
           1;
@@ -7721,18 +8027,24 @@
 
         $("playerHpBar")
           .classList
-          .add("hit");
+          .add(
+            "hit"
+          );
       }
 
       setGameTimer(
         () => {
           $("playerHpBar")
             .classList
-            .remove("hit");
+            .remove(
+              "hit"
+            );
 
           $("aiHpBar")
             .classList
-            .remove("hit");
+            .remove(
+              "hit"
+            );
         },
         450
       );
@@ -7744,16 +8056,6 @@
           ? "五連成立・勝利"
           : "五連成立・敗北"
       );
-
-      $("turnText")
-        .textContent =
-        winner === PLAYER
-          ? "玩家取得本局勝利"
-          : "赤焰術師取得本局勝利";
-
-      $("turnSubtext")
-        .textContent =
-        `造成 ${damage} 點傷害`;
 
       matchEnded =
         playerScore >=
@@ -7795,13 +8097,17 @@
 
       element
         .classList
-        .remove("show");
+        .remove(
+          "show"
+        );
 
       void element.offsetWidth;
 
       element
         .classList
-        .add("show");
+        .add(
+          "show"
+        );
     }
 
     function showResult() {
@@ -7830,12 +8136,14 @@
 
       $("resultOverlay")
         .classList
-        .add("show");
+        .add(
+          "show"
+        );
     }
 
-    /* =========================================
-       UI
-    ========================================= */
+    /* =========================================================
+       UI UPDATE
+    ========================================================= */
 
     function updateInterface() {
       $("playerScore")
@@ -7883,30 +8191,30 @@
         !roundEnded &&
         !matchEnded;
 
-      const canStaffSpecial =
+      const staff =
         playerReady &&
         playerRole ===
           "staff" &&
-        !specialUsedThisRound;
+        !specialUsedThisTurn;
 
-      const canSwordSpecial =
+      const sword =
         playerReady &&
         playerRole ===
           "sword" &&
-        !specialUsedThisRound;
+        !specialUsedThisTurn;
 
       $("fireButton")
         .disabled =
-        !canStaffSpecial;
+        !staff;
 
       $("iceButton")
         .disabled =
-        !canStaffSpecial;
+        !staff;
 
       $("slashButton")
         .disabled =
         !(
-          canSwordSpecial &&
+          sword &&
           hasSlashTarget()
         );
 
@@ -7953,13 +8261,14 @@
           .textContent =
           "END";
       } else if (
-        currentPlayer === AI
+        currentPlayer ===
+        AI
       ) {
         $("actionState")
           .textContent =
           "WAIT";
       } else if (
-        specialUsedThisRound
+        specialUsedThisTurn
       ) {
         $("actionState")
           .textContent =
@@ -7974,9 +8283,9 @@
       }
     }
 
-    /* =========================================
-       Events
-    ========================================= */
+    /* =========================================================
+       EVENTS
+    ========================================================= */
 
     $("soundToggle")
       .addEventListener(
@@ -7995,9 +8304,9 @@
 
           audio.tone(
             620,
-            0.1,
+            .1,
             "sine",
-            0.025
+            .025
           );
 
           showScreen(
@@ -8048,7 +8357,11 @@
 
           $("thinking")
             .classList
-            .remove("show");
+            .remove(
+              "show"
+            );
+
+          hideTargetHint();
 
           showScreen(
             "modeScreen"
@@ -8074,7 +8387,9 @@
         () => {
           $("resultOverlay")
             .classList
-            .remove("show");
+            .remove(
+              "show"
+            );
 
           showScreen(
             "modeScreen"
@@ -8128,9 +8443,9 @@
         cancelAction
       );
 
-    /* =========================================
-       Animation Loop
-    ========================================= */
+    /* =========================================================
+       ANIMATION
+    ========================================================= */
 
     const clock =
       new THREE.Clock();
@@ -8145,22 +8460,25 @@
       const delta =
         Math.min(
           clock.getDelta(),
-          0.033
+          .033
         );
+
+      /* Character */
 
       for (
         const character
         of characterMap.values()
       ) {
-        const targetScale =
-          character.userData
+        const target =
+          character
+            .userData
             .targetScale ||
-          0.75;
+          .75;
 
         const scale =
           THREE.MathUtils.damp(
             character.scale.x,
-            targetScale,
+            target,
             13,
             delta
           );
@@ -8172,44 +8490,48 @@
 
         const phase =
           time *
-          0.002 +
+          .002 +
           character.userData.row *
-          0.45 +
+          .45 +
           character.userData.col *
-          0.31;
+          .31;
 
         character.position.y =
-          0.1 +
+          .1 +
           Math.sin(
             phase
           ) *
-          0.018;
+          .018;
 
         character.rotation.y =
           Math.sin(
             phase *
-            0.55
+            .55
           ) *
-          0.045;
+          .045;
 
         if (
-          character.userData
+          character
+            .userData
             .flame
         ) {
-          character.userData
+          character
+            .userData
             .flame
             .scale
             .setScalar(
               1 +
               Math.sin(
                 time *
-                0.008 +
+                .008 +
                 phase
               ) *
-              0.08
+              .08
             );
         }
       }
+
+      /* Effects */
 
       for (
         const effect
@@ -8227,10 +8549,11 @@
         }
 
         if (
-          effect.userData.glyph
+          effect.userData
+            .glyph
         ) {
           effect.userData.life -=
-            0.018;
+            .018;
 
           effect.scale
             .multiplyScalar(
@@ -8243,10 +8566,11 @@
               effect.userData.life
             );
         } else if (
-          effect.userData.arc
+          effect.userData
+            .arc
         ) {
           effect.userData.life -=
-            0.04;
+            .04;
 
           effect.scale
             .multiplyScalar(
@@ -8263,30 +8587,25 @@
             .flameFx
         ) {
           effect.userData.life -=
-            0.035;
+            .035;
 
           effect.scale.y *=
             1.028;
 
           effect.scale.x *=
-            0.98;
+            .98;
 
           effect.scale.z *=
-            0.98;
+            .98;
 
-          if (
-            "opacity" in
-            effect.material
-          ) {
-            effect.material.transparent =
-              true;
+          effect.material.transparent =
+            true;
 
-            effect.material.opacity =
-              Math.max(
-                0,
-                effect.userData.life
-              );
-          }
+          effect.material.opacity =
+            Math.max(
+              0,
+              effect.userData.life
+            );
         } else {
           effect.position.add(
             effect.userData.velocity
@@ -8294,10 +8613,10 @@
 
           effect.userData
             .velocity.y -=
-            0.003;
+            .003;
 
           effect.userData.life -=
-            0.026;
+            .026;
 
           effect.material.opacity =
             Math.max(
@@ -8314,10 +8633,15 @@
             effect
           );
 
-          effect.geometry.dispose();
-          effect.material.dispose();
+          effect.geometry
+            .dispose();
+
+          effect.material
+            .dispose();
         }
       }
+
+      /* Last Move */
 
       if (
         lastMoveRing.visible
@@ -8325,20 +8649,20 @@
         lastMoveRing
           .material
           .opacity =
-          0.58 +
+          .58 +
           Math.sin(
             time *
-            0.007
+            .007
           ) *
-          0.28;
+          .28;
 
         const scale =
           1 +
           Math.sin(
             time *
-            0.006
+            .006
           ) *
-          0.05;
+          .05;
 
         lastMoveRing.scale
           .setScalar(
@@ -8346,36 +8670,40 @@
           );
       }
 
+      /* Winning Line */
+
       if (
         winningLine
       ) {
         winningLine
           .material
           .opacity =
-          0.7 +
+          .7 +
           Math.sin(
             time *
-            0.01
+            .01
           ) *
-          0.25;
+          .25;
       }
+
+      /* Environment */
 
       sakuraLight.intensity =
         4.05 +
         Math.sin(
           time *
-          0.0013
+          .0013
         ) *
-        0.42;
+        .42;
 
       cyanLight.intensity =
         3.6 +
         Math.sin(
           time *
-          0.0011 +
+          .0011 +
           1.4
         ) *
-        0.38;
+        .38;
 
       renderer.render(
         scene,
@@ -8391,9 +8719,9 @@
       );
     }
 
-    /* =========================================
-       Init
-    ========================================= */
+    /* =========================================================
+       INIT
+    ========================================================= */
 
     buildPersistentBoard();
 
